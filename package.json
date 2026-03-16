@@ -9,7 +9,11 @@
   "scripts": {
     "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
-    "test": "echo \"No test specified\" && exit 0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open",
     "dev": "quasar dev",
     "build": "quasar build",
     "postinstall": "quasar prepare"
@@ -38,7 +42,13 @@
     "@intlify/unplugin-vue-i18n": "^4.0.0",
     "@quasar/app-vite": "^2.1.0",
     "autoprefixer": "^10.4.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
+    "@vue/test-utils": "^2.4.0",
+    "vitest": "^2.0.0",
+    "cypress": "^13.0.0",
+    "jsdom": "^24.0.0"
   },
   "engines": {
     "node": "^28 || ^26 || ^24 || ^22 || ^20",
