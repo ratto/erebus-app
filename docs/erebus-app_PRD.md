@@ -526,9 +526,17 @@ erebus-app/
 │   ├── router.ts               # Vue Router config
 │   └── quasar.conf.ts          # Quasar config
 ├── tests/
-│   ├── unit/                    # Testes unitários
-│   ├── integration/             # Testes de integração
-│   └── e2e/                     # Testes E2E (Playwright)
+│   ├── cypress/                 # Testes E2E (Cypress)
+│   │   ├── e2e/                 # Specs (.cy.ts)
+│   │   ├── fixtures/            # Dados de teste
+│   │   └── support/             # Comandos customizados e setup
+│   └── vitest/                  # Testes unitários e de componente (espelha /src)
+│       ├── components/          # *.spec.ts para .vue
+│       ├── layouts/
+│       ├── pages/
+│       ├── stores/              # *.test.ts para .ts
+│       ├── services/
+│       └── composables/
 ├── public/                      # Arquivos estáticos (favicon, manifest)
 ├── .netlify/                    # Configuração do Netlify
 │   └── netlify.toml
@@ -537,9 +545,9 @@ erebus-app/
 ├── .env.example
 ├── package.json
 ├── tsconfig.json
-├── vite.config.ts
+├── quasar.config.ts
 ├── vitest.config.ts
-├── playwright.config.ts
+├── cypress.config.ts
 ├── README.md
 ├── CONTRIBUTING.md
 └── LICENSE (MIT/Apache 2.0)
@@ -555,8 +563,8 @@ erebus-app/
 - **HTTP Client:** Axios
 - **Router:** Vue Router 4
 - **CSS:** Tailwind CSS (com Quasar components)
-- **Testes Unitários:** Vitest + Vue Test Utils
-- **Testes E2E:** Playwright
+- **Testes Unitários/Componente:** Vitest + Vue Test Utils
+- **Testes E2E:** Cypress
 - **Linting:** ESLint + Prettier
 - **Deployment:** Netlify
 
@@ -784,4 +792,4 @@ jobs:
 ---
 
 **Próximo Review:** 30/04/2026  
-**Última Atualização:** 16/03/2026
+**Última Atualização:** 17/03/2026
