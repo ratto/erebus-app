@@ -1,9 +1,10 @@
 {
   "name": "erebus-app",
   "version": "0.0.1",
-  "description": "A Quasar Project",
+  "description": "O Erebus App serve como interface de usuário para o sistema Erebus, sendo parte dele.",
   "productName": "Erebus App",
-  "author": "ratto <rattopedro@gmail.com>",
+  "author": "Pedro 'Ratto' Paixão <rattopedro@gmail.com>",
+  "license": "GPL-2.0-only",
   "type": "module",
   "private": true,
   "scripts": {
