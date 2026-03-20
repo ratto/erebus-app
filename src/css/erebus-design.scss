@@ -1,0 +1,83 @@
+// Erebus Design System v1.0
+// Importação de fontes e tokens visuais centrais
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=Fira+Code:wght@300;400;500&family=Vollkorn:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
+
+:root {
+  // ── Paleta: Void (fundos) ──────────────────────────────
+  --void-900: #0a0a0f;
+  --void-800: #0f0f18;
+  --void-700: #151522;
+  --void-600: #1c1c2e;
+  --void-500: #252540;
+  --void-400: #2e2e52;
+
+  // ── Paleta: Ember (accent primário) ───────────────────
+  --ember-500: #c94a00;
+  --ember-400: #e85d1a;
+  --ember-300: #f07840;
+  --ember-200: #f59d72;
+
+  // ── Paleta: Rune (accent secundário) ──────────────────
+  --rune-500: #6259d4;
+  --rune-400: #8078e8;
+  --rune-300: #a09af4;
+
+  // ── Paleta: Bone (texto / neutros) ────────────────────
+  --bone-900: #f8f3ec;
+  --bone-800: #e8dfd1;
+  --bone-700: #c9bcb0;
+  --bone-600: #a89890;
+  --bone-500: #857570;
+
+  // ── Cores semânticas ──────────────────────────────────
+  --ichor-400:     #c42238;
+  --verdant-400:   #258a4a;
+  --brimstone-400: #b07e00;
+  --mist-400:      #2588ae;
+
+  // ── Tipografia ────────────────────────────────────────
+  --font-display: 'Cinzel Decorative', serif;
+  --font-heading: 'Cinzel', serif;
+  --font-body:    'Vollkorn', serif;
+  --font-mono:    'Fira Code', monospace;
+
+  // ── Espaçamento (base 1rem = 16px) ────────────────────
+  --sp-1:  0.25rem;
+  --sp-2:  0.5rem;
+  --sp-3:  0.75rem;
+  --sp-4:  1rem;
+  --sp-5:  1.25rem;
+  --sp-6:  1.5rem;
+  --sp-8:  2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+
+  // ── Border Radius ─────────────────────────────────────
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  // ── Sombras ───────────────────────────────────────────
+  --shadow-glow-ember: 0 0 1.5rem rgba(232, 93, 26, 0.25);
+  --shadow-glow-rune:  0 0 1.5rem rgba(98, 89, 212, 0.25);
+  --shadow-inner:      inset 0 0.125rem 0.5rem rgba(0, 0, 0, 0.5);
+
+  // ── Animações ─────────────────────────────────────────
+  --anim-instant: 100ms linear;
+  --anim-fast:    200ms ease-out;
+  --anim-base:    400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --anim-slow:    800ms ease-in-out;
+
+  // ── Layout ────────────────────────────────────────────
+  --sidebar-w: 16.25rem;
+}
+
+// ── Estilos globais de base ───────────────────────────────
+body {
+  background: var(--void-900);
+  color: var(--bone-800);
+  font-family: var(--font-body);
+}
