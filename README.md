@@ -9,7 +9,7 @@ Este repositório é **um dos três pilares do ecossistema Erebus**:
 | Repositório     | Stack                          | Responsabilidade                     |
 | --------------- | ------------------------------ | ------------------------------------ |
 | `erebus-engine` | C++17                          | Núcleo de mecânicas de jogo          |
-| `erebus-api`    | Node.js + TypeScript + Fastify | API REST que expõe o engine          |
+| `erebus-api`    | Node.js + TypeScript + Express | API REST que expõe o engine          |
 | `erebus-app`    | Vue 3 + Quasar                 | **Este repositório** — interface web |
 
 ---
@@ -24,24 +24,39 @@ O frontend é uma **SPA** construída com **Vue 3 + Quasar Framework**, utilizan
 - **vue-i18n** para internacionalização
 - **Vite** como bundler — porque a vida é curta demais para esperar o Webpack
 
-### Páginas planejadas
+### Estrutura atual (`src/`)
 
-| Página             | Descrição                                  |
-| ------------------ | ------------------------------------------ |
-| `CharacterCreator` | Criação e geração aleatória de personagens |
-| `CharacterSheet`   | Visualização da ficha do personagem        |
-| `SkillTesting`     | Teste de perícias com rolagem de dados     |
-| `CombatSimulator`  | Simulação de turnos de combate             |
-| `ApiDocsPage`      | Documentação interativa da API (Swagger)   |
+```
+src/
+├── boot/           # Plugins de boot (axios, i18n)
+├── components/     # ErebusTopbar, ErebusFooter, MenuDrawer
+├── css/            # Design system (erebus-design.scss, quasar.variables.scss)
+├── i18n/           # Internacionalização (en-US)
+├── layouts/        # MainLayout.vue
+├── pages/          # IndexPage.vue, ErrorNotFound.vue
+├── router/         # Rotas e configuração do Vue Router
+└── stores/         # Pinia (placeholder — em desenvolvimento)
+```
 
-### Stores (Pinia)
+### Páginas planejadas (MVP)
 
-| Store          | Responsabilidade                        |
-| -------------- | --------------------------------------- |
-| `character.ts` | Personagem atual e histórico de geração |
-| `ui.ts`        | Estado de página e tema                 |
-| `logs.ts`      | Eventos SSE e status de conexão         |
-| `api.ts`       | Configurações e estado da API           |
+| Página             | Descrição                                  | Status      |
+| ------------------ | ------------------------------------------ | ----------- |
+| `IndexPage`        | Página inicial                             | ✅ Implementada |
+| `CharacterCreator` | Criação e geração aleatória de personagens | ⏳ Planejada |
+| `CharacterSheet`   | Visualização da ficha do personagem        | ⏳ Planejada |
+| `SkillTesting`     | Teste de perícias com rolagem de dados     | ⏳ Planejada |
+| `CombatSimulator`  | Simulação de turnos de combate             | ⏳ Planejada |
+| `ApiDocsPage`      | Documentação interativa da API (Swagger)   | ⏳ Planejada |
+
+### Stores Pinia (planejadas)
+
+| Store          | Responsabilidade                        | Status      |
+| -------------- | --------------------------------------- | ----------- |
+| `character.ts` | Personagem atual e histórico de geração | ⏳ Planejada |
+| `ui.ts`        | Estado de página e tema                 | ⏳ Planejada |
+| `logs.ts`      | Eventos SSE e status de conexão         | ⏳ Planejada |
+| `api.ts`       | Configurações e estado da API           | ⏳ Planejada |
 
 ---
 
@@ -163,14 +178,14 @@ O Sistema Daemon é um RPG de mesa brasileiro com 8 atributos primários:
 
 | Código | Atributo         | Descrição                                     |
 | ------ | ---------------- | --------------------------------------------- |
-| `FR`   | Força            | Força física e capacidade muscular            |
-| `CON`  | Constituição     | Vigor, saúde e condição física                |
-| `DEX`  | Destreza         | Habilidade manual e com os pés                |
+| `FOR`  | Força            | Força física e capacidade muscular            |
 | `AGI`  | Agilidade        | Velocidade e equilíbrio                       |
+| `CON`  | Constituição     | Vigor, saúde e condição física                |
 | `INT`  | Inteligência     | Raciocínio lógico                             |
-| `WILL` | Força de Vontade | Concentração e determinação                   |
-| `PER`  | Percepção        | Poder de observação e percepção dos arredores |
-| `CAR`  | Carisma          | Charme e presença                             |
+| `PRE`  | Presença         | Charme e presença social                      |
+| `VON`  | Força de Vontade | Concentração e determinação                   |
+| `PHI`  | Poder Físico     | Capacidade física bruta                       |
+| `ELE`  | Poder Elemental  | Afinidade com forças elementais               |
 
 **Modos de criação de personagem:**
 
