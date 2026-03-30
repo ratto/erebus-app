@@ -1,0 +1,202 @@
+{
+  "skills": [
+    {
+      "id": 1,
+      "nome": "Espada",
+      "grupo": "Combate",
+      "atributoBase": "DEX",
+      "apenasComTreinamento": false,
+      "sinergia": "Escudo (Combate)",
+      "descricao": "Habilidade no manejo de espadas de um ou dois gumes em combate corpo a corpo. Permite golpes precisos, fintas e defesas com a lâmina."
+    },
+    {
+      "id": 2,
+      "nome": "Machado",
+      "grupo": "Combate",
+      "atributoBase": "FR",
+      "apenasComTreinamento": false,
+      "sinergia": null,
+      "descricao": "Uso de machados de batalha em combate. A força bruta é fundamental para golpes devastadores que ignoram parte da armadura inimiga."
+    },
+    {
+      "id": 3,
+      "nome": "Arco",
+      "grupo": "Combate",
+      "atributoBase": "DEX",
+      "apenasComTreinamento": true,
+      "sinergia": null,
+      "descricao": "Manuseio de arcos curtos, longos e compostos. Inclui técnicas de mira, tiro em movimento e estimativa de distância."
+    },
+    {
+      "id": 4,
+      "nome": "Furtividade",
+      "grupo": "Furtivo",
+      "atributoBase": "AGI",
+      "apenasComTreinamento": false,
+      "sinergia": "Disfarce (Furtivo)",
+      "descricao": "Capacidade de mover-se silenciosamente e sem chamar atenção. Envolve controle corporal, escolha de terreno e sincronização com o ambiente."
+    },
+    {
+      "id": 5,
+      "nome": "Disfarce",
+      "grupo": "Furtivo",
+      "atributoBase": "CAR",
+      "apenasComTreinamento": true,
+      "sinergia": "Furtividade (Furtivo)",
+      "descricao": "Arte de alterar a própria aparência para passar despercebido ou se passar por outra pessoa. Inclui uso de maquiagem, roupas e postura."
+    },
+    {
+      "id": 6,
+      "nome": "Arrombamento",
+      "grupo": "Furtivo",
+      "atributoBase": "DEX",
+      "apenasComTreinamento": true,
+      "sinergia": null,
+      "descricao": "Habilidade de abrir fechaduras, cofres e mecanismos de segurança sem a chave correta, usando ferramentas especializadas."
+    },
+    {
+      "id": 7,
+      "nome": "Ocultismo",
+      "grupo": "Magia",
+      "atributoBase": "INT",
+      "apenasComTreinamento": true,
+      "sinergia": "Conhecimento Arcano (Magia)",
+      "descricao": "Estudo das artes obscuras, rituais demoníacos e forças sobrenaturais proibidas. Permite identificar e realizar rituais de ocultismo."
+    },
+    {
+      "id": 8,
+      "nome": "Conhecimento Arcano",
+      "grupo": "Magia",
+      "atributoBase": "INT",
+      "apenasComTreinamento": true,
+      "sinergia": "Ocultismo (Magia)",
+      "descricao": "Base teórica da magia: história, teoria, classificação de feitiços e entidades. Fundamental para magistas e estudiosos do oculto."
+    },
+    {
+      "id": 9,
+      "nome": "Primeiros Socorros",
+      "grupo": "Sobrevivência",
+      "atributoBase": "CON",
+      "apenasComTreinamento": false,
+      "sinergia": "Medicina (Sobrevivência)",
+      "descricao": "Aplicação de técnicas básicas de estabilização de ferimentos: curativos, torniquetes, ressuscitação e tratamento de choques."
+    },
+    {
+      "id": 10,
+      "nome": "Sobrevivência no Deserto",
+      "grupo": "Sobrevivência",
+      "atributoBase": "CON",
+      "apenasComTreinamento": false,
+      "sinergia": null,
+      "descricao": "Técnicas de sobrevivência em ambientes áridos: localizar água, construir abrigos, evitar hiperidratação e orientar-se sem instrumentos."
+    },
+    {
+      "id": 11,
+      "nome": "Rastreamento",
+      "grupo": "Sobrevivência",
+      "atributoBase": "PER",
+      "apenasComTreinamento": false,
+      "sinergia": null,
+      "descricao": "Capacidade de seguir rastros de pessoas, animais ou veículos em diferentes tipos de terreno e condições climáticas."
+    },
+    {
+      "id": 12,
+      "nome": "Retórica",
+      "grupo": "Social",
+      "atributoBase": "CAR",
+      "apenasComTreinamento": true,
+      "sinergia": "Liderança (Social)",
+      "descricao": "Arte da persuasão e do discurso. Permite convencer audiências, ganhar debates e influenciar decisões em contextos formais."
+    },
+    {
+      "id": 13,
+      "nome": "Liderança",
+      "grupo": "Social",
+      "atributoBase": "CAR",
+      "apenasComTreinamento": false,
+      "sinergia": "Retórica (Social)",
+      "descricao": "Capacidade de inspirar e coordenar grupos. Reduz penalidades de trabalho em equipe e aumenta o moral de aliados em situações críticas."
+    },
+    {
+      "id": 14,
+      "nome": "Intimidação",
+      "grupo": "Social",
+      "atributoBase": "FR",
+      "apenasComTreinamento": false,
+      "sinergia": null,
+      "descricao": "Uso da presença física, tom de voz e linguagem corporal para assustar e coagir oponentes a se submeterem ou revelarem informações."
+    },
+    {
+      "id": 15,
+      "nome": "Atletismo",
+      "grupo": "Físico",
+      "atributoBase": "FR",
+      "apenasComTreinamento": false,
+      "sinergia": null,
+      "descricao": "Desempenho físico geral: escalada, saltos, arremessos e outras atividades atléticas que exigem força e coordenação motora ampla."
+    },
+    {
+      "id": 16,
+      "nome": "Acrobacia",
+      "grupo": "Físico",
+      "atributoBase": "AGI",
+      "apenasComTreinamento": true,
+      "sinergia": "Atletismo (Físico)",
+      "descricao": "Execução de manobras acrobáticas complexas: rolamentos, saltos mortais, equilíbrio em superfícies instáveis e esquivas elaboradas."
+    },
+    {
+      "id": 17,
+      "nome": "Natação",
+      "grupo": "Físico",
+      "atributoBase": "CON",
+      "apenasComTreinamento": false,
+      "sinergia": null,
+      "descricao": "Capacidade de nadar em diferentes corpos d'água. Em situações adversas, evita afogamento e permite deslocamento aquático eficiente."
+    },
+    {
+      "id": 18,
+      "nome": "Percepção",
+      "grupo": null,
+      "atributoBase": "PER",
+      "apenasComTreinamento": false,
+      "sinergia": null,
+      "descricao": "Acuidade geral dos sentidos. Permite notar detalhes sutis, armadilhas ocultas, sussuros distantes e outros estímulos que passam despercebidos à maioria."
+    },
+    {
+      "id": 19,
+      "nome": "Intuição",
+      "grupo": null,
+      "atributoBase": "WILL",
+      "apenasComTreinamento": false,
+      "sinergia": null,
+      "descricao": "Capacidade de sentir algo errado ou perceber intenções ocultas sem evidências concretas. Útil para detectar traições e armadilhas sociais."
+    },
+    {
+      "id": 20,
+      "nome": "Meditação",
+      "grupo": null,
+      "atributoBase": null,
+      "apenasComTreinamento": true,
+      "sinergia": null,
+      "descricao": "Técnica de controle mental que permite recuperar Pontos de Foco mais rapidamente e resistir a efeitos de medo e caos. Requer ambiente tranquilo."
+    },
+    {
+      "id": 21,
+      "nome": "Pilotagem",
+      "grupo": "Técnico",
+      "atributoBase": "DEX",
+      "apenasComTreinamento": true,
+      "sinergia": null,
+      "descricao": "Operação de aeronaves, drones e outros veículos aéreos motorizados. Cada subtipo (hélice, jato, asa-delta) pode ser especializado separadamente."
+    },
+    {
+      "id": 22,
+      "nome": "Eletrônica",
+      "grupo": "Técnico",
+      "atributoBase": "INT",
+      "apenasComTreinamento": true,
+      "sinergia": null,
+      "descricao": "Montagem, reparo e modificação de circuitos eletrônicos. Inclui diagnóstico de falhas, soldagem e programação de microcontroladores básicos."
+    }
+  ]
+}
