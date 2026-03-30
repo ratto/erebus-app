@@ -126,7 +126,7 @@ Fornecer uma experiência de usuário intuitiva que permita explorar o Sistema D
    - [ ] Botão "Gerar Aleatório" que chama API
 
 2. **Distribuição de Atributos** (apenas modo manual, futuro)
-   - [ ] Sliders ou input numérico para cada atributo (FOR, AGI, CON, INT, PRE, VON, PHI, ELE)
+   - [ ] Sliders ou input numérico para cada atributo (FR, DEX, AGI, CON, INT, WILL, CAR, PER)
    - [ ] Validação de pontos totais
    - [ ] Reset button
 
@@ -150,7 +150,7 @@ GET /api/v1/characters/create?mode=adventure
 {
   "id": "char-123abc",
   "name": "Generated Name",
-  "attributes": { "FOR": 50, "AGI": 45, ... },
+  "attributes": { "FR": 50, "DEX": 45, "AGI": 48, "CON": 40, "INT": 35, "WILL": 38, "CAR": 30, "PER": 32 },
   "derived": { "life": 45, "magic": 30, ... }
 }
 ```
@@ -297,7 +297,7 @@ POST /api/v1/skills/test
 
 2. **Interface de Combate**
    - [ ] Dois cards lado a lado (atacante esquerda, defensor direita)
-   - [ ] Exibir atributos relevantes (FOR, AGI, VON, DEF, RES)
+   - [ ] Exibir atributos relevantes (FR, AGI, WILL, DEF, RES)
    - [ ] Barras de vida (HP) com animação
    - [ ] Barras de magia (MP) com animação
 
