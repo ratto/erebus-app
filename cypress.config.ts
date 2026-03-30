@@ -8,5 +8,7 @@ export default defineConfig({
     fixturesFolder: 'tests/cypress/fixtures',
     video: false,
     screenshotOnRunFailure: true,
+    // Required to intercept cross-origin requests (API on :3000 vs app on :9000)
+    chromeWebSecurity: false,
   },
 })

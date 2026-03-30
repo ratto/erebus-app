@@ -20,6 +20,18 @@
         </q-item-section>
         <q-item-section>HOME</q-item-section>
       </q-item>
+
+      <q-item
+        clickable
+        :to="{ name: 'Skills' }"
+        active-class="nav-item-active"
+        class="nav-item"
+      >
+        <q-item-section avatar>
+          <q-icon name="menu_book" />
+        </q-item-section>
+        <q-item-section>PERÍCIAS</q-item-section>
+      </q-item>
     </q-list>
   </q-drawer>
 </template>
