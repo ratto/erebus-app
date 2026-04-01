@@ -1,18 +1,37 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
-import { Quasar } from 'quasar'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { mount, flushPromises } from '@vue/test-utils';
+import { nextTick } from 'vue';
+import { Quasar } from 'quasar';
 
-// Mock do módulo de serviço ANTES de importar o componente
-vi.mock('../../../src/services/skills.service', () => ({
-  fetchAllSkills: vi.fn(),
-}))
+import type { Skill } from 'src/model/types/skill.type';
 
-import { fetchAllSkills } from '../../../src/services/skills.service'
-import SkillsPage from '../../../src/pages/SkillsPage.vue'
+// vi.hoisted garante que os refs sejam criados antes do hoisting do vi.mock,
+// permitindo que o mock e os testes compartilhem o mesmo estado reativo.
+const { mockLoading, mockSkills, mockGetAllSkills } = vi.hoisted(() => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/consistent-type-imports
+  const { ref } = require('vue') as typeof import('vue');
+  return {
+    mockLoading: ref(false),
+    mockSkills: ref<Skill[]>([]),
+    mockGetAllSkills: vi.fn().mockResolvedValue(undefined),
+  };
+});
 
-const mockedFetchAllSkills = vi.mocked(fetchAllSkills)
+// London style: isola completamente o composable. O componente nunca toca na
+// camada de rede — todo estado é controlado pelos refs acima.
+vi.mock('src/composables/skills.composable', () => ({
+  useSkills: () => ({
+    loading: mockLoading,
+    skills: mockSkills,
+    getAllSkills: mockGetAllSkills,
+  }),
+}));
 
-const mockSkills = [
+import SkillsPage from '../../../src/pages/SkillsPage.vue';
+
+// ─── Fixtures ────────────────────────────────────────────────────────────────
+
+const skillsFixture: Skill[] = [
   {
     id: 1,
     nome: 'Espada',
@@ -40,121 +59,367 @@ const mockSkills = [
     sinergia: null,
     descricao: 'Conhecimento de artes arcanas e rituais.',
   },
-]
+];
 
-// QPage requer QLayout para não emitir warning; usamos stub simples
-const quasarMountOptions = {
+// ─── Helper de montagem ───────────────────────────────────────────────────────
+
+const mountOptions = {
   global: {
     plugins: [[Quasar, {}]] as [typeof Quasar, Record<string, unknown>][],
     stubs: {
+      // QPage exige QLayout para não emitir warnings; stub simples evita o problema
       QPage: { template: '<div><slot /></div>' },
     },
   },
+};
+
+function mountPage() {
+  return mount(SkillsPage, mountOptions);
 }
 
-function mountSkillsPage() {
-  return mount(SkillsPage, quasarMountOptions)
+// QSelect e QInput têm inheritAttrs: false no Quasar — data-testid não vai para
+// o root element. Buscamos o QSelect pelo prop `label` em vez de atributo DOM.
+function findSelectByTestId(wrapper: ReturnType<typeof mountPage>, testId: string) {
+  const labelMap: Record<string, string> = {
+    'select-grupo': 'Grupo',
+    'select-atributo': 'Atributo Base',
+  };
+  const label = labelMap[testId];
+  const match = wrapper
+    .findAllComponents({ name: 'QSelect' })
+    .find((c) => c.props('label') === label);
+  if (!match) throw new Error(`QSelect com data-testid="${testId}" não encontrado`);
+  return match;
 }
+
+// ─── Suite ───────────────────────────────────────────────────────────────────
 
 describe('SkillsPage.vue', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+    mockLoading.value = false;
+    mockSkills.value = [];
+  });
 
-  it('RF-B1: renderiza a tabela com as skills mockadas após carregar', async () => {
-    mockedFetchAllSkills.mockResolvedValue(mockSkills)
+  // ── Inicialização ──────────────────────────────────────────────────────────
 
-    const wrapper = mountSkillsPage()
-    await flushPromises()
+  describe('Inicialização', () => {
+    it('chama getAllSkills uma vez ao montar o componente', async () => {
+      mountPage();
+      await flushPromises();
 
-    expect(wrapper.find('.q-table').exists()).toBe(true)
-    const tableText = wrapper.text()
-    expect(tableText).toContain('Espada')
-    expect(tableText).toContain('Furtividade')
-    expect(tableText).toContain('Ocultismo')
-  })
+      expect(mockGetAllSkills).toHaveBeenCalledOnce();
+    });
 
-  it('RF-B2: clicar no chevron de uma linha expande a descrição', async () => {
-    mockedFetchAllSkills.mockResolvedValue(mockSkills)
+    it('renderiza a q-table independente do estado dos dados', () => {
+      const wrapper = mountPage();
 
-    const wrapper = mountSkillsPage()
-    await flushPromises()
+      expect(wrapper.find('.q-table').exists()).toBe(true);
+    });
 
-    // Antes de clicar, a descrição não deve estar visível
-    expect(wrapper.text()).not.toContain('Habilidade com lâminas longas')
+    it('exibe mensagem de estado vazio quando não há perícias', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
 
-    // Clica no botão chevron da primeira linha (id=1)
-    const chevronBtns = wrapper.findAll('[data-testid="chevron-btn"]')
-    expect(chevronBtns.length).toBeGreaterThan(0)
-    await chevronBtns[0]!.trigger('click')
+      expect(wrapper.text()).toContain('Nenhuma perícia encontrada para os filtros aplicados.');
+    });
+  });
 
-    // Após o clique, a descrição deve aparecer
-    expect(wrapper.text()).toContain('Habilidade com lâminas longas')
-  })
+  // ── Exibição das perícias ──────────────────────────────────────────────────
 
-  it('RF-B3: clicar novamente no chevron colapsa a descrição', async () => {
-    mockedFetchAllSkills.mockResolvedValue(mockSkills)
+  describe('Exibição das perícias', () => {
+    beforeEach(() => {
+      mockSkills.value = skillsFixture;
+    });
 
-    const wrapper = mountSkillsPage()
-    await flushPromises()
+    it('exibe o nome de cada perícia carregada', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
 
-    const chevronBtns = wrapper.findAll('[data-testid="chevron-btn"]')
+      const text = wrapper.text();
+      expect(text).toContain('Espada');
+      expect(text).toContain('Furtividade');
+      expect(text).toContain('Ocultismo');
+    });
 
-    // Primeiro clique: expande
-    await chevronBtns[0]!.trigger('click')
-    expect(wrapper.text()).toContain('Habilidade com lâminas longas')
+    it('exibe um badge por linha (v-if/v-else em apenasComTreinamento)', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
 
-    // Segundo clique: colapsa
-    await chevronBtns[0]!.trigger('click')
-    expect(wrapper.text()).not.toContain('Habilidade com lâminas longas')
-  })
+      // Cada linha renderiza exatamente um QBadge: "Não" ou "Sim"
+      const badges = wrapper.findAllComponents({ name: 'QBadge' });
+      expect(badges).toHaveLength(skillsFixture.length);
+    });
 
-  it('RF-B4: q-table recebe loading=true enquanto a chamada API está pendente', async () => {
-    // Promise que não resolve imediatamente
-    let resolveSkills!: (value: typeof mockSkills) => void
-    const pendingPromise = new Promise<typeof mockSkills>((resolve) => {
-      resolveSkills = resolve
-    })
-    mockedFetchAllSkills.mockReturnValue(pendingPromise)
+    it('badge "Sim" aparece para perícias que requerem treinamento', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
 
-    const wrapper = mountSkillsPage()
+      expect(wrapper.text()).toContain('Sim'); // Furtividade e Ocultismo
+    });
 
-    // onMounted executa na montagem — mas antes de nextTick a UI ainda não re-renderizou
-    // O loading é setado para true ANTES do await da API, então está true imediatamente
-    // Precisamos verificar via nextTick (antes de flushPromises que resolve a promise)
-    const { nextTick } = await import('vue')
-    await nextTick()
+    it('badge "Não" aparece para perícias que não requerem treinamento', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
 
-    const table = wrapper.findComponent({ name: 'QTable' })
-    expect(table.exists()).toBe(true)
-    expect(table.props('loading')).toBe(true)
+      expect(wrapper.text()).toContain('Não'); // Espada
+    });
 
-    // Resolve a promise
-    resolveSkills(mockSkills)
-    await flushPromises()
+    it('exibe "—" para campos nulos (sinergia de Furtividade e Ocultismo)', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
 
-    expect(table.props('loading')).toBe(false)
-  })
+      expect(wrapper.text()).toContain('—');
+    });
+  });
 
-  it('RF-B5: filtro por nome funciona — filtra linhas pelo searchText', async () => {
-    mockedFetchAllSkills.mockResolvedValue(mockSkills)
+  // ── Expandir / Colapsar descrição ─────────────────────────────────────────
 
-    const wrapper = mountSkillsPage()
-    await flushPromises()
+  describe('Expandir / colapsar descrição', () => {
+    beforeEach(() => {
+      mockSkills.value = skillsFixture;
+    });
 
-    // O data-testid no q-input cai diretamente no <input> nativo
-    const searchInput = wrapper.find('[data-testid="search-input"]')
-    expect(searchInput.exists()).toBe(true)
+    it('descrição não é visível antes de clicar no chevron', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
 
-    // setValue no input nativo e trigger input event
-    await searchInput.setValue('Espad')
-    await searchInput.trigger('input')
-    await flushPromises()
+      expect(wrapper.text()).not.toContain('Habilidade com lâminas longas');
+    });
 
-    const tableText = wrapper.text()
-    expect(tableText).toContain('Espada')
-    // Furtividade e Ocultismo não devem aparecer
-    expect(tableText).not.toContain('Furtividade')
-    expect(tableText).not.toContain('Ocultismo')
-  })
-})
+    it('clicar no chevron expande a descrição da linha correspondente', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      await wrapper.findAll('[data-testid="chevron-btn"]')[0]!.trigger('click');
+
+      expect(wrapper.text()).toContain('Habilidade com lâminas longas');
+    });
+
+    it('segundo clique no chevron colapsa a descrição', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      const chevron = wrapper.findAll('[data-testid="chevron-btn"]')[0]!;
+      await chevron.trigger('click');
+      await chevron.trigger('click');
+
+      expect(wrapper.text()).not.toContain('Habilidade com lâminas longas');
+    });
+
+    it('expandir uma linha não expande as demais', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      // Expande apenas a primeira linha (Espada)
+      await wrapper.findAll('[data-testid="chevron-btn"]')[0]!.trigger('click');
+
+      expect(wrapper.text()).toContain('Habilidade com lâminas longas');
+      expect(wrapper.text()).not.toContain('Mover-se sem ser detectado');
+    });
+  });
+
+  // ── Estado de loading ──────────────────────────────────────────────────────
+
+  describe('Estado de loading', () => {
+    it('q-table recebe loading=true quando o composable sinaliza carregamento', async () => {
+      mockLoading.value = true;
+      const wrapper = mountPage();
+      await nextTick();
+
+      expect(wrapper.findComponent({ name: 'QTable' }).props('loading')).toBe(true);
+    });
+
+    it('q-table recebe loading=false quando o carregamento termina', async () => {
+      mockLoading.value = false;
+      const wrapper = mountPage();
+      await nextTick();
+
+      expect(wrapper.findComponent({ name: 'QTable' }).props('loading')).toBe(false);
+    });
+
+    it('q-table reage reativamente à transição de loading true → false', async () => {
+      mockLoading.value = true;
+      const wrapper = mountPage();
+      await nextTick();
+
+      expect(wrapper.findComponent({ name: 'QTable' }).props('loading')).toBe(true);
+
+      mockLoading.value = false;
+      await nextTick();
+
+      expect(wrapper.findComponent({ name: 'QTable' }).props('loading')).toBe(false);
+    });
+  });
+
+  // ── Filtro por nome ────────────────────────────────────────────────────────
+
+  describe('Filtro por nome (searchText)', () => {
+    // QInput usa debounce="300" via setTimeout; fake timers permitem avançar
+    // o relógio sem aguardar 300ms reais de wall time.
+    beforeEach(() => {
+      mockSkills.value = skillsFixture;
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    async function typeSearch(wrapper: ReturnType<typeof mountPage>, text: string) {
+      // QInput tem inheritAttrs: false — o <input> nativo não é acessível via
+      // data-testid. Emitimos update:modelValue direto no componente para
+      // atualizar searchText sem depender do debounce do DOM.
+      const qInput = wrapper.findComponent({ name: 'QInput' });
+      await qInput.vm.$emit('update:modelValue', text);
+      await nextTick();
+    }
+
+    it('filtra skills pelo texto digitado (correspondência parcial)', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      await typeSearch(wrapper, 'Espad');
+
+      const text = wrapper.text();
+      expect(text).toContain('Espada');
+      expect(text).not.toContain('Furtividade');
+      expect(text).not.toContain('Ocultismo');
+    });
+
+    it('filtro por nome é case-insensitive', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      await typeSearch(wrapper, 'espad');
+
+      expect(wrapper.text()).toContain('Espada');
+    });
+
+    it('limpar o campo restaura todas as skills', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      await typeSearch(wrapper, 'Espad');
+      await typeSearch(wrapper, '');
+
+      const text = wrapper.text();
+      expect(text).toContain('Espada');
+      expect(text).toContain('Furtividade');
+      expect(text).toContain('Ocultismo');
+    });
+
+    it('busca sem correspondência exibe mensagem de estado vazio', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      await typeSearch(wrapper, 'xyzw_inexistente');
+
+      expect(wrapper.text()).toContain('Nenhuma perícia encontrada para os filtros aplicados.');
+    });
+  });
+
+  // ── Filtro por grupo ───────────────────────────────────────────────────────
+
+  describe('Filtro por grupo', () => {
+    beforeEach(() => {
+      mockSkills.value = skillsFixture;
+    });
+
+    it('exibe apenas as skills do grupo selecionado', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      const select = findSelectByTestId(wrapper, 'select-grupo');
+      await select.vm.$emit('update:modelValue', 'Combate');
+      await nextTick();
+
+      const text = wrapper.text();
+      expect(text).toContain('Espada');
+      expect(text).not.toContain('Furtividade');
+      expect(text).not.toContain('Ocultismo');
+    });
+
+    it('selecionar null remove o filtro de grupo e exibe todas as skills', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      const select = findSelectByTestId(wrapper, 'select-grupo');
+      await select.vm.$emit('update:modelValue', 'Combate');
+      await nextTick();
+
+      await select.vm.$emit('update:modelValue', null);
+      await nextTick();
+
+      const text = wrapper.text();
+      expect(text).toContain('Espada');
+      expect(text).toContain('Furtividade');
+      expect(text).toContain('Ocultismo');
+    });
+  });
+
+  // ── Filtro por atributo base ───────────────────────────────────────────────
+
+  describe('Filtro por atributo base', () => {
+    beforeEach(() => {
+      mockSkills.value = skillsFixture;
+    });
+
+    it('exibe apenas as skills do atributo selecionado', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      const select = findSelectByTestId(wrapper, 'select-atributo');
+      await select.vm.$emit('update:modelValue', 'AGI');
+      await nextTick();
+
+      const text = wrapper.text();
+      expect(text).toContain('Furtividade');
+      expect(text).not.toContain('Espada');
+      expect(text).not.toContain('Ocultismo');
+    });
+
+    it('valor __none__ filtra skills sem atributo base', async () => {
+      mockSkills.value = [
+        ...skillsFixture,
+        {
+          id: 4,
+          nome: 'Sorte',
+          grupo: null,
+          atributoBase: null,
+          apenasComTreinamento: false,
+          sinergia: null,
+          descricao: 'Depende inteiramente do destino.',
+        },
+      ];
+      const wrapper = mountPage();
+      await flushPromises();
+
+      const select = findSelectByTestId(wrapper, 'select-atributo');
+      await select.vm.$emit('update:modelValue', '__none__');
+      await nextTick();
+
+      const text = wrapper.text();
+      expect(text).toContain('Sorte');
+      expect(text).not.toContain('Espada');
+      expect(text).not.toContain('Furtividade');
+    });
+
+    it('selecionar null remove o filtro e exibe todas as skills', async () => {
+      const wrapper = mountPage();
+      await flushPromises();
+
+      const select = findSelectByTestId(wrapper, 'select-atributo');
+      await select.vm.$emit('update:modelValue', 'INT');
+      await nextTick();
+
+      await select.vm.$emit('update:modelValue', null);
+      await nextTick();
+
+      const text = wrapper.text();
+      expect(text).toContain('Espada');
+      expect(text).toContain('Furtividade');
+      expect(text).toContain('Ocultismo');
+    });
+  });
+});
