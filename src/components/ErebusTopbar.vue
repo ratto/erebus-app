@@ -7,8 +7,8 @@
         round
         icon="menu"
         aria-label="Menu"
-        class="drawer-toggle"
-        @click="$emit('toggle-drawer')"
+        class="menu-toggle"
+        @click="$emit('toggle-menu')"
       />
       <q-toolbar-title class="topbar-logo">EREBUS</q-toolbar-title>
     </q-toolbar>
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-defineEmits<{ 'toggle-drawer': [] }>();
+defineEmits<{ 'toggle-menu': [] }>();
 </script>
 
 <style scoped lang="scss">
@@ -33,7 +33,7 @@ defineEmits<{ 'toggle-drawer': [] }>();
   letter-spacing: 0.15em;
 }
 
-.drawer-toggle {
+.menu-toggle {
   color: var(--bone-600);
 
   &:hover {

@@ -65,24 +65,16 @@
           </q-td>
           <q-td key="nome" :props="props">{{ props.row.nome }}</q-td>
           <q-td key="grupo" :props="props">{{ props.row.grupo ?? '—' }}</q-td>
-          <q-td
-            v-if="!$q.screen.lt.md"
-            key="atributoBase"
-            :props="props"
-          >{{ props.row.atributoBase ?? '—' }}</q-td>
+          <q-td v-if="!$q.screen.lt.md" key="atributoBase" :props="props">{{
+            props.row.atributoBase ?? '—'
+          }}</q-td>
           <q-td key="apenasComTreinamento" :props="props">
-            <q-badge
-              v-if="props.row.apenasComTreinamento"
-              color="positive"
-              label="Sim"
-            />
-            <span v-else>—</span>
+            <q-badge v-if="!props.row.apenasComTreinamento" color="negattive" label="Não" />
+            <q-badge v-else color="positive" label="Sim" />
           </q-td>
-          <q-td
-            v-if="!$q.screen.lt.md"
-            key="sinergia"
-            :props="props"
-          >{{ props.row.sinergia ?? '—' }}</q-td>
+          <q-td v-if="!$q.screen.lt.md" key="sinergia" :props="props">{{
+            props.row.sinergia ?? '—'
+          }}</q-td>
         </q-tr>
         <q-tr v-if="expanded.has(props.row.id)" :props="props">
           <q-td colspan="100%" class="skill-description">
@@ -102,101 +94,129 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, reactive } from 'vue'
-import { useQuasar } from 'quasar'
-import type { QTableColumn } from 'quasar'
-import type { Skill } from '../types/skill'
-import { fetchAllSkills } from '../services/skills.service'
+import { ref, computed, onMounted, reactive } from 'vue';
+import { useQuasar } from 'quasar';
+import type { QTableColumn } from 'quasar';
+import type { Skill } from 'src/model/types/skill.type';
+import { useSkills } from 'src/composables/skills.composable';
+import { attributeOptions } from 'src/utils/options';
 
-const $q = useQuasar()
+const $q = useQuasar();
+const { loading, skills, getAllSkills } = useSkills();
 
-const skills = ref<Skill[]>([])
-const loading = ref(false)
-const expanded = reactive(new Set<number>())
+const expanded = reactive(new Set<number>());
 
-const searchText = ref('')
-const selectedGrupo = ref<string | null>(null)
-const selectedAtributo = ref<string | null>(null)
+const searchText = ref('');
+const selectedGrupo = ref<string | null>(null);
+const selectedAtributo = ref<string | null>(null);
 
 const pagination = ref({
   page: 1,
   rowsPerPage: 15,
-})
+});
 
-const ATRIBUTOS_FIXOS = ['FR', 'DEX', 'AGI', 'CON', 'INT', 'PER', 'CAR', 'WILL']
-
-const atributoOptions = computed(() => [
-  { label: 'Todos', value: null },
+const atributoOptions = [
+  { label: '', value: null },
   { label: 'Nenhum', value: '__none__' },
-  ...ATRIBUTOS_FIXOS.map((a) => ({ label: a, value: a })),
-])
+  ...attributeOptions,
+];
 
 const grupoOptions = computed(() => {
-  const grupos = new Set<string>()
+  const grupos = new Set<string>();
   skills.value.forEach((s) => {
-    if (s.grupo) grupos.add(s.grupo)
-  })
-  return [
-    { label: 'Todos', value: null },
-    ...[...grupos].sort().map((g) => ({ label: g, value: g })),
-  ]
-})
+    if (s.grupo) grupos.add(s.grupo);
+  });
+  return [{ label: '', value: null }, ...[...grupos].sort().map((g) => ({ label: g, value: g }))];
+});
 
 const filterComputed = computed(() => ({
   nome: searchText.value,
   grupo: selectedGrupo.value,
   atributo: selectedAtributo.value,
-}))
+}));
+
+const visibleColumnsConfig = computed<QTableColumn[]>(() => {
+  if ($q.screen.lt.md) {
+    return allColumns.filter((c) => !['atributoBase', 'sinergia'].includes(c.name));
+  }
+  return allColumns;
+});
+
+const allColumns: QTableColumn[] = [
+  {
+    name: 'expand',
+    label: '',
+    field: 'id',
+    align: 'left',
+  },
+  {
+    name: 'nome',
+    label: 'Nome',
+    field: 'nome',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'grupo',
+    label: 'Grupo',
+    field: 'grupo',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'atributoBase',
+    label: 'Atributo Base',
+    field: 'atributoBase',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'apenasComTreinamento',
+    label: 'Apenas c/ Treinamento',
+    field: 'apenasComTreinamento',
+    align: 'center',
+  },
+  {
+    name: 'sinergia',
+    label: 'Sinergia',
+    field: 'sinergia',
+    align: 'left',
+  },
+  {
+    name: 'actions',
+    label: '',
+    field: 'id',
+    align: 'right',
+  },
+];
 
 function filterMethod(
   rows: readonly Skill[],
-  terms: { nome: string; grupo: string | null; atributo: string | null }
+  terms: { nome: string; grupo: string | null; atributo: string | null },
 ): Skill[] {
   return (rows as Skill[]).filter((row) => {
-    const matchNome =
-      !terms.nome || row.nome.toLowerCase().includes(terms.nome.toLowerCase())
-    const matchGrupo = !terms.grupo || row.grupo === terms.grupo
+    const matchNome = !terms.nome || row.nome.toLowerCase().includes(terms.nome.toLowerCase());
+    const matchGrupo = !terms.grupo || row.grupo === terms.grupo;
     const matchAtributo =
       !terms.atributo ||
       (terms.atributo === '__none__'
         ? row.atributoBase === null
-        : row.atributoBase === terms.atributo)
-    return matchNome && matchGrupo && matchAtributo
-  })
+        : row.atributoBase === terms.atributo);
+    return matchNome && matchGrupo && matchAtributo;
+  });
 }
 
 function toggleExpand(id: number): void {
   if (expanded.has(id)) {
-    expanded.delete(id)
+    expanded.delete(id);
   } else {
-    expanded.add(id)
+    expanded.add(id);
   }
 }
 
-const allColumns: QTableColumn[] = [
-  { name: 'expand', label: '', field: 'id', align: 'left' },
-  { name: 'nome', label: 'Nome', field: 'nome', sortable: true, align: 'left' },
-  { name: 'grupo', label: 'Grupo', field: 'grupo', sortable: true, align: 'left' },
-  { name: 'atributoBase', label: 'Atributo Base', field: 'atributoBase', sortable: true, align: 'left' },
-  { name: 'apenasComTreinamento', label: 'Apenas c/ Treinamento', field: 'apenasComTreinamento', align: 'center' },
-  { name: 'sinergia', label: 'Sinergia', field: 'sinergia', align: 'left' },
-]
-
-const visibleColumnsConfig = computed<QTableColumn[]>(() => {
-  if ($q.screen.lt.md) {
-    return allColumns.filter((c) => !['atributoBase', 'sinergia'].includes(c.name))
-  }
-  return allColumns
-})
-
 onMounted(async () => {
-  loading.value = true
-  try {
-    skills.value = await fetchAllSkills()
-  } finally {
-    loading.value = false
-  }
-})
+  await getAllSkills();
+});
 </script>
 
 <style scoped lang="scss">
