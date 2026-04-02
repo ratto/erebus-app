@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh Lpr lFr">
-    <ErebusTopbar @toggle-drawer="toggleLeftDrawer" />
+    <ErebusTopbar @toggle-menu="toggleLeftDrawer" />
 
     <MenuDrawer v-model="leftDrawerOpen" />
 

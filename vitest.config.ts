@@ -1,7 +1,7 @@
-import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
-import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
-import { fileURLToPath } from 'node:url'
+import { defineConfig } from 'vitest/config';
+import vue from '@vitejs/plugin-vue';
+import { quasar, transformAssetUrls } from '@quasar/vite-plugin';
+import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
   resolve: {
@@ -21,7 +21,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'lcov', 'html'],
       include: ['src/**/*.{ts,vue}'],
-      exclude: ['src/boot/**', 'src/css/**', 'src/assets/**'],
+      exclude: ['src/boot/**', 'src/css/**', 'src/i18n/**', 'src/assets/**'],
       // TODO: ativar thresholds após Sprint 1 (src/ ainda com stubs do template)
       // thresholds: {
       //   lines: 70,
@@ -30,4 +30,4 @@ export default defineConfig({
       // },
     },
   },
-})
+});
