@@ -32,6 +32,18 @@
         </q-item-section>
         <q-item-section>PERÍCIAS</q-item-section>
       </q-item>
+
+      <q-item
+        clickable
+        :to="{ name: 'Weapons' }"
+        active-class="nav-item-active"
+        class="nav-item"
+      >
+        <q-item-section avatar>
+          <q-icon name="mdi-sword" />
+        </q-item-section>
+        <q-item-section>ARMAS</q-item-section>
+      </q-item>
     </q-list>
   </q-drawer>
 </template>
