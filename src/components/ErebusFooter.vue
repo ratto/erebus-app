@@ -1,8 +1,12 @@
 <template>
   <footer class="erebus-footer">
-    <span class="footer-text">EREBUS ENGINE &copy; 2026</span>
+    <span class="footer-text">{{ $t('footer.copyright') }}</span>
   </footer>
 </template>
+
+<script setup lang="ts">
+// vue-i18n expõe $t automaticamente no template via app.use(i18n)
+</script>
 
 <style scoped lang="scss">
 .erebus-footer {

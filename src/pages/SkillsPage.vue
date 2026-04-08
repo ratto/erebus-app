@@ -5,7 +5,7 @@
         v-model="searchText"
         dense
         debounce="300"
-        placeholder="Buscar por nome..."
+        :placeholder="t('pages.skills.searchPlaceholder')"
         clearable
         class="col-12 col-sm-4"
         data-testid="search-input"
@@ -20,7 +20,7 @@
         :options="grupoOptions"
         dense
         clearable
-        label="Grupo"
+        :label="t('pages.skills.groupLabel')"
         emit-value
         map-options
         class="col-12 col-sm-3"
@@ -32,7 +32,7 @@
         :options="atributoOptions"
         dense
         clearable
-        label="Atributo Base"
+        :label="t('pages.skills.attributeLabel')"
         emit-value
         map-options
         class="col-12 col-sm-3"
@@ -86,7 +86,7 @@
       <template #no-data>
         <div class="full-width row flex-center text-grey q-gutter-sm q-pa-md">
           <q-icon size="2em" name="search_off" />
-          <span>Nenhuma perícia encontrada para os filtros aplicados.</span>
+          <span>{{ t('pages.skills.noData') }}</span>
         </div>
       </template>
     </q-table>
@@ -97,11 +97,13 @@
 import { ref, computed, onMounted, reactive } from 'vue';
 import { useQuasar } from 'quasar';
 import type { QTableColumn } from 'quasar';
+import { useI18n } from 'vue-i18n';
 import type { Skill } from 'src/model/types/skill.type';
 import { useSkills } from 'src/composables/skills.composable';
 import { attributeOptions } from 'src/utils/options';
 
 const $q = useQuasar();
+const { t } = useI18n();
 const { loading, skills, getAllSkills } = useSkills();
 
 const expanded = reactive(new Set<number>());
@@ -135,60 +137,22 @@ const filterComputed = computed(() => ({
   atributo: selectedAtributo.value,
 }));
 
+const allColumns = computed<QTableColumn[]>(() => [
+  { name: 'expand', label: '', field: 'id', align: 'left' },
+  { name: 'nome', label: t('pages.skills.columns.name'), field: 'nome', sortable: true, align: 'left' },
+  { name: 'grupo', label: t('pages.skills.columns.group'), field: 'grupo', sortable: true, align: 'left' },
+  { name: 'atributoBase', label: t('pages.skills.columns.baseAttribute'), field: 'atributoBase', sortable: true, align: 'left' },
+  { name: 'apenasComTreinamento', label: t('pages.skills.columns.trainingOnly'), field: 'apenasComTreinamento', align: 'center' },
+  { name: 'sinergia', label: t('pages.skills.columns.synergy'), field: 'sinergia', align: 'left' },
+  { name: 'actions', label: '', field: 'id', align: 'right' },
+]);
+
 const visibleColumnsConfig = computed<QTableColumn[]>(() => {
   if ($q.screen.lt.md) {
-    return allColumns.filter((c) => !['atributoBase', 'sinergia'].includes(c.name));
+    return allColumns.value.filter((c) => !['atributoBase', 'sinergia'].includes(c.name));
   }
-  return allColumns;
+  return allColumns.value;
 });
-
-const allColumns: QTableColumn[] = [
-  {
-    name: 'expand',
-    label: '',
-    field: 'id',
-    align: 'left',
-  },
-  {
-    name: 'nome',
-    label: 'Nome',
-    field: 'nome',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'grupo',
-    label: 'Grupo',
-    field: 'grupo',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'atributoBase',
-    label: 'Atributo Base',
-    field: 'atributoBase',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'apenasComTreinamento',
-    label: 'Apenas c/ Treinamento',
-    field: 'apenasComTreinamento',
-    align: 'center',
-  },
-  {
-    name: 'sinergia',
-    label: 'Sinergia',
-    field: 'sinergia',
-    align: 'left',
-  },
-  {
-    name: 'actions',
-    label: '',
-    field: 'id',
-    align: 'right',
-  },
-];
 
 function filterMethod(
   rows: readonly Skill[],
