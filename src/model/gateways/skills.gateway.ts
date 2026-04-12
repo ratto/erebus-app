@@ -6,7 +6,9 @@ export const SkillsGateway = () => {
   const domainUrl = 'skills';
 
   const fetchAllSkills = async (): Promise<Array<Skill>> => {
-    return (await api.get<Array<Skill>>(domainUrl)).data;
+    const response = await api.get<{ skills: Array<Skill> }>(domainUrl);
+
+    return response.data.skills;
   };
 
   return {
