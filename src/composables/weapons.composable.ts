@@ -15,6 +15,7 @@ export const useWeapons = () => {
     await gateway
       .fetchAllWeapons(tipo)
       .then((res) => {
+        console.log(res);
         weapons.value.push(...res);
       })
       .catch((err) => {
