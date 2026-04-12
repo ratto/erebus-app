@@ -7,7 +7,9 @@ export const WeaponsGateway = () => {
 
   const fetchAllWeapons = async (tipo?: string): Promise<Array<Weapon>> => {
     const params = tipo ? { tipo } : {};
+
     const response = await api.get<{ weapons: Array<Weapon> }>(domainUrl, { params });
+
     return response.data.weapons;
   };
 
