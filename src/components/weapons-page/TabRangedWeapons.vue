@@ -1,14 +1,14 @@
 <template>
-  <div class="component-tab-meelee">
+  <div class="component-tab-ranged">
     <div class="q-mb-md">
       <q-input
-        v-model="searchMeelee"
+        v-model="searchRanged"
         dense
         debounce="300"
         placeholder="Buscar por nome..."
         clearable
         class="col-12 col-sm-4"
-        data-testid="search-meelee"
+        data-testid="search-distancia"
       >
         <template #append>
           <q-icon name="search" />
@@ -16,7 +16,7 @@
       </q-input>
     </div>
     <q-table
-      :rows="filteredMeelee"
+      :rows="filteredRanged"
       :columns="columns"
       row-key="id"
       :loading="loading"
@@ -41,60 +41,30 @@ import type { Weapon } from 'src/model/types/weapon.type';
 
 const { weapons, loading, getAllWeapons } = useWeapons();
 
-const searchMeelee = ref<string>('');
+const searchRanged = ref<string>('');
 
-const filteredMeelee = computed(() => {
+const filteredRanged = computed(() => {
   return weapons.value.filter(
-    (w) => !searchMeelee.value || w.nome.toLowerCase().includes(searchMeelee.value.toLowerCase()),
+    (w) => !searchRanged.value || w.nome.toLowerCase().includes(searchRanged.value.toLowerCase()),
   );
 });
 
 const columns: QTableColumn<Weapon>[] = [
+  { name: 'nome', label: 'Nome', field: 'nome', sortable: true, align: 'left' },
+  { name: 'categoria', label: 'Categoria', field: 'categoria', sortable: true, align: 'left' },
+  { name: 'dano', label: 'Dano', field: 'dano', sortable: false, align: 'left' },
+  { name: 'iniciativa', label: 'Iniciativa', field: 'iniciativa', sortable: true, align: 'left' },
   {
-    name: 'nome',
-    label: 'Nome',
-    field: 'nome',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'categoria',
-    label: 'Categoria',
-    field: 'categoria',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'dano',
-    label: 'Dano',
-    field: 'dano',
+    name: 'alcanceMedio',
+    label: 'Alcance Médio',
+    field: 'alcanceMedio',
     sortable: false,
     align: 'left',
   },
-  {
-    name: 'iniciativa',
-    label: 'Iniciativa',
-    field: 'iniciativa',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'tipoDano',
-    label: 'Tipo de Dano',
-    field: 'tipoDano',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'ocultabilidade',
-    label: 'Ocultabilidade',
-    field: 'ocultabilidade',
-    sortable: true,
-    align: 'left',
-  },
+  { name: 'alcanceMax', label: 'Alcance Máx', field: 'alcanceMax', sortable: false, align: 'left' },
 ];
 
 onBeforeMount(async () => {
-  await getAllWeapons('branca');
+  await getAllWeapons('branca_distancia');
 });
 </script>

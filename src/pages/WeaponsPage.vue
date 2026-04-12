@@ -42,7 +42,7 @@
       </q-tab-panel>
 
       <q-tab-panel name="ranged" class="q-pa-none">
-        <div class="q-mb-md">
+        <!-- <div class="q-mb-md">
           <q-input
             v-model="searchDistancia"
             dense
@@ -71,7 +71,7 @@
               <span>Nenhuma arma encontrada.</span>
             </div>
           </template>
-        </q-table>
+        </q-table> -->
       </q-tab-panel>
 
       <q-tab-panel name="firearm" class="q-pa-none">
@@ -121,7 +121,7 @@ const { loading, weapons, getAllWeapons } = useWeapons();
 
 const activeTab = ref<'meelee' | 'ranged' | 'firearm'>('meelee');
 // const searchBranca = ref('');
-const searchDistancia = ref('');
+// const searchDistancia = ref('');
 const searchFogo = ref('');
 
 /* const filteredBranca = computed(() =>
@@ -130,7 +130,7 @@ const searchFogo = ref('');
     .filter((w) => !searchBranca.value || w.nome.toLowerCase().includes(searchBranca.value.toLowerCase())),
 ); */
 
-const filteredDistancia = computed(() =>
+/* const filteredDistancia = computed(() =>
   weapons.value
     .filter((w) => w.tipo === 'branca_distancia')
     .filter(
@@ -138,7 +138,7 @@ const filteredDistancia = computed(() =>
         !searchDistancia.value ||
         w.nome.toLowerCase().includes(searchDistancia.value.toLowerCase()),
     ),
-);
+); */
 
 const filteredFogo = computed(() =>
   weapons.value
@@ -157,7 +157,7 @@ const filteredFogo = computed(() =>
   { name: 'ocultabilidade', label: 'Ocultabilidade', field: 'ocultabilidade', sortable: true, align: 'left' },
 ]; */
 
-const columnsDistancia: QTableColumn<Weapon>[] = [
+/* const columnsDistancia: QTableColumn<Weapon>[] = [
   { name: 'nome', label: 'Nome', field: 'nome', sortable: true, align: 'left' },
   { name: 'categoria', label: 'Categoria', field: 'categoria', sortable: true, align: 'left' },
   { name: 'dano', label: 'Dano', field: 'dano', sortable: false, align: 'left' },
@@ -170,7 +170,7 @@ const columnsDistancia: QTableColumn<Weapon>[] = [
     align: 'left',
   },
   { name: 'alcanceMax', label: 'Alcance Máx', field: 'alcanceMax', sortable: false, align: 'left' },
-];
+]; */
 
 const columnsFogo: QTableColumn<Weapon>[] = [
   { name: 'nome', label: 'Nome', field: 'nome', sortable: true, align: 'left' },
