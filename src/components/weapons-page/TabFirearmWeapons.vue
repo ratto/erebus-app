@@ -1,14 +1,14 @@
 <template>
-  <div class="component-tab-ranged">
+  <div class="component-firearm-weapons">
     <div class="q-mb-md">
       <q-input
-        v-model="searchRanged"
+        v-model="searchFirearm"
         dense
         debounce="300"
         placeholder="Buscar por nome..."
         clearable
         class="col-12 col-sm-4"
-        data-testid="search-distancia"
+        data-testid="search-firearm"
       >
         <template #append>
           <q-icon name="search" />
@@ -16,7 +16,7 @@
       </q-input>
     </div>
     <q-table
-      :rows="filteredRanged"
+      :rows="filteredFirearm"
       :columns="columns"
       row-key="id"
       :loading="loading"
@@ -41,11 +41,11 @@ import type { Weapon } from 'src/model/types/weapon.type';
 
 const { weapons, loading, getAllWeapons } = useWeapons();
 
-const searchRanged = ref<string>('');
+const searchFirearm = ref<string>('');
 
-const filteredRanged = computed(() => {
+const filteredFirearm = computed(() => {
   return weapons.value.filter(
-    (w) => !searchRanged.value || w.nome.toLowerCase().includes(searchRanged.value.toLowerCase()),
+    (w) => !searchFirearm.value || w.nome.toLowerCase().includes(searchFirearm.value.toLowerCase()),
   );
 });
 
@@ -65,6 +65,13 @@ const columns: QTableColumn<Weapon>[] = [
     align: 'left',
   },
   {
+    name: 'calibre',
+    label: 'Calibre',
+    field: 'calibre',
+    sortable: true,
+    align: 'left',
+  },
+  {
     name: 'dano',
     label: 'Dano',
     field: 'dano',
@@ -72,29 +79,36 @@ const columns: QTableColumn<Weapon>[] = [
     align: 'left',
   },
   {
-    name: 'iniciativa',
-    label: 'Iniciativa',
-    field: 'iniciativa',
+    name: 'alcanceEfetivo',
+    label: 'Alcance Efetivo',
+    field: 'alcanceEfetivo',
+    sortable: false,
+    align: 'left',
+  },
+  {
+    name: 'rof',
+    label: 'ROF',
+    field: 'rof',
+    sortable: false,
+    align: 'left',
+  },
+  {
+    name: 'pente',
+    label: 'Pente',
+    field: 'pente',
+    sortable: false,
+    align: 'left',
+  },
+  {
+    name: 'ocultabilidade',
+    label: 'Ocultabilidade',
+    field: 'ocultabilidade',
     sortable: true,
-    align: 'left',
-  },
-  {
-    name: 'alcanceMedio',
-    label: 'Alcance Médio',
-    field: 'alcanceMedio',
-    sortable: false,
-    align: 'left',
-  },
-  {
-    name: 'alcanceMax',
-    label: 'Alcance Máx',
-    field: 'alcanceMax',
-    sortable: false,
     align: 'left',
   },
 ];
 
 onBeforeMount(async () => {
-  await getAllWeapons('branca_distancia');
+  await getAllWeapons('fogo');
 });
 </script>
