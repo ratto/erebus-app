@@ -11,12 +11,21 @@
         @click="$emit('toggle-menu')"
       />
       <q-toolbar-title class="topbar-logo">EREBUS</q-toolbar-title>
+      <q-btn
+        flat
+        dense
+        round
+        icon="chat"
+        aria-label="Terminal"
+        class="chat-toggle"
+        @click="$emit('toggle-chat')"
+      />
     </q-toolbar>
   </q-header>
 </template>
 
 <script setup lang="ts">
-defineEmits<{ 'toggle-menu': [] }>();
+defineEmits<{ 'toggle-menu': []; 'toggle-chat': [] }>();
 </script>
 
 <style scoped lang="scss">
@@ -33,7 +42,8 @@ defineEmits<{ 'toggle-menu': [] }>();
   letter-spacing: 0.15em;
 }
 
-.menu-toggle {
+.menu-toggle,
+.chat-toggle {
   color: var(--bone-600);
 
   &:hover {
