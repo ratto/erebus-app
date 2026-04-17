@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AxiosRequestConfig, AxiosResponse } from 'axios';
-import axios from 'axios';
+import { api } from 'src/boot/axios';
 
 const BaseGateway = () => {
   const baseUrl = import.meta.env.VITE_API_URL;
@@ -11,7 +11,7 @@ const BaseGateway = () => {
   ): Promise<AxiosResponse<T, any, object>> {
     const url = `${baseUrl}/${domainUrl}`;
 
-    return await axios.get<T>(url, options);
+    return await api.get<T>(url, options);
   }
 
   async function post(
@@ -21,7 +21,7 @@ const BaseGateway = () => {
   ): Promise<AxiosResponse<any, any, object>> {
     const url = `${baseUrl}/${domainUrl}`;
 
-    return await axios.post(url, data, options);
+    return await api.post(url, data, options);
   }
 
   return {
