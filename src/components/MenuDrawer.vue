@@ -44,6 +44,18 @@
         </q-item-section>
         <q-item-section>ARMAS</q-item-section>
       </q-item>
+
+      <q-item
+        clickable
+        :to="{ name: 'Enhancements' }"
+        active-class="nav-item-active"
+        class="nav-item"
+      >
+        <q-item-section avatar>
+          <q-icon name="mdi-star-four-points" />
+        </q-item-section>
+        <q-item-section>APRIMORAMENTOS</q-item-section>
+      </q-item>
     </q-list>
   </q-drawer>
 </template>
