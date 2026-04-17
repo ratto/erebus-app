@@ -1,6 +1,8 @@
 import { createI18n } from 'vue-i18n';
 
-import messages from 'src/i18n';
+import type messages from 'src/i18n';
+import enUS from 'src/i18n/en-US';
+import ptBR from 'src/i18n/pt-BR';
 
 export type MessageLanguages = keyof typeof messages;
 // Type-define 'pt-BR' as the master schema for the resource
@@ -23,7 +25,7 @@ declare module 'vue-i18n' {
 export const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
   locale: (localStorage.getItem('erebus_locale') as MessageLanguages) ?? 'pt-BR',
   legacy: false,
-  messages,
+  messages: { 'en-US': enUS, 'pt-BR': ptBR },
 });
 
 export default function ({ app }: { app: { use: (plugin: unknown) => unknown } }) {

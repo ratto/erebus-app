@@ -65,11 +65,11 @@ const skillsFixture: Skill[] = [
 
 // ─── Helper de montagem ───────────────────────────────────────────────────────
 
-const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
+// const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}], i18nInstance] as [unknown, ...unknown[]][],
+    // plugins: [[Quasar, {}], i18nInstance],
     stubs: {
       // QPage exige QLayout para não emitir warnings; stub simples evita o problema
       QPage: { template: '<div><slot /></div>' },

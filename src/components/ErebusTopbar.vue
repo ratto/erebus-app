@@ -8,21 +8,28 @@
         icon="menu"
         :aria-label="$t('topbar.menuAriaLabel')"
         class="menu-toggle"
+        data-testid="btn-menu"
         @click="$emit('toggle-menu')"
       />
       <q-toolbar-title class="topbar-logo">EREBUS</q-toolbar-title>
       <q-btn-group flat class="lang-switcher">
         <q-btn
-          flat dense
+          flat
+          dense
           label="PT"
           :class="{ 'lang-active': configStore.locale === 'pt-BR' }"
-          @click="configStore.setLocale('pt-BR')"
+          :disabled="configStore.locale === 'pt-BR'"
+          data-testid="btn-pt"
+          @click="handleLocaleChange('pt-BR')"
         />
         <q-btn
-          flat dense
+          flat
+          dense
           label="EN"
           :class="{ 'lang-active': configStore.locale === 'en-US' }"
-          @click="configStore.setLocale('en-US')"
+          :disabled="configStore.locale === 'en-US'"
+          data-testid="btn-en"
+          @click="handleLocaleChange('en-US')"
         />
       </q-btn-group>
     </q-toolbar>
@@ -35,6 +42,10 @@ import { useConfigStore } from 'src/stores/config.store';
 defineEmits<{ 'toggle-menu': [] }>();
 
 const configStore = useConfigStore();
+
+const handleLocaleChange = (locale: 'pt-BR' | 'en-US') => {
+  configStore.setLocale(locale);
+};
 </script>
 
 <style scoped lang="scss">
