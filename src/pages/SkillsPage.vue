@@ -69,7 +69,7 @@
             props.row.atributoBase ?? '—'
           }}</q-td>
           <q-td key="apenasComTreinamento" :props="props">
-            <q-badge v-if="!props.row.apenasComTreinamento" color="negattive" label="Não" />
+            <q-badge v-if="!props.row.apenasComTreinamento" color="negative" label="Não" />
             <q-badge v-else color="positive" label="Sim" />
           </q-td>
           <q-td v-if="!$q.screen.lt.md" key="sinergia" :props="props">{{
@@ -95,8 +95,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue';
-import { useQuasar } from 'quasar';
-import type { QTableColumn } from 'quasar';
+import { type QTableColumn, useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import type { Skill } from 'src/model/types/skill.type';
 import { useSkills } from 'src/composables/skills.composable';
@@ -139,10 +138,33 @@ const filterComputed = computed(() => ({
 
 const allColumns = computed<QTableColumn[]>(() => [
   { name: 'expand', label: '', field: 'id', align: 'left' },
-  { name: 'nome', label: t('pages.skills.columns.name'), field: 'nome', sortable: true, align: 'left' },
-  { name: 'grupo', label: t('pages.skills.columns.group'), field: 'grupo', sortable: true, align: 'left' },
-  { name: 'atributoBase', label: t('pages.skills.columns.baseAttribute'), field: 'atributoBase', sortable: true, align: 'left' },
-  { name: 'apenasComTreinamento', label: t('pages.skills.columns.trainingOnly'), field: 'apenasComTreinamento', align: 'center' },
+  {
+    name: 'nome',
+    label: t('pages.skills.columns.name'),
+    field: 'nome',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'grupo',
+    label: t('pages.skills.columns.group'),
+    field: 'grupo',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'atributoBase',
+    label: t('pages.skills.columns.baseAttribute'),
+    field: 'atributoBase',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'apenasComTreinamento',
+    label: t('pages.skills.columns.trainingOnly'),
+    field: 'apenasComTreinamento',
+    align: 'center',
+  },
   { name: 'sinergia', label: t('pages.skills.columns.synergy'), field: 'sinergia', align: 'left' },
   { name: 'actions', label: '', field: 'id', align: 'right' },
 ]);

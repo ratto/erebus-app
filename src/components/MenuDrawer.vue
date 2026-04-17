@@ -14,6 +14,7 @@
         :to="{ name: 'Index' }"
         active-class="nav-item-active"
         class="nav-item"
+        data-testid="nav-home"
       >
         <q-item-section avatar>
           <q-icon name="home" />
@@ -26,6 +27,7 @@
         :to="{ name: 'Skills' }"
         active-class="nav-item-active"
         class="nav-item"
+        data-testid="nav-skills"
       >
         <q-item-section avatar>
           <q-icon name="menu_book" />
@@ -38,9 +40,10 @@
         :to="{ name: 'Weapons' }"
         active-class="nav-item-active"
         class="nav-item"
+        data-testid="nav-weapons"
       >
         <q-item-section avatar>
-          <q-icon name="mdi-sword" />
+          <q-icon name="sym_o_swords" />
         </q-item-section>
         <q-item-section>{{ $t('nav.weapons') }}</q-item-section>
       </q-item>

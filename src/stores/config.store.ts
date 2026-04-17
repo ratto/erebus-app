@@ -10,7 +10,7 @@ export const useConfigStore = defineStore('config', {
   actions: {
     setLocale(locale: MessageLanguages) {
       this.locale = locale;
-      i18n.global.locale.value = locale;
+      (i18n.global.locale as unknown as { value: string }).value = locale;
       localStorage.setItem(STORAGE_KEY, locale);
     },
   },
