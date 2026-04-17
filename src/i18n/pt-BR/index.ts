@@ -6,10 +6,10 @@ export default {
     menuAriaLabel: 'Menu',
   },
   nav: {
-    navigation: 'Navigation',
+    navigation: 'Navegação',
     home: 'HOME',
-    skills: 'SKILLS',
-    weapons: 'WEAPONS',
+    skills: 'PERÍCIAS',
+    weapons: 'ARMAS',
   },
   footer: {
     copyright: 'EREBUS ENGINE © 2026',

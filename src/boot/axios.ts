@@ -1,5 +1,6 @@
 import { defineBoot } from '#q-app/wrappers';
 import axios, { type AxiosInstance } from 'axios';
+import { i18n } from 'src/boot/i18n';
 
 declare module 'vue' {
   interface ComponentCustomProperties {
@@ -15,6 +16,11 @@ declare module 'vue' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({ baseURL: 'https://api.example.com' });
+
+api.interceptors.request.use((config) => {
+  config.headers['Accept-Language'] = (i18n.global.locale as unknown as { value: string }).value;
+  return config;
+});
 
 export default defineBoot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

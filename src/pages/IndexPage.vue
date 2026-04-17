@@ -1,20 +1,14 @@
 <template>
   <q-page class="page-home">
-    <h1 class="page-title">Home</h1>
-    <p class="page-body">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vehicula
-      sapien vitae turpis gravida, ac ultrices nulla tincidunt. Sed euismod
-      felis at diam consequat, vel tincidunt eros fringilla. Proin aliquet
-      libero ac dui fermentum, nec dictum ligula luctus.
-    </p>
-    <p class="page-body">
-      Pellentesque habitant morbi tristique senectus et netus et malesuada fames
-      ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget,
-      tempor sit amet, ante. Donec eu libero sit amet quam egestas semper.
-      Aenean ultricies mi vitae est. Mauris placerat eleifend leo.
-    </p>
+    <h1 class="page-title">{{ $t('pages.home.title') }}</h1>
+    <p class="page-body">{{ $t('pages.home.intro1') }}</p>
+    <p class="page-body">{{ $t('pages.home.intro2') }}</p>
   </q-page>
 </template>
+
+<script setup lang="ts">
+// vue-i18n expõe $t automaticamente no template via app.use(i18n)
+</script>
 
 <style scoped lang="scss">
 .page-home {

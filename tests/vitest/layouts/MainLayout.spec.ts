@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { Quasar } from 'quasar';
+import { createPinia, setActivePinia } from 'pinia';
 import { nextTick } from 'vue';
 
 import MainLayout from 'src/layouts/MainLayout.vue';
@@ -10,6 +11,9 @@ import ErebusFooter from 'src/components/ErebusFooter.vue';
 
 // ─── Helper de montagem ───────────────────────────────────────────────────────
 
+// ChatDrawer usa useChat() → useChatStore() → Pinia.
+// Fazemos stub do componente para isolar o MainLayout de dependências externas,
+// seguindo o mesmo padrão dos outros componentes filhos.
 const mountOptions = {
   global: {
     plugins: [[Quasar, {}]] as [typeof Quasar, Record<string, unknown>][],
@@ -18,9 +22,14 @@ const mountOptions = {
       MenuDrawer: true,
       ErebusFooter: true,
       RouterView: true,
+      ChatDrawer: true,
     },
   },
 };
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+});
 
 function mountLayout() {
   return mount(MainLayout, mountOptions);

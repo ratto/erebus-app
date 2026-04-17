@@ -7,18 +7,19 @@
     class="erebus-drawer"
   >
     <q-list>
-      <q-item-label class="drawer-section-title">Navegação</q-item-label>
+      <q-item-label class="drawer-section-title">{{ $t('nav.navigation') }}</q-item-label>
 
       <q-item
         clickable
         :to="{ name: 'Index' }"
         active-class="nav-item-active"
         class="nav-item"
+        data-testid="nav-home"
       >
         <q-item-section avatar>
           <q-icon name="home" />
         </q-item-section>
-        <q-item-section>HOME</q-item-section>
+        <q-item-section>{{ $t('nav.home') }}</q-item-section>
       </q-item>
 
       <q-item
@@ -26,11 +27,12 @@
         :to="{ name: 'Skills' }"
         active-class="nav-item-active"
         class="nav-item"
+        data-testid="nav-skills"
       >
         <q-item-section avatar>
           <q-icon name="menu_book" />
         </q-item-section>
-        <q-item-section>PERÍCIAS</q-item-section>
+        <q-item-section>{{ $t('nav.skills') }}</q-item-section>
       </q-item>
 
       <q-item
@@ -38,11 +40,12 @@
         :to="{ name: 'Weapons' }"
         active-class="nav-item-active"
         class="nav-item"
+        data-testid="nav-weapons"
       >
         <q-item-section avatar>
-          <q-icon name="mdi-sword" />
+          <q-icon name="sym_o_swords" />
         </q-item-section>
-        <q-item-section>ARMAS</q-item-section>
+        <q-item-section>{{ $t('nav.weapons') }}</q-item-section>
       </q-item>
     </q-list>
   </q-drawer>
