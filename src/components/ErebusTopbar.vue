@@ -32,6 +32,15 @@
           @click="handleLocaleChange('en-US')"
         />
       </q-btn-group>
+      <q-btn
+        flat
+        dense
+        round
+        icon="chat"
+        aria-label="Terminal"
+        class="chat-toggle"
+        @click="$emit('toggle-chat')"
+      />
     </q-toolbar>
   </q-header>
 </template>
@@ -62,7 +71,8 @@ const handleLocaleChange = (locale: 'pt-BR' | 'en-US') => {
   letter-spacing: 0.15em;
 }
 
-.menu-toggle {
+.menu-toggle,
+.chat-toggle {
   color: var(--bone-600);
 
   &:hover {
