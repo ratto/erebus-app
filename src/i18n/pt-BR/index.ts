@@ -11,6 +11,7 @@ export default {
     skills: 'PERÍCIAS',
     weapons: 'ARMAS',
     enhancements: 'APRIMORAMENTOS',
+    items: 'ITENS',
   },
   footer: {
     copyright: 'EREBUS ENGINE © 2026',

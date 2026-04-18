@@ -9,6 +9,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'pericias', name: 'Skills', component: () => import('pages/SkillsPage.vue') },
       { path: 'armas', name: 'Weapons', component: () => import('pages/WeaponsPage.vue') },
       { path: 'aprimoramentos', name: 'Enhancements', component: () => import('pages/EnhancementsPage.vue') },
+      { path: 'itens', name: 'Items', component: () => import('pages/ItemsPage.vue') },
     ],
   },
 
