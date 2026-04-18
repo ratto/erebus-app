@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { useConfigStore } from 'src/stores/config.store';
 
-defineEmits<{ 'toggle-menu': [] }>();
+defineEmits<{ 'toggle-menu': []; 'toggle-chat': [] }>();
 
 const configStore = useConfigStore();
 

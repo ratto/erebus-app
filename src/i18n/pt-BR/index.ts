@@ -10,6 +10,7 @@ export default {
     home: 'HOME',
     skills: 'PERÍCIAS',
     weapons: 'ARMAS',
+    enhancements: 'APRIMORAMENTOS',
   },
   footer: {
     copyright: 'EREBUS ENGINE © 2026',

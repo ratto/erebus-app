@@ -10,6 +10,7 @@ export default {
     home: 'HOME',
     skills: 'SKILLS',
     weapons: 'WEAPONS',
+    enhancements: 'ENHANCEMENTS',
   },
   footer: {
     copyright: 'EREBUS ENGINE © 2026',

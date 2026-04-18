@@ -35,16 +35,9 @@
         <q-item-section>{{ $t('nav.skills') }}</q-item-section>
       </q-item>
 
-      <q-item clickable :to="{ name: 'Weapons' }" active-class="nav-item-active" class="nav-item">
-        <q-item-section avatar>
-          <q-icon name="mdi-sword" />
-        </q-item-section>
-        <q-item-section>ARMAS</q-item-section>
-      </q-item>
-
       <q-item
         clickable
-        :to="{ name: 'Enhancements' }"
+        :to="{ name: 'Weapons' }"
         active-class="nav-item-active"
         class="nav-item"
         data-testid="nav-weapons"
@@ -53,6 +46,19 @@
           <q-icon name="sym_o_swords" />
         </q-item-section>
         <q-item-section>{{ $t('nav.weapons') }}</q-item-section>
+      </q-item>
+
+      <q-item
+        clickable
+        :to="{ name: 'Enhancements' }"
+        active-class="nav-item-active"
+        class="nav-item"
+        data-testid="nav-enhancements"
+      >
+        <q-item-section avatar>
+          <q-icon name="star_outline" />
+        </q-item-section>
+        <q-item-section>{{ $t('nav.enhancements') }}</q-item-section>
       </q-item>
     </q-list>
   </q-drawer>
