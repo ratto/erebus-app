@@ -9,36 +9,21 @@
     <q-list>
       <q-item-label class="drawer-section-title">Navegação</q-item-label>
 
-      <q-item
-        clickable
-        :to="{ name: 'Index' }"
-        active-class="nav-item-active"
-        class="nav-item"
-      >
+      <q-item clickable :to="{ name: 'Index' }" active-class="nav-item-active" class="nav-item">
         <q-item-section avatar>
           <q-icon name="home" />
         </q-item-section>
         <q-item-section>HOME</q-item-section>
       </q-item>
 
-      <q-item
-        clickable
-        :to="{ name: 'Skills' }"
-        active-class="nav-item-active"
-        class="nav-item"
-      >
+      <q-item clickable :to="{ name: 'Skills' }" active-class="nav-item-active" class="nav-item">
         <q-item-section avatar>
           <q-icon name="menu_book" />
         </q-item-section>
         <q-item-section>PERÍCIAS</q-item-section>
       </q-item>
 
-      <q-item
-        clickable
-        :to="{ name: 'Weapons' }"
-        active-class="nav-item-active"
-        class="nav-item"
-      >
+      <q-item clickable :to="{ name: 'Weapons' }" active-class="nav-item-active" class="nav-item">
         <q-item-section avatar>
           <q-icon name="mdi-sword" />
         </q-item-section>
@@ -52,7 +37,7 @@
         class="nav-item"
       >
         <q-item-section avatar>
-          <q-icon name="mdi-star-four-points" />
+          <q-icon name="star_outline" />
         </q-item-section>
         <q-item-section>APRIMORAMENTOS</q-item-section>
       </q-item>
