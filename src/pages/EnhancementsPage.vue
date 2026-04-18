@@ -100,7 +100,7 @@ const searchName = ref<string>('');
 const typeSelected = ref<string | null>('');
 const pagination = ref({
   page: 1,
-  rowsPerPage: 15,
+  rowsPerPage: 100,
 });
 
 const tipoOptions = [
