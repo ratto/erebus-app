@@ -7,35 +7,18 @@ export const useEnhancements = () => {
 
   const loading = ref<boolean>(false);
   const enhancements = ref<Enhancement[]>([]);
-  const total = ref<number>(0);
-  const page = ref<number>(1);
-  const limit = ref<number>(20);
-  const tipoFilter = ref<'' | 'positivo' | 'negativo'>('');
-  const search = ref<string>('');
-  const error = ref<string | null>(null);
 
   const fetchEnhancements = async () => {
     loading.value = true;
-    error.value = null;
-
-    const params: Parameters<typeof gateway.list>[0] = {
-      page: page.value,
-      limit: limit.value,
-      ...(tipoFilter.value && { tipo: tipoFilter.value }),
-      ...(search.value && { search: search.value }),
-    };
+    enhancements.value = [];
 
     await gateway
-      .list(params)
+      .getAllEnhancements()
       .then((res) => {
-        enhancements.value = res.data;
-        total.value = res.total;
-        page.value = res.page;
-        limit.value = res.limit;
+        enhancements.value.push(...res);
       })
-      .catch((err: unknown) => {
+      .catch((err) => {
         console.error(err);
-        error.value = 'Erro ao carregar aprimoramentos.';
       })
       .finally(() => {
         loading.value = false;
@@ -45,13 +28,7 @@ export const useEnhancements = () => {
   return {
     // States
     enhancements,
-    total,
-    page,
-    limit,
-    tipoFilter,
-    search,
     loading,
-    error,
 
     // Actions
     fetchEnhancements,

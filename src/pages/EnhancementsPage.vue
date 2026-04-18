@@ -1,40 +1,43 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="q-mb-md row q-gutter-md items-end">
-      <q-input
-        v-model="search"
-        dense
-        debounce="300"
-        placeholder="Buscar por nome..."
-        clearable
-        class="col-12 col-sm-4"
-        data-testid="search-input"
-        @update:model-value="onSearchChange"
-      >
-        <template #append>
-          <q-icon name="search" />
-        </template>
-      </q-input>
-
-      <q-select
-        v-model="tipoFilter"
-        :options="tipoOptions"
-        dense
-        label="Tipo"
-        emit-value
-        map-options
-        class="col-12 col-sm-3"
-        data-testid="select-tipo"
-        @update:model-value="onFilterChange"
-      />
+    <div class="q-mb-md row q-gutter-md">
+      <div class="col-12 col-md-6">
+        <q-input
+          v-model="searchName"
+          dense
+          debounce="300"
+          placeholder="Buscar por nome..."
+          clearable
+          class="col-12 col-sm-4"
+          data-testid="input-search-name"
+        >
+          <template #append>
+            <q-icon name="o_search" />
+          </template>
+        </q-input>
+      </div>
+      <div class="col-12 col-md-6">
+        <q-select
+          v-model="typeSelected"
+          :options="tipoOptions"
+          dense
+          label="Tipo"
+          emit-value
+          map-options
+          class="col-12 col-sm-3"
+          data-testid="select-type"
+        />
+      </div>
     </div>
 
     <q-table
       :rows="enhancements"
       :columns="columns"
       row-key="id"
+      v-model:pagination="pagination"
       :loading="loading"
-      :rows-per-page-options="[]"
+      :rows-per-page-options="[10, 15, 25, 50]"
+      :filter="filterComputed"
       class="enhancements-table"
     >
       <template #body="props">
@@ -78,51 +81,27 @@
           <span>Nenhum aprimoramento encontrado para os filtros aplicados.</span>
         </div>
       </template>
-
-      <template #bottom>
-        <div class="row full-width items-center justify-between q-pa-sm">
-          <span class="text-caption text-grey">Total: {{ total }}</span>
-          <q-pagination
-            v-model="page"
-            :max="totalPages"
-            :max-pages="6"
-            boundary-numbers
-            @update:model-value="fetchEnhancements"
-          />
-          <q-select
-            v-model="limit"
-            :options="[10, 20, 50]"
-            dense
-            label="Por página"
-            class="limit-select"
-            @update:model-value="onLimitChange"
-          />
-        </div>
-      </template>
     </q-table>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useQuasar } from 'quasar';
 import type { QTableColumn } from 'quasar';
 import { useEnhancements } from 'src/composables/enhancements.composable';
 
 const $q = useQuasar();
-
-const {
-  loading,
-  enhancements,
-  total,
-  page,
-  limit,
-  tipoFilter,
-  search,
-  fetchEnhancements,
-} = useEnhancements();
+const { loading, enhancements, fetchEnhancements } = useEnhancements();
 
 const expanded = reactive(new Set<number>());
+
+const searchName = ref<string>('');
+const typeSelected = ref<string | null>('');
+const pagination = ref({
+  page: 1,
+  rowsPerPage: 15,
+});
 
 const tipoOptions = [
   { label: 'Todos', value: '' },
@@ -130,7 +109,10 @@ const tipoOptions = [
   { label: 'Negativo', value: 'negativo' },
 ];
 
-const totalPages = computed(() => Math.max(1, Math.ceil(total.value / limit.value)));
+const filterComputed = computed(() => ({
+  nome: searchName.value,
+  tipo: typeSelected.value,
+}));
 
 const columns = computed<QTableColumn[]>(() => {
   const base: QTableColumn[] = [
@@ -151,21 +133,6 @@ function toggleExpand(id: number): void {
   } else {
     expanded.add(id);
   }
-}
-
-function onFilterChange() {
-  page.value = 1;
-  void fetchEnhancements();
-}
-
-function onSearchChange() {
-  page.value = 1;
-  void fetchEnhancements();
-}
-
-function onLimitChange() {
-  page.value = 1;
-  void fetchEnhancements();
 }
 
 onMounted(async () => {
