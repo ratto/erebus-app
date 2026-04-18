@@ -53,13 +53,13 @@ describe('SkillsGateway', () => {
 
   describe('fetchAllSkills', () => {
     test('Deverá buscar todas as perícias da API', async () => {
-      const mockResponse: Partial<AxiosResponse<Skill[]>> = {
-        data: skillsFixture,
+      const mockResponse: Partial<AxiosResponse<{ skills: Skill[] }>> = {
+        data: { skills: skillsFixture },
         status: 200,
         statusText: 'OK',
       };
 
-      vi.mocked(mockGet).mockResolvedValue(mockResponse as AxiosResponse<Skill[]>);
+      vi.mocked(mockGet).mockResolvedValue(mockResponse);
 
       const gateway = SkillsGateway();
       const actual = await gateway.fetchAllSkills();
@@ -70,20 +70,20 @@ describe('SkillsGateway', () => {
     });
 
     test('Deverá retornar uma lista vazia quando a API não retornar perícias', async () => {
-      const mockResponse: Partial<AxiosResponse<Skill[]>> = {
-        data: [],
+      const mockResponse: Partial<AxiosResponse<{ skills: Skill[] }>> = {
+        data: { skills: [] },
         status: 200,
         statusText: 'OK',
       };
 
-      vi.mocked(mockGet).mockResolvedValue(mockResponse as AxiosResponse<Skill[]>);
+      vi.mocked(mockGet).mockResolvedValue(mockResponse);
 
       const gateway = SkillsGateway();
       const actual = await gateway.fetchAllSkills();
 
       expect(mockGet).toHaveBeenCalledTimes(1);
       expect(mockGet).toHaveBeenCalledWith('skills');
-      expect(actual).toEqual([]);
+      expect(actual).toStrictEqual([]);
     });
 
     test('Deverá propagar o erro quando a API falhar', async () => {
