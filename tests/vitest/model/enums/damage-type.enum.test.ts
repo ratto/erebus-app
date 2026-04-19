@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DamageType } from 'src/model/types/damage-type.type';
+import { DamageType } from 'src/model/enums/damage-type.enum';
 
 describe('DamageType enum (erebus-app)', () => {
   it('define os 7 tipos de dano esperados com nomes corretos', () => {

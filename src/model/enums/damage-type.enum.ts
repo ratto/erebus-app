@@ -10,11 +10,11 @@
  *  - Armas de fogo: BALLISTIC, exceto lança-chamas (FIRE) e lançadores de granada (dano variável).
  */
 export enum DamageType {
-  KINETIC   = 0,
+  KINETIC = 0,
   BALLISTIC = 1,
-  FIRE      = 2,
-  COLD      = 3,
-  GAS       = 4,
-  ACID      = 5,
-  VACUUM    = 6,
+  FIRE = 2,
+  COLD = 3,
+  GAS = 4,
+  ACID = 5,
+  VACUUM = 6,
 }
