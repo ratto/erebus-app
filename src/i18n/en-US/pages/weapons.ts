@@ -1,4 +1,7 @@
 export default {
+  title: 'Weapons',
+  subtitle:
+    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae explicabo molestias praesentium possimus inventore, quod cupiditate vitae dolore omnis illum ipsum optio cumque culpa laborum doloribus corrupti dolorum natus quae!',
   tabs: {
     melee: 'Melee Weapons',
     ranged: 'Ranged Weapons',

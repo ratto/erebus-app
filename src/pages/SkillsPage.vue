@@ -2,9 +2,7 @@
   <q-page id="skills-page" class="erebus-page q-pa-md">
     <h1>{{ t('pages.skills.title') }}</h1>
     <div class="subtitle">
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aliquam, velit. Necessitatibus unde
-      in culpa nam minima impedit, alias vel quasi hic adipisci asperiores quos veritatis, soluta
-      tempora atque obcaecati cupiditate!
+      {{ t('pages.skills.subtitle') }}
     </div>
 
     <main class="q-gutter-lg">
@@ -12,7 +10,7 @@
         <q-card-section class="card-header"> Filtros </q-card-section>
         <q-card-section class="card-body">
           <div class="q-mb-md row q-col-gutter-md items-end">
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-md-4">
               <erebus-input
                 v-model="searchText"
                 label="Perícia"
