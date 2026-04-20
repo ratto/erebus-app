@@ -80,7 +80,7 @@ defineEmits<{ 'update:modelValue': [value: boolean] }>();
   font-size: 0.5625rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--bone-500);
+  color: var(--bone-900);
   padding: var(--sp-4) var(--sp-6) var(--sp-2);
 }
 
