@@ -10,7 +10,9 @@ export const useConfigStore = defineStore('config', {
   actions: {
     setLocale(locale: MessageLanguages) {
       this.locale = locale;
-      (i18n.global.locale as unknown as { value: string }).value = locale;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const global = i18n.global as any;
+      (global.locale as { value: string }).value = locale;
       localStorage.setItem(STORAGE_KEY, locale);
     },
   },

@@ -1,4 +1,4 @@
-type BaseOption = { label: string; value: string | number | null };
+export type BaseOption = { label: string; value: string | number | null };
 
 export const attributeOptions: BaseOption[] = [
   { label: 'Constituição', value: 'CON' },

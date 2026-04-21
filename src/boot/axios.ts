@@ -18,7 +18,9 @@ declare module 'vue' {
 const api = axios.create({ baseURL: 'https://api.example.com' });
 
 api.interceptors.request.use((config) => {
-  config.headers['Accept-Language'] = (i18n.global.locale as unknown as { value: string }).value;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const global = i18n.global as any;
+  config.headers['Accept-Language'] = (global.locale as { value: string }).value;
   return config;
 });
 

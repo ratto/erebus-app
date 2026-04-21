@@ -1,20 +1,19 @@
 <template>
   <div class="component-tab-meelee">
-    <div class="q-mb-md">
-      <q-input
-        v-model="searchMeelee"
-        dense
-        debounce="300"
-        placeholder="Buscar por nome..."
-        clearable
-        class="col-12 col-sm-4"
-        data-testid="search-meelee"
-      >
-        <template #append>
-          <q-icon name="search" />
-        </template>
-      </q-input>
+    <div class="q-mb-md row q-col-gutter-md items-end">
+      <div class="col-12 col-md-4">
+        <erebus-input
+          v-model="searchMeelee"
+          placeholder="Buscar por nome..."
+          data-testid="input-search-meelee"
+        >
+          <template #append>
+            <q-icon name="search" />
+          </template>
+        </erebus-input>
+      </div>
     </div>
+
     <q-table
       :rows="filteredMeelee"
       :columns="columns"
@@ -38,6 +37,7 @@ import { computed, onBeforeMount, ref } from 'vue';
 import { type QTableColumn } from 'quasar';
 import { useWeapons } from 'src/composables/weapons.composable';
 import type { Weapon } from 'src/model/types/weapon.type';
+import ErebusInput from 'src/components/common/ErebusInput.vue';
 
 const { weapons, loading, getAllWeapons } = useWeapons();
 
