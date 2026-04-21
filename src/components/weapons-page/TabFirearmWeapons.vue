@@ -1,20 +1,19 @@
 <template>
   <div class="component-firearm-weapons">
-    <div class="q-mb-md">
-      <q-input
-        v-model="searchFirearm"
-        dense
-        debounce="300"
-        placeholder="Buscar por nome..."
-        clearable
-        class="col-12 col-sm-4"
-        data-testid="search-firearm"
-      >
-        <template #append>
-          <q-icon name="search" />
-        </template>
-      </q-input>
+    <div class="q-mb-md row q-col-gutter-md items-end">
+      <div class="col-12 col-md-4">
+        <erebus-input
+          v-model="searchFirearm"
+          placeholder="Buscar por nome..."
+          data-testid="input-search-firearm"
+        >
+          <template #append>
+            <q-icon name="search" />
+          </template>
+        </erebus-input>
+      </div>
     </div>
+
     <q-table
       :rows="filteredFirearm"
       :columns="columns"

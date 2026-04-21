@@ -1,20 +1,19 @@
 <template>
   <div class="component-tab-ranged">
-    <div class="q-mb-md">
-      <q-input
-        v-model="searchRanged"
-        dense
-        debounce="300"
-        placeholder="Buscar por nome..."
-        clearable
-        class="col-12 col-sm-4"
-        data-testid="search-distancia"
-      >
-        <template #append>
-          <q-icon name="search" />
-        </template>
-      </q-input>
+    <div class="q-mb-md row q-col-gutter-md items-end">
+      <div class="col-12 col-md-4">
+        <erebus-input
+          v-model="searchRanged"
+          placeholder="Buscar por nome..."
+          data-testid="input-search-ranged"
+        >
+          <template #append>
+            <q-icon name="search" />
+          </template>
+        </erebus-input>
+      </div>
     </div>
+
     <q-table
       :rows="filteredRanged"
       :columns="columns"

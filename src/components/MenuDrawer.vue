@@ -60,6 +60,19 @@
         </q-item-section>
         <q-item-section>{{ $t('nav.enhancements') }}</q-item-section>
       </q-item>
+
+      <q-item
+        clickable
+        :to="{ name: 'Items' }"
+        active-class="nav-item-active"
+        class="nav-item"
+        data-testid="nav-items"
+      >
+        <q-item-section avatar>
+          <q-icon name="inventory_2" />
+        </q-item-section>
+        <q-item-section>{{ $t('nav.items') }}</q-item-section>
+      </q-item>
     </q-list>
   </q-drawer>
 </template>
@@ -80,7 +93,7 @@ defineEmits<{ 'update:modelValue': [value: boolean] }>();
   font-size: 0.5625rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--bone-500);
+  color: var(--bone-900);
   padding: var(--sp-4) var(--sp-6) var(--sp-2);
 }
 
