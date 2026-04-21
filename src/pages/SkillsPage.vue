@@ -7,14 +7,14 @@
 
     <main class="q-gutter-lg">
       <q-card class="erebus-card filtros-card">
-        <q-card-section class="card-header"> Filtros </q-card-section>
+        <q-card-section class="card-header">{{ t('common.filters') }}</q-card-section>
         <q-card-section class="card-body">
           <div class="q-mb-md row q-col-gutter-md items-end">
             <div class="col-12 col-md-4">
               <erebus-input
                 v-model="searchText"
-                label="Perícia"
-                :placeholder="t('pages.skills.searchPlaceholder')"
+                :label="t('pages.skills.filters.search.label')"
+                :placeholder="t('pages.skills.filters.search.placeholder')"
                 inner-class="input-search"
                 data-testid="search-input"
               >
@@ -28,7 +28,7 @@
               <erebus-select
                 v-model="selectedGrupo"
                 :options="grupoOptions"
-                :label="t('pages.skills.groupLabel')"
+                :label="t('pages.skills.filters.selectGroup.label')"
                 data-testid="select-grupo"
               />
             </div>
@@ -37,7 +37,7 @@
               <erebus-select
                 v-model="selectedAtributo"
                 :options="atributoOptions"
-                :label="t('pages.skills.attributeLabel')"
+                :label="t('pages.skills.filters.selectAttribute.label')"
                 data-testid="select-atributo"
               />
             </div>
@@ -126,7 +126,7 @@ const pagination = ref({
 
 const atributoOptions = [
   { label: '', value: null },
-  { label: 'Nenhum', value: '__none__' },
+  { label: t('pages.skills.noneOption'), value: '__none__' },
   ...attributeOptions,
 ];
 
@@ -169,7 +169,7 @@ const allColumns = computed<QTableColumn[]>(() => [
   },
   {
     name: 'apenasComTreinamento',
-    label: t('pages.skills.columns.trainingOnly'),
+    label: t('pages.skills.columns.trainedOnly'),
     field: 'apenasComTreinamento',
     align: 'center',
   },
