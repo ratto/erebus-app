@@ -1,5 +1,4 @@
-{
-  "skills": [
+[
     {
       "id": 1,
       "nome": "Espada",
@@ -199,4 +198,3 @@
       "descricao": "Montagem, reparo e modificação de circuitos eletrônicos. Inclui diagnóstico de falhas, soldagem e programação de microcontroladores básicos."
     }
   ]
-}

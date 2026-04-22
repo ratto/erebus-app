@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "nome": "Espada Longa",
+    "categoria": "Espadas",
+    "dano": "1d10",
+    "iniciativa": "-2",
+    "fonte": "Daemon 4ed",
+    "tipo": "branca",
+    "tipoDano": "Corte",
+    "ocultabilidade": null,
+    "alcanceMedio": null,
+    "alcanceMax": null,
+    "calibre": null,
+    "alcanceEfetivo": null,
+    "rof": null,
+    "pente": null
+  },
+  {
+    "id": 2,
+    "nome": "Arco Curto",
+    "categoria": "Arcos",
+    "dano": "1d6",
+    "iniciativa": "-1",
+    "fonte": "Daemon 4ed",
+    "tipo": "branca_distancia",
+    "tipoDano": "Perfura",
+    "ocultabilidade": null,
+    "alcanceMedio": "30m",
+    "alcanceMax": "60m",
+    "calibre": null,
+    "alcanceEfetivo": null,
+    "rof": null,
+    "pente": null
+  },
+  {
+    "id": 3,
+    "nome": "Pistola 9mm",
+    "categoria": "Pistolas",
+    "dano": "2d6",
+    "iniciativa": "0",
+    "fonte": "Daemon 4ed",
+    "tipo": "fogo",
+    "tipoDano": "Perfura",
+    "ocultabilidade": "Fácil",
+    "alcanceMedio": "30m",
+    "alcanceMax": "60m",
+    "calibre": "9mm",
+    "alcanceEfetivo": "20m",
+    "rof": "1",
+    "pente": "15"
+  }
+]

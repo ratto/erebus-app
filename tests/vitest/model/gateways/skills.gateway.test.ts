@@ -53,8 +53,8 @@ describe('SkillsGateway', () => {
 
   describe('fetchAllSkills', () => {
     test('Deverá buscar todas as perícias da API', async () => {
-      const mockResponse: Partial<AxiosResponse<{ skills: Skill[] }>> = {
-        data: { skills: skillsFixture },
+      const mockResponse: Partial<AxiosResponse<Skill[]>> = {
+        data: skillsFixture,
         status: 200,
         statusText: 'OK',
       };
@@ -70,8 +70,8 @@ describe('SkillsGateway', () => {
     });
 
     test('Deverá retornar uma lista vazia quando a API não retornar perícias', async () => {
-      const mockResponse: Partial<AxiosResponse<{ skills: Skill[] }>> = {
-        data: { skills: [] },
+      const mockResponse: Partial<AxiosResponse<Skill[]>> = {
+        data: [],
         status: 200,
         statusText: 'OK',
       };

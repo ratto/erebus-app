@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "nome": "Ambidestria",
+    "descricao": "O personagem pode usar ambas as mãos com igual habilidade.",
+    "tipo": "positivo",
+    "custo": 5
+  },
+  {
+    "id": 2,
+    "nome": "Mira Certeira",
+    "descricao": "Aumenta a precisão em ataques à distância em +2.",
+    "tipo": "positivo",
+    "custo": 3
+  },
+  {
+    "id": 3,
+    "nome": "Regeneração",
+    "descricao": "O personagem regenera 1 ponto de vida por turno.",
+    "tipo": "positivo",
+    "custo": 7
+  },
+  {
+    "id": 4,
+    "nome": "Fraqueza Mágica",
+    "descricao": "O personagem sofre +50% de dano de magia.",
+    "tipo": "negativo",
+    "custo": 0
+  },
+  {
+    "id": 5,
+    "nome": "Lentidão",
+    "descricao": "O personagem tem movimento reduzido em 50%.",
+    "tipo": "negativo",
+    "custo": 0
+  }
+]
