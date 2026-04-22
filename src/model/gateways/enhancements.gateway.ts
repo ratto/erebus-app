@@ -6,11 +6,9 @@ export const EnhancementsGateway = () => {
   const domainUrl = 'enhancements';
 
   const getAllEnhancements = async (): Promise<Array<Enhancement>> => {
-    const response = await api.get<{ enhancements: Array<Enhancement> }>(domainUrl);
+    const response = await api.get<Array<Enhancement>>(domainUrl);
 
-    console.log(response);
-
-    return response.data.enhancements;
+    return response.data;
   };
 
   return {
