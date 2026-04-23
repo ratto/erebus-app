@@ -77,8 +77,8 @@ describe('WeaponsGateway', () => {
 
   describe('fetchAllWeapons', () => {
     test('Deverá buscar todas as armas da API sem filtro de tipo', async () => {
-      const mockResponse: Partial<AxiosResponse<{ weapons: Weapon[] }>> = {
-        data: { weapons: weaponsFixture },
+      const mockResponse: Partial<AxiosResponse<Weapon[]>> = {
+        data: weaponsFixture,
         status: 200,
         statusText: 'OK',
       };
@@ -97,8 +97,8 @@ describe('WeaponsGateway', () => {
       'Deverá buscar armas filtradas pelo tipo da arma quando o parâmetro %j for fornecido',
       async (wepType) => {
         const weaponFixture = weaponsFixture.filter((w) => w.tipo === wepType);
-        const mockResponse: Partial<AxiosResponse<{ weapons: Weapon[] }>> = {
-          data: { weapons: weaponFixture },
+        const mockResponse: Partial<AxiosResponse<Weapon[]>> = {
+          data: weaponFixture,
           status: 200,
           statusText: 'OK',
         };
@@ -115,8 +115,8 @@ describe('WeaponsGateway', () => {
     );
 
     test('Deverá retornar uma lista vazia quando a API não retornar armas', async () => {
-      const mockResponse: Partial<AxiosResponse<{ weapons: Weapon[] }>> = {
-        data: { weapons: [] },
+      const mockResponse: Partial<AxiosResponse<Weapon[]>> = {
+        data: [],
         status: 200,
         statusText: 'OK',
       };
