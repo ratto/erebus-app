@@ -16,6 +16,21 @@ export default {
   footer: {
     copyright: 'EREBUS ENGINE © 2026',
   },
+  settings: {
+    title: 'Configurações',
+    language: 'Idioma',
+    campaignScenario: 'Cenário de Campanha',
+    gameType: 'Tipo de Jogo',
+    scenarios: {
+      contemporary: 'Contemporâneo',
+      medieval: 'Medieval',
+      futuristic: 'Futurístico',
+    },
+    gameTypes: {
+      action: 'Action RPG',
+      turn_based: 'Turn Based RPG',
+    },
+  },
   common,
   pages,
 };

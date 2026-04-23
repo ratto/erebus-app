@@ -12,26 +12,16 @@
         @click="$emit('toggle-menu')"
       />
       <q-toolbar-title class="topbar-logo">EREBUS</q-toolbar-title>
-      <q-btn-group flat class="lang-switcher">
-        <q-btn
-          flat
-          dense
-          label="PT"
-          :class="{ 'lang-active': configStore.locale === 'pt-BR' }"
-          :disabled="configStore.locale === 'pt-BR'"
-          data-testid="btn-pt"
-          @click="handleLocaleChange('pt-BR')"
-        />
-        <q-btn
-          flat
-          dense
-          label="EN"
-          :class="{ 'lang-active': configStore.locale === 'en-US' }"
-          :disabled="configStore.locale === 'en-US'"
-          data-testid="btn-en"
-          @click="handleLocaleChange('en-US')"
-        />
-      </q-btn-group>
+      <q-btn
+        flat
+        dense
+        round
+        icon="settings"
+        aria-label="Configurações"
+        class="settings-toggle"
+        data-testid="btn-settings"
+        @click="$emit('toggle-settings')"
+      />
       <q-btn
         flat
         dense
@@ -46,15 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { useConfigStore } from 'src/stores/config.store';
-
-defineEmits<{ 'toggle-menu': []; 'toggle-chat': [] }>();
-
-const configStore = useConfigStore();
-
-const handleLocaleChange = (locale: 'pt-BR' | 'en-US') => {
-  configStore.setLocale(locale);
-};
+defineEmits<{ 'toggle-menu': []; 'toggle-chat': []; 'toggle-settings': [] }>();
 </script>
 
 <style scoped lang="scss">
@@ -72,19 +54,12 @@ const handleLocaleChange = (locale: 'pt-BR' | 'en-US') => {
 }
 
 .menu-toggle,
-.chat-toggle {
+.chat-toggle,
+.settings-toggle {
   color: var(--bone-600);
 
   &:hover {
     color: var(--bone-800);
   }
-}
-
-.lang-switcher {
-  margin-left: auto;
-}
-
-.lang-active {
-  color: var(--ember-300) !important;
 }
 </style>
