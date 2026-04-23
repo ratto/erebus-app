@@ -15,7 +15,6 @@ vi.mock('src/boot/i18n', () => ({
 }));
 
 import ErebusTopbar from '../../../src/components/ErebusTopbar.vue';
-import { useConfigStore } from 'src/stores/config.store';
 
 const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
 
@@ -35,47 +34,44 @@ describe('ErebusTopbar.vue', () => {
     setActivePinia(createPinia());
   });
 
-  it('renderiza botões PT e EN', () => {
+  it('não renderiza botões PT e EN', () => {
     const wrapper = mountTopbar();
-    expect(wrapper.text()).toContain('PT');
-    expect(wrapper.text()).toContain('EN');
-  });
-
-  it('clique em EN chama configStore.setLocale("en-US")', async () => {
-    const wrapper = mountTopbar();
-    const store = useConfigStore();
-    const spy = vi.spyOn(store, 'setLocale');
-
     const buttons = wrapper.findAllComponents({ name: 'QBtn' });
+    const ptBtn = buttons.find((b) => b.props('label') === 'PT');
     const enBtn = buttons.find((b) => b.props('label') === 'EN');
-    expect(enBtn).toBeDefined();
-    await enBtn!.trigger('click');
-
-    expect(spy).toHaveBeenCalledWith('en-US');
+    expect(ptBtn).toBeUndefined();
+    expect(enBtn).toBeUndefined();
   });
 
-  it('clique em PT chama configStore.setLocale("pt-BR")', async () => {
+  it('renderiza botão de settings com icon="settings"', () => {
     const wrapper = mountTopbar();
-    const store = useConfigStore();
-    const spy = vi.spyOn(store, 'setLocale');
-
     const buttons = wrapper.findAllComponents({ name: 'QBtn' });
-    const ptBtn = buttons.find((b) => b.props('label') === 'PT');
-    expect(ptBtn).toBeDefined();
-    await ptBtn!.trigger('click');
-
-    expect(spy).toHaveBeenCalledWith('pt-BR');
+    const settingsBtn = buttons.find((b) => b.props('icon') === 'settings');
+    expect(settingsBtn).toBeDefined();
   });
 
-  it('botão PT tem classe lang-active quando locale = pt-BR', () => {
+  it('clique no botão settings emite toggle-settings', async () => {
     const wrapper = mountTopbar();
-    const store = useConfigStore();
-    store.locale = 'pt-BR';
-
     const buttons = wrapper.findAllComponents({ name: 'QBtn' });
-    const ptBtn = buttons.find((b) => b.props('label') === 'PT');
-    expect(ptBtn).toBeDefined();
-    // A classe lang-active é aplicada via :class binding no root do QBtn
-    expect(ptBtn!.classes()).toContain('lang-active');
+    const settingsBtn = buttons.find((b) => b.props('icon') === 'settings');
+    expect(settingsBtn).toBeDefined();
+    await settingsBtn!.trigger('click');
+    expect(wrapper.emitted('toggle-settings')).toBeTruthy();
+  });
+
+  it('clique no botão de menu emite toggle-menu', async () => {
+    const wrapper = mountTopbar();
+    const menuBtn = wrapper.find('[data-testid="btn-menu"]');
+    await menuBtn.trigger('click');
+    expect(wrapper.emitted('toggle-menu')).toBeTruthy();
+  });
+
+  it('clique no botão de chat emite toggle-chat', async () => {
+    const wrapper = mountTopbar();
+    const buttons = wrapper.findAllComponents({ name: 'QBtn' });
+    const chatBtn = buttons.find((b) => b.props('icon') === 'chat');
+    expect(chatBtn).toBeDefined();
+    await chatBtn!.trigger('click');
+    expect(wrapper.emitted('toggle-chat')).toBeTruthy();
   });
 });
