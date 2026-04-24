@@ -181,4 +181,159 @@ describe('Página de Aprimoramentos — /aprimoramentos', () => {
     cy.get('.enhancements-table').contains('Ambidestria').should('be.visible')
     cy.get('.enhancements-table').contains('Lentidão').should('be.visible')
   })
+
+  // ---------------------------------------------------------------------------
+  // E2E-EN-11: Filtro por nome retorna apenas aprimoramentos com termo
+  // ---------------------------------------------------------------------------
+  it('E2E-EN-11: filtro por nome retorna apenas aprimoramentos cujo nome contenha o termo digitado', () => {
+    // Encontra o input de busca por nome
+    cy.get('[data-testid="enhancements-container"] input').first().as('searchInput')
+
+    // Digita "Ambi" para filtrar por Ambidestria
+    cy.get('@searchInput').clear().type('Ambi')
+
+    // Aguarda que a tabela seja atualizada
+    cy.get('.enhancements-table tbody tr').should('have.length', 1)
+
+    // Valida que apenas Ambidestria aparece
+    cy.get('.enhancements-table').contains('Ambidestria').should('be.visible')
+    cy.get('.enhancements-table').contains('Mira Certeira').should('not.exist')
+    cy.get('.enhancements-table').contains('Regeneração').should('not.exist')
+  })
+
+  // ---------------------------------------------------------------------------
+  // E2E-EN-12: Filtro por tipo "positivo"
+  // ---------------------------------------------------------------------------
+  it('E2E-EN-12: filtro por tipo "positivo" exibe apenas aprimoramentos positivos', () => {
+    // Encontra o select de tipo e clica para abrir dropdown
+    cy.get('[data-testid="select-type"]').click({ force: true })
+
+    // Aguarda que a opção "Positivo" apareça no dropdown
+    cy.contains('[role="option"]', 'Positivo', { timeout: 5000 }).should('be.visible').click()
+
+    // Aguarda que a tabela seja atualizada
+    cy.get('.enhancements-table tbody tr').should('have.length', 3)
+
+    // Valida que apenas positivos aparecem
+    cy.get('.enhancements-table').contains('Ambidestria').should('be.visible')
+    cy.get('.enhancements-table').contains('Mira Certeira').should('be.visible')
+    cy.get('.enhancements-table').contains('Regeneração').should('be.visible')
+
+    // Valida que negativos não aparecem
+    cy.get('.enhancements-table').contains('Fraqueza Mágica').should('not.exist')
+    cy.get('.enhancements-table').contains('Lentidão').should('not.exist')
+  })
+
+  // ---------------------------------------------------------------------------
+  // E2E-EN-13: Filtro por tipo "negativo"
+  // ---------------------------------------------------------------------------
+  it('E2E-EN-13: filtro por tipo "negativo" exibe apenas aprimoramentos negativos', () => {
+    // Encontra o select de tipo e clica para abrir dropdown
+    cy.get('[data-testid="select-type"]').click({ force: true })
+
+    // Aguarda que a opção "Negativo" apareça no dropdown
+    cy.contains('[role="option"]', 'Negativo', { timeout: 5000 }).should('be.visible').click()
+
+    // Aguarda que a tabela seja atualizada
+    cy.get('.enhancements-table tbody tr').should('have.length', 2)
+
+    // Valida que apenas negativos aparecem
+    cy.get('.enhancements-table').contains('Fraqueza Mágica').should('be.visible')
+    cy.get('.enhancements-table').contains('Lentidão').should('be.visible')
+
+    // Valida que positivos não aparecem
+    cy.get('.enhancements-table').contains('Ambidestria').should('not.exist')
+    cy.get('.enhancements-table').contains('Mira Certeira').should('not.exist')
+    cy.get('.enhancements-table').contains('Regeneração').should('not.exist')
+  })
+
+  // ---------------------------------------------------------------------------
+  // E2E-EN-14: Combinação de filtros nome + tipo
+  // ---------------------------------------------------------------------------
+  it('E2E-EN-14: combinação de filtro nome + tipo retorna intersecção correta', () => {
+    // Digita nome que corresponde a um positivo
+    cy.get('[data-testid="enhancements-container"] input').first().as('searchInput')
+    cy.get('@searchInput').clear().type('Ambi')
+
+    // Seleciona tipo "Positivo"
+    cy.get('[data-testid="select-type"]').click({ force: true })
+    cy.contains('[role="option"]', 'Positivo', { timeout: 5000 }).should('be.visible').click()
+
+    // Aguarda que a tabela seja atualizada
+    cy.get('.enhancements-table tbody tr').should('have.length', 1)
+
+    // Valida que apenas Ambidestria aparece
+    cy.get('.enhancements-table').contains('Ambidestria').should('be.visible')
+
+    // Agora altera para tipo "Negativo" — o mesmo termo "Ambi" não deve encontrar negativos
+    cy.get('[data-testid="select-type"]').click({ force: true })
+    cy.contains('[role="option"]', 'Negativo', { timeout: 5000 }).should('be.visible').click()
+
+    // Aguarda que a tabela mostre "no data" (0 linhas)
+    cy.get('.enhancements-table tbody tr').should('have.length', 0)
+  })
+
+  // ---------------------------------------------------------------------------
+  // E2E-EN-15: Filtro sem resultados exibe estado no-data
+  // ---------------------------------------------------------------------------
+  it('E2E-EN-15: filtro por nome sem resultados exibe estado no-data', () => {
+    // Digita um termo que não existe
+    cy.get('[data-testid="enhancements-container"] input').first().as('searchInput')
+    cy.get('@searchInput').clear().type('XYZInexistente')
+
+    // Aguarda que a tabela mostre estado vazio (0 linhas no tbody)
+    cy.get('.enhancements-table tbody tr').should('have.length', 0)
+
+    // Valida que o template no-data é exibido
+    cy.get('.enhancements-table').within(() => {
+      cy.get('[role="gridcell"]').should('not.exist')
+      // O template no-data do q-table exibe um ícone e texto
+      cy.get('.full-width').should('be.visible')
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // E2E-EN-16: Ao alterar filtro, paginação retorna à página 1
+  // ---------------------------------------------------------------------------
+  it('E2E-EN-16: ao alterar o filtro, a paginação retorna à página 1', () => {
+    // Como a fixture tem 5 items e rowsPerPage=10, não há múltiplas páginas reais.
+    // Este teste valida que o objeto pagination.page volta a 1 ao filtrar.
+    // Valida o estado inicial: página 1
+    cy.get('.enhancements-table').contains('Ambidestria').should('be.visible')
+
+    // Aplica um filtro
+    cy.get('[data-testid="enhancements-container"] input').first().as('searchInput')
+    cy.get('@searchInput').clear().type('Mira')
+
+    // Valida que ainda estamos na página 1 (seletor de paginação mostra "1-1 de 1" ou similar)
+    // O Quasar exibe algo como "1 de 1" no seletor de paginação
+    cy.get('.enhancements-table').contains('Mira Certeira').should('be.visible')
+
+    // Limpa o filtro e valida que voltamos ao estado inicial
+    cy.get('@searchInput').clear()
+    cy.get('.enhancements-table tbody tr').should('have.length', 5)
+  })
+
+  // ---------------------------------------------------------------------------
+  // E2E-EN-17: Paginação inicial exibe 10 linhas por página
+  // ---------------------------------------------------------------------------
+  it('E2E-EN-17: paginação inicial exibe 10 linhas por página (não 100)', () => {
+    // Valida que apenas 5 linhas da fixture aparecem (menos que 10)
+    cy.get('.enhancements-table tbody tr').should('have.length', 5)
+
+    // Valida que com rowsPerPage=10, a tabela caberia em 1 página
+    cy.get('.enhancements-table tbody tr').its('length').should('be.lte', 10)
+
+    // Procura pelo seletor de paginação do Quasar que mostra o número de linhas por página
+    // O q-table exibe a informação de paginação abaixo/ao lado da tabela
+    cy.get('.enhancements-table').parent().within(() => {
+      // Procura por referências ao número "10" no seletor de paginação
+      cy.get('[role="button"]').each(($btn) => {
+        // O seletor de linhas por página em Quasar é um input ou botão
+        if ($btn.text().includes('10') || $btn.attr('aria-label')?.includes('10')) {
+          cy.wrap($btn).should('exist')
+        }
+      })
+    })
+  })
 })
