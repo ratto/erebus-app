@@ -1,5 +1,5 @@
 <template>
-  <q-page id="enhancements-page" class="erebus-page q-pa-md">
+  <q-page id="enhancements-page" class="erebus-page q-pa-md" data-testid="enhancements-container">
     <h1>{{ t('pages.enhancements.title') }}</h1>
     <div class="subtitle">
       {{ t('pages.enhancements.subtitle') }}
@@ -38,6 +38,7 @@
         :loading="loading"
         :rows-per-page-options="[10, 15, 25, 50]"
         :filter="filterComputed"
+        :filter-method="filterMethod"
         class="enhancements-table"
       >
         <template #body="props">
@@ -87,12 +88,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { type QTableColumn, useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import { useEnhancements } from 'src/composables/enhancements.composable';
 import ErebusInput from 'src/components/common/ErebusInput.vue';
 import ErebusSelect from 'src/components/common/ErebusSelect.vue';
+import type { Enhancement } from 'src/model/types/enhancement.type';
 
 const $q = useQuasar();
 const { t } = useI18n();
@@ -105,7 +107,7 @@ const searchName = ref<string>('');
 const typeSelected = ref<string | null>('');
 const pagination = ref({
   page: 1,
-  rowsPerPage: 100,
+  rowsPerPage: 10,
 });
 
 const tipoOptions = [
@@ -154,6 +156,23 @@ const columns = computed<QTableColumn[]>(() => {
   }
   return base;
 });
+
+watch(filterComputed, () => {
+  pagination.value.page = 1;
+});
+
+function filterMethod(
+  rows: readonly Enhancement[],
+  terms: { nome: string; tipo: string | null },
+): Enhancement[] {
+  const nomeTerm = terms.nome?.trim().toLowerCase() ?? '';
+  const tipoTerm = terms.tipo ?? '';
+  return rows.filter((row) => {
+    const passaNome = !nomeTerm || row.nome.toLowerCase().includes(nomeTerm);
+    const passaTipo = !tipoTerm || row.tipo === tipoTerm;
+    return passaNome && passaTipo;
+  });
+}
 
 function toggleExpand(id: number): void {
   if (expanded.has(id)) {
