@@ -57,7 +57,7 @@
             <q-td key="tipo" :props="props">
               <q-badge
                 :color="props.row.tipo === 'positivo' ? 'positive' : 'negative'"
-                :label="props.row.tipo === 'positivo' ? 'Positivo' : 'Negativo'"
+                :label="props.row.tipo === 'positivo' ? 'positivo' : 'negativo'"
               />
             </q-td>
             <q-td key="custo" :props="props">
