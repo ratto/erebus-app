@@ -112,17 +112,13 @@ describe('Página de Aprimoramentos — /aprimoramentos', () => {
     // Abre o drawer via botão de menu
     cy.get('.erebus-topbar button').first().click()
 
-    // Clica no link de APRIMORAMENTOS se existir
-    cy.get('.erebus-drawer').then(($drawer) => {
-      if ($drawer.text().includes('APRIMORAMENTOS')) {
-        cy.get('.erebus-drawer').contains('APRIMORAMENTOS').click({ force: true })
-        cy.url().should('include', '/#/aprimoramentos')
-        cy.wait('@getEnhancementsFromHome')
-        cy.get('[data-testid="enhancements-container"]').should('be.visible')
-      } else {
-        cy.log('Link APRIMORAMENTOS não encontrado no drawer — ajuste necessário')
-      }
-    })
+    // Aguarda e valida que o drawer está visível
+    cy.get('.erebus-drawer').should('be.visible')
+    // Clica no link de APRIMORAMENTOS
+    cy.get('[data-testid="nav-enhancements"]').should('be.visible').click()
+    cy.url().should('include', '/#/aprimoramentos')
+    cy.wait('@getEnhancementsFromHome')
+    cy.get('[data-testid="enhancements-container"]').should('be.visible')
   })
 
   // ---------------------------------------------------------------------------
