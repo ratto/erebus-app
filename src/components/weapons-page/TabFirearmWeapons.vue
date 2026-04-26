@@ -14,21 +14,14 @@
       </div>
     </div>
 
-    <q-table
+    <erebus-table
       :rows="filteredFirearm"
       :columns="columns"
       row-key="id"
       :loading="loading"
       :rows-per-page-options="[15, 25, 50]"
-      class="weapons-table"
-    >
-      <template #no-data>
-        <div class="full-width row flex-center text-grey q-gutter-sm q-pa-md">
-          <q-icon size="2em" name="search_off" />
-          <span>Nenhuma arma encontrada.</span>
-        </div>
-      </template>
-    </q-table>
+      no-data-label="Nenhuma arma encontrada."
+    />
   </div>
 </template>
 
@@ -37,6 +30,7 @@ import { computed, onBeforeMount, ref } from 'vue';
 import { type QTableColumn } from 'quasar';
 import { useWeapons } from 'src/composables/weapons.composable';
 import type { Weapon } from 'src/model/types/weapon.type';
+import ErebusTable from 'src/components/common/ErebusTable.vue';
 
 const { weapons, loading, getAllWeapons } = useWeapons();
 

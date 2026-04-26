@@ -30,16 +30,15 @@
         </q-card-section>
       </q-card>
 
-      <q-table
+      <erebus-table
         :rows="enhancements"
         :columns="columns"
         row-key="id"
         v-model:pagination="pagination"
         :loading="loading"
-        :rows-per-page-options="[10, 15, 25, 50]"
         :filter="filterComputed"
         :filter-method="filterMethod"
-        class="enhancements-table"
+        :no-data-label="t('pages.enhancements.noData')"
       >
         <template #body="props">
           <q-tr :props="props">
@@ -75,14 +74,7 @@
             </q-td>
           </q-tr>
         </template>
-
-        <template #no-data>
-          <div class="full-width row flex-center text-grey q-gutter-sm q-pa-md">
-            <q-icon size="2em" name="search_off" />
-            <span>{{ t('pages.enhancements.noData') }}</span>
-          </div>
-        </template>
-      </q-table>
+      </erebus-table>
     </main>
   </q-page>
 </template>
@@ -94,6 +86,7 @@ import { useI18n } from 'vue-i18n';
 import { useEnhancements } from 'src/composables/enhancements.composable';
 import ErebusInput from 'src/components/common/ErebusInput.vue';
 import ErebusSelect from 'src/components/common/ErebusSelect.vue';
+import ErebusTable from 'src/components/common/ErebusTable.vue';
 import type { Enhancement } from 'src/model/types/enhancement.type';
 
 const $q = useQuasar();
