@@ -1,0 +1,119 @@
+[
+  {
+    "id": 1,
+    "nome": "Briga",
+    "tipo": "melee",
+    "atributoAtaque": "DEX",
+    "atributoDefesa": "DEX",
+    "aprimoramentoRequerido": null,
+    "descricao": "Luta sem armas. Todo personagem começa com esta perícia."
+  },
+  {
+    "id": 2,
+    "nome": "Boxe",
+    "tipo": "melee",
+    "atributoAtaque": "AGI",
+    "atributoDefesa": "AGI",
+    "aprimoramentoRequerido": null,
+    "descricao": "Arte marcial ocidental de combate com socos."
+  },
+  {
+    "id": 3,
+    "nome": "Artes Marciais",
+    "tipo": "melee",
+    "atributoAtaque": "AGI",
+    "atributoDefesa": "AGI",
+    "aprimoramentoRequerido": null,
+    "descricao": "Sistemas orientais de combate sem armas."
+  },
+  {
+    "id": 4,
+    "nome": "Espada",
+    "tipo": "melee",
+    "atributoAtaque": "DEX",
+    "atributoDefesa": "DEX",
+    "aprimoramentoRequerido": null,
+    "descricao": "Uso de espadas e similares em combate."
+  },
+  {
+    "id": 5,
+    "nome": "Facas",
+    "tipo": "melee",
+    "atributoAtaque": "DEX",
+    "atributoDefesa": "DEX",
+    "aprimoramentoRequerido": null,
+    "descricao": "Uso de facas e adagas em combate corpo a corpo."
+  },
+  {
+    "id": 6,
+    "nome": "Machado",
+    "tipo": "melee",
+    "atributoAtaque": "FR",
+    "atributoDefesa": "FR",
+    "aprimoramentoRequerido": null,
+    "descricao": "Uso de machados e similares em combate."
+  },
+  {
+    "id": 7,
+    "nome": "Lança",
+    "tipo": "melee",
+    "atributoAtaque": "DEX",
+    "atributoDefesa": "DEX",
+    "aprimoramentoRequerido": null,
+    "descricao": "Uso de lanças e similares em combate corpo a corpo."
+  },
+  {
+    "id": 8,
+    "nome": "Pistolas",
+    "tipo": "ranged",
+    "atributoAtaque": "DEX",
+    "atributoDefesa": null,
+    "aprimoramentoRequerido": "Armas de Fogo",
+    "descricao": "Uso de pistolas e revólveres."
+  },
+  {
+    "id": 9,
+    "nome": "Escopetas",
+    "tipo": "ranged",
+    "atributoAtaque": "DEX",
+    "atributoDefesa": null,
+    "aprimoramentoRequerido": "Armas de Fogo",
+    "descricao": "Uso de escopetas e rifles de cano curto."
+  },
+  {
+    "id": 10,
+    "nome": "Fuzis",
+    "tipo": "ranged",
+    "atributoAtaque": "DEX",
+    "atributoDefesa": null,
+    "aprimoramentoRequerido": "Armas de Fogo",
+    "descricao": "Uso de fuzis e rifles de cano longo."
+  },
+  {
+    "id": 11,
+    "nome": "Arco",
+    "tipo": "ranged",
+    "atributoAtaque": "DEX",
+    "atributoDefesa": null,
+    "aprimoramentoRequerido": null,
+    "descricao": "Uso de arcos simples e compostos."
+  },
+  {
+    "id": 12,
+    "nome": "Besta",
+    "tipo": "ranged",
+    "atributoAtaque": "DEX",
+    "atributoDefesa": null,
+    "aprimoramentoRequerido": null,
+    "descricao": "Uso de bestas e similares."
+  },
+  {
+    "id": 13,
+    "nome": "Escudo",
+    "tipo": "shield",
+    "atributoAtaque": null,
+    "atributoDefesa": "DEX",
+    "aprimoramentoRequerido": null,
+    "descricao": "Uso de escudos para defesa — não permite ataque."
+  }
+]
