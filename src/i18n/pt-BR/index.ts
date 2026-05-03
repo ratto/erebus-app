@@ -12,6 +12,7 @@ export default {
     weapons: 'ARMAS',
     enhancements: 'APRIMORAMENTOS',
     items: 'ITENS',
+    combatSkills: 'PERÍCIAS DE COMBATE',
   },
   footer: {
     copyright: 'EREBUS ENGINE © 2026',
