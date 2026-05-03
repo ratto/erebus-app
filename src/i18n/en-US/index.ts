@@ -12,6 +12,7 @@ export default {
     weapons: 'WEAPONS',
     enhancements: 'ENHANCEMENTS',
     items: 'ITEMS',
+    combatSkills: 'COMBAT SKILLS',
   },
   footer: {
     copyright: 'EREBUS ENGINE © 2026',

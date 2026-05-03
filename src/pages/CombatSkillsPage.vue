@@ -1,8 +1,8 @@
 <template>
-  <q-page id="skills-page" class="erebus-page q-pa-md">
-    <h1>{{ t('pages.skills.title') }}</h1>
+  <q-page id="combat-skills-page" class="erebus-page q-pa-md">
+    <h1>{{ t('pages.combatSkills.title') }}</h1>
     <div class="subtitle">
-      {{ t('pages.skills.subtitle') }}
+      {{ t('pages.combatSkills.subtitle') }}
     </div>
 
     <main class="q-gutter-lg">
@@ -13,8 +13,8 @@
             <div class="col-12 col-md-4">
               <erebus-input
                 v-model="searchText"
-                :label="t('pages.skills.filters.search.label')"
-                :placeholder="t('pages.skills.filters.search.placeholder')"
+                :label="t('pages.combatSkills.filters.search.label')"
+                :placeholder="t('pages.combatSkills.filters.search.placeholder')"
                 inner-class="input-search"
                 data-testid="search-input"
               >
@@ -26,10 +26,10 @@
 
             <div class="col-12 col-md-4 col-lg-2">
               <erebus-select
-                v-model="selectedGrupo"
-                :options="grupoOptions"
-                :label="t('pages.skills.filters.selectGroup.label')"
-                data-testid="select-grupo"
+                v-model="selectedTipo"
+                :options="tipoOptions"
+                :label="t('pages.combatSkills.filters.selectType.label')"
+                data-testid="select-tipo"
               />
             </div>
 
@@ -37,7 +37,7 @@
               <erebus-select
                 v-model="selectedAtributo"
                 :options="atributoOptions"
-                :label="t('pages.skills.filters.selectAttribute.label')"
+                :label="t('pages.combatSkills.filters.selectAttribute.label')"
                 data-testid="select-atributo"
               />
             </div>
@@ -45,16 +45,23 @@
         </q-card-section>
       </q-card>
 
-      <erebus-table
-        :rows="skills"
+      <q-table
+        :rows="combatSkills"
         :columns="visibleColumnsConfig"
         row-key="id"
         v-model:pagination="pagination"
         :filter="filterComputed"
         :filter-method="filterMethod"
         :loading="loading"
-        :no-data-label="t('pages.skills.noData')"
+        :rows-per-page-options="[10, 15, 25, 50, 0]"
+        :no-data-label="t('pages.combatSkills.noData')"
       >
+        <template #no-data="{ message }">
+          <div class="full-width row flex-center q-gutter-sm">
+            <q-icon name="search_off" size="2em" />
+            <span>{{ message }}</span>
+          </div>
+        </template>
         <template #body="props">
           <q-tr :props="props">
             <q-td key="expand" class="q-td--expand">
@@ -68,25 +75,29 @@
               />
             </q-td>
             <q-td key="nome" :props="props">{{ props.row.nome }}</q-td>
-            <q-td key="grupo" :props="props">{{ props.row.grupo ?? '—' }}</q-td>
-            <q-td v-if="!$q.screen.lt.md" key="atributoBase" :props="props">{{
-              props.row.atributoBase ?? '—'
-            }}</q-td>
-            <q-td key="apenasComTreinamento" :props="props">
-              <q-badge v-if="!props.row.apenasComTreinamento" color="negative" label="Não" />
-              <q-badge v-else color="positive" label="Sim" />
+            <q-td key="tipo" :props="props">
+              <q-badge
+                :color="tipoBadgeColor(props.row.tipo)"
+                :label="tipoBadgeLabel(props.row.tipo)"
+              />
             </q-td>
-            <q-td v-if="!$q.screen.lt.md" key="sinergia" :props="props">{{
-              props.row.sinergia ?? '—'
-            }}</q-td>
+            <q-td v-if="!$q.screen.lt.md" key="atributoAtaque" :props="props">
+              {{ props.row.atributoAtaque ?? '—' }}
+            </q-td>
+            <q-td v-if="!$q.screen.lt.md" key="atributoDefesa" :props="props">
+              {{ props.row.atributoDefesa ?? '—' }}
+            </q-td>
+            <q-td v-if="!$q.screen.lt.md" key="aprimoramentoRequerido" :props="props">
+              {{ props.row.aprimoramentoRequerido ?? '—' }}
+            </q-td>
           </q-tr>
           <q-tr v-if="expanded.has(props.row.id)" :props="props">
-            <q-td colspan="100%" class="skill-description">
+            <q-td colspan="100%" class="combat-skill-description">
               {{ props.row.descricao }}
             </q-td>
           </q-tr>
         </template>
-      </erebus-table>
+      </q-table>
     </main>
   </q-page>
 </template>
@@ -95,21 +106,20 @@
 import { ref, computed, onMounted, reactive } from 'vue';
 import { type QTableColumn, useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
-import type { Skill } from 'src/model/types/skill.type';
-import { useSkills } from 'src/composables/skills.composable';
+import type { CombatSkill } from 'src/model/types/combat-skill.type';
+import { useCombatSkills } from 'src/composables/combat-skills.composable';
 import { attributeOptions } from 'src/utils/options';
 import ErebusInput from 'src/components/common/ErebusInput.vue';
 import ErebusSelect from 'src/components/common/ErebusSelect.vue';
-import ErebusTable from 'src/components/common/ErebusTable.vue';
 
 const $q = useQuasar();
 const { t } = useI18n();
-const { loading, skills, getAllSkills } = useSkills();
+const { loading, combatSkills, getAllCombatSkills } = useCombatSkills();
 
 const expanded = reactive(new Set<number>());
 
 const searchText = ref('');
-const selectedGrupo = ref<string | null>(null);
+const selectedTipo = ref<string | null>(null);
 const selectedAtributo = ref<string | null>(null);
 
 const pagination = ref({
@@ -117,23 +127,21 @@ const pagination = ref({
   rowsPerPage: 15,
 });
 
+const tipoOptions = computed(() => [
+  { label: '', value: null },
+  { label: t('pages.combatSkills.types.melee'), value: 'melee' },
+  { label: t('pages.combatSkills.types.ranged'), value: 'ranged' },
+  { label: t('pages.combatSkills.types.shield'), value: 'shield' },
+]);
+
 const atributoOptions = [
   { label: '', value: null },
-  { label: t('pages.skills.noneOption'), value: '__none__' },
   ...attributeOptions,
 ];
 
-const grupoOptions = computed(() => {
-  const grupos = new Set<string>();
-  skills.value.forEach((s) => {
-    if (s.grupo) grupos.add(s.grupo);
-  });
-  return [{ label: '', value: null }, ...[...grupos].sort().map((g) => ({ label: g, value: g }))];
-});
-
 const filterComputed = computed(() => ({
   nome: searchText.value,
-  grupo: selectedGrupo.value,
+  tipo: selectedTipo.value,
   atributo: selectedAtributo.value,
 }));
 
@@ -141,55 +149,72 @@ const allColumns = computed<QTableColumn[]>(() => [
   { name: 'expand', label: '', field: 'id', align: 'left' },
   {
     name: 'nome',
-    label: t('pages.skills.columns.name'),
+    label: t('pages.combatSkills.columns.name'),
     field: 'nome',
     sortable: true,
     align: 'left',
   },
   {
-    name: 'grupo',
-    label: t('pages.skills.columns.group'),
-    field: 'grupo',
+    name: 'tipo',
+    label: t('pages.combatSkills.columns.type'),
+    field: 'tipo',
     sortable: true,
     align: 'left',
   },
   {
-    name: 'atributoBase',
-    label: t('pages.skills.columns.baseAttribute'),
-    field: 'atributoBase',
+    name: 'atributoAtaque',
+    label: t('pages.combatSkills.columns.attackAttribute'),
+    field: 'atributoAtaque',
     sortable: true,
     align: 'left',
   },
   {
-    name: 'apenasComTreinamento',
-    label: t('pages.skills.columns.trainedOnly'),
-    field: 'apenasComTreinamento',
-    align: 'center',
+    name: 'atributoDefesa',
+    label: t('pages.combatSkills.columns.defenseAttribute'),
+    field: 'atributoDefesa',
+    sortable: true,
+    align: 'left',
   },
-  { name: 'sinergia', label: t('pages.skills.columns.synergy'), field: 'sinergia', align: 'left' },
-  { name: 'actions', label: '', field: 'id', align: 'right' },
+  {
+    name: 'aprimoramentoRequerido',
+    label: t('pages.combatSkills.columns.requirement'),
+    field: 'aprimoramentoRequerido',
+    sortable: true,
+    align: 'left',
+  },
 ]);
 
 const visibleColumnsConfig = computed<QTableColumn[]>(() => {
   if ($q.screen.lt.md) {
-    return allColumns.value.filter((c) => !['atributoBase', 'sinergia'].includes(c.name));
+    return allColumns.value.filter(
+      (c) => !['atributoAtaque', 'atributoDefesa', 'aprimoramentoRequerido'].includes(c.name),
+    );
   }
   return allColumns.value;
 });
 
+function tipoBadgeColor(tipo: string): string {
+  if (tipo === 'melee') return 'warning';
+  if (tipo === 'ranged') return 'info';
+  return 'secondary';
+}
+
+function tipoBadgeLabel(tipo: string): string {
+  return t(`pages.combatSkills.types.${tipo}`);
+}
+
 function filterMethod(
-  rows: readonly Skill[],
-  terms: { nome: string; grupo: string | null; atributo: string | null },
-): Skill[] {
-  return (rows as Skill[]).filter((row) => {
+  rows: readonly CombatSkill[],
+  terms: { nome: string; tipo: string | null; atributo: string | null },
+): CombatSkill[] {
+  return (rows as CombatSkill[]).filter((row) => {
     const matchNome = !terms.nome || row.nome.toLowerCase().includes(terms.nome.toLowerCase());
-    const matchGrupo = !terms.grupo || row.grupo === terms.grupo;
+    const matchTipo = !terms.tipo || row.tipo === terms.tipo;
     const matchAtributo =
       !terms.atributo ||
-      (terms.atributo === '__none__'
-        ? row.atributoBase === null
-        : row.atributoBase === terms.atributo);
-    return matchNome && matchGrupo && matchAtributo;
+      row.atributoAtaque === terms.atributo ||
+      row.atributoDefesa === terms.atributo;
+    return matchNome && matchTipo && matchAtributo;
   });
 }
 
@@ -202,12 +227,12 @@ function toggleExpand(id: number): void {
 }
 
 onMounted(async () => {
-  await getAllSkills();
+  await getAllCombatSkills();
 });
 </script>
 
 <style scoped lang="scss">
-.skill-description {
+.combat-skill-description {
   padding: 12px 16px;
   font-style: italic;
   color: var(--bone-600, #aaa);

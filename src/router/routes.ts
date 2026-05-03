@@ -10,6 +10,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'armas', name: 'Weapons', component: () => import('pages/WeaponsPage.vue') },
       { path: 'aprimoramentos', name: 'Enhancements', component: () => import('pages/EnhancementsPage.vue') },
       { path: 'itens', name: 'Items', component: () => import('pages/ItemsPage.vue') },
+      { path: 'pericias-de-combate', name: 'CombatSkills', component: () => import('pages/CombatSkillsPage.vue') },
     ],
   },
 
