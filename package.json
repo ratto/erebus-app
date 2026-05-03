@@ -1,6 +1,6 @@
 {
   "name": "erebus-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "O Erebus App serve como interface de usuário para o sistema Erebus, sendo parte dele.",
   "productName": "Erebus App",
   "author": "Pedro 'Ratto' Paixão <rattopedro@gmail.com>",
