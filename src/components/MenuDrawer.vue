@@ -86,6 +86,19 @@
         </q-item-section>
         <q-item-section>{{ $t('nav.items') }}</q-item-section>
       </q-item>
+
+      <q-item
+        clickable
+        :to="{ name: 'Character' }"
+        active-class="nav-item-active"
+        class="nav-item"
+        data-testid="nav-character"
+      >
+        <q-item-section avatar>
+          <q-icon name="assignment_ind" />
+        </q-item-section>
+        <q-item-section>{{ $t('nav.character') }}</q-item-section>
+      </q-item>
     </q-list>
   </q-drawer>
 </template>

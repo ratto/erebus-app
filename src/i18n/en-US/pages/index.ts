@@ -4,6 +4,7 @@ import skills from './skills';
 import weapons from './weapons';
 import enhancements from './enhancements';
 import combatSkills from './combat-skills';
+import character from './character';
 
 export default {
   home,
@@ -12,4 +13,5 @@ export default {
   weapons,
   enhancements,
   combatSkills,
+  character,
 };
