@@ -15,8 +15,6 @@ export const useEnhancements = () => {
     await gateway
       .getAllEnhancements()
       .then((res) => {
-        //console.log(res);
-
         enhancements.value.push(...res);
       })
       .catch((err) => {
