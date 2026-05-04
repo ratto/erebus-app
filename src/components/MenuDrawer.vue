@@ -63,6 +63,19 @@
 
       <q-item
         clickable
+        :to="{ name: 'ProtectiveEquipment' }"
+        active-class="nav-item-active"
+        class="nav-item"
+        data-testid="nav-protective-equipment"
+      >
+        <q-item-section avatar>
+          <q-icon name="shield" />
+        </q-item-section>
+        <q-item-section>{{ $t('nav.protectiveEquipment') }}</q-item-section>
+      </q-item>
+
+      <q-item
+        clickable
         :to="{ name: 'Enhancements' }"
         active-class="nav-item-active"
         class="nav-item"
