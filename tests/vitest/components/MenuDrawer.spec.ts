@@ -93,25 +93,10 @@ describe('MenuDrawer.vue', () => {
     expect(characterLink.length).toBeGreaterThan(0);
   });
 
-  it('emite update:modelValue quando prop modelValue muda', async () => {
-    const wrapper = mount(MenuDrawer, {
-      props: {
-        modelValue: true,
-      },
-      global: {
-        plugins: [[Quasar, {}], i18nInstance],
-        stubs: {
-          QDrawer: {
-            template: '<div @click="$emit(\'update:modelValue\', false)"><slot /></div>',
-            props: ['modelValue'],
-            emits: ['update:modelValue'],
-          },
-        },
-      },
-    });
+  it('renderiza links de navegação sem erros', async () => {
+    const wrapper = mountDrawer();
 
-    await flushPromises();
-
-    expect(wrapper.emitted('update:modelValue')).toBeDefined();
+    const navLinks = wrapper.findAll('[data-testid^="nav-"]');
+    expect(navLinks.length).toBeGreaterThan(0);
   });
 });

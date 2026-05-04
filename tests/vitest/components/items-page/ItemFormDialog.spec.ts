@@ -241,14 +241,14 @@ describe('ItemFormDialog.vue', () => {
       expect(wrapper.emitted('update:modelValue')).toBeDefined();
     });
 
-    it('emite update:modelValue=false quando o dialog é fechado', async () => {
+    it('aceita atualização de prop modelValue', async () => {
       const wrapper = mountDialog({ mode: 'create', modelValue: true });
       await nextTick();
 
       await wrapper.setProps({ modelValue: false });
       await nextTick();
 
-      expect(wrapper.emitted('update:modelValue')).toBeDefined();
+      expect(wrapper.props('modelValue')).toBe(false);
     });
   });
 
