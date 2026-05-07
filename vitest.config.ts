@@ -14,6 +14,14 @@ export default defineConfig({
       boot: fileURLToPath(new URL('./src/boot', import.meta.url)),
       stores: fileURLToPath(new URL('./src/stores', import.meta.url)),
       router: fileURLToPath(new URL('./src/router', import.meta.url)),
+      // Quasar CLI gera este alias em runtime; em Vitest precisamos apontar
+      // para o pacote @quasar/app-vite que contém os wrappers no-op de tipagem.
+      '#q-app/wrappers': fileURLToPath(
+        new URL(
+          './node_modules/@quasar/app-vite/exports/wrappers/wrappers.js',
+          import.meta.url,
+        ),
+      ),
     },
   },
   plugins: [
@@ -23,6 +31,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    setupFiles: ['tests/vitest/setup.ts'],
     include: ['tests/vitest/**/*.test.ts', 'tests/vitest/**/*.spec.ts'],
     coverage: {
       provider: 'v8',
