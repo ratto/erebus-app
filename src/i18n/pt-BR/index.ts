@@ -13,6 +13,7 @@ export default {
     enhancements: 'APRIMORAMENTOS',
     items: 'ITENS',
     combatSkills: 'PERÍCIAS DE COMBATE',
+    character: 'PERSONAGEM',
   },
   footer: {
     copyright: 'EREBUS ENGINE © 2026',
