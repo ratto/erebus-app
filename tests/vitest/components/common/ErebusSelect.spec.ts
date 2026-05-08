@@ -1,21 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { Quasar } from 'quasar';
+
 import ErebusSelect from 'src/components/common/ErebusSelect.vue';
 import type { BaseOption } from 'src/utils/options';
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}]],
+    plugins: [],
     stubs: {
       QSelect: {
         template: `<select
           class="q-select"
           :class="[innerClass]"
           :data-testid="dataTestid"
-          :value="modelValue"
-          @change="$emit('update:modelValue', $event.target.value)"
+          :value="modelValue ?? ''"
+          @change="$emit('update:modelValue', $event.target.value || null)"
         >
+          <option value=""></option>
           <option v-for="opt in options" :key="opt.value" :value="opt.value">
             {{ opt.label }}
           </option>
@@ -131,7 +132,7 @@ describe('ErebusSelect.vue', () => {
     const wrapper = mountSelect();
 
     const options = wrapper.findAll('option');
-    expect(options).toHaveLength(testOptions.length);
+    expect(options).toHaveLength(testOptions.length + 1); // +1 empty option for clearable behavior
   });
 
   it('suporta null como modelValue (seleção vazia)', async () => {

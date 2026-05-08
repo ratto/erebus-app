@@ -1,20 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 import ErebusFooter from 'src/components/ErebusFooter.vue';
-
-const i18nInstance = createI18n({
-  locale: 'pt-BR',
-  legacy: false,
-  messages,
-});
 
 describe('ErebusFooter.vue', () => {
   function mountFooter() {
     return mount(ErebusFooter, {
       global: {
-        plugins: [i18nInstance],
+        plugins: [],
       },
     });
   }

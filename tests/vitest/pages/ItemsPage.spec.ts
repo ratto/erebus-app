@@ -1,21 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
 import { createPinia, setActivePinia } from 'pinia';
-import messages from 'src/i18n';
 import ItemsPage from 'src/pages/ItemsPage.vue';
-
-const i18nInstance = createI18n({
-  locale: 'pt-BR',
-  legacy: false,
-  messages,
-});
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}], i18nInstance, createPinia()],
+    plugins: [createPinia()],
     stubs: {
       QPage: { template: '<div class="q-page"><slot /></div>' },
       QIcon: { template: '<span class="q-icon"></span>' },

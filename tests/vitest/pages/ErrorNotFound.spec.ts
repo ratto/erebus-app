@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { Quasar } from 'quasar';
+
 
 import ErrorNotFound from '../../../src/pages/ErrorNotFound.vue';
 
@@ -8,7 +8,7 @@ import ErrorNotFound from '../../../src/pages/ErrorNotFound.vue';
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}]] as [typeof Quasar, Record<string, unknown>][],
+    plugins: [],
   },
 };
 

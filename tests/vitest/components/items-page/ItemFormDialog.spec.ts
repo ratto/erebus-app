@@ -1,17 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 import ItemFormDialog from 'src/components/items-page/ItemFormDialog.vue';
 import type { Item } from 'src/model/types/item.type';
-
-const i18nInstance = createI18n({
-  locale: 'pt-BR',
-  legacy: false,
-  messages,
-});
 
 const defaultMountOptions = {
   props: {
@@ -19,7 +10,7 @@ const defaultMountOptions = {
     mode: 'create' as const,
   },
   global: {
-    plugins: [[Quasar, {}], i18nInstance],
+    plugins: [],
     stubs: {
       QDialog: { template: '<div><slot /></div>' },
       QCard: { template: '<div class="q-card"><slot /></div>' },
@@ -88,7 +79,7 @@ describe('ItemFormDialog.vue', () => {
 
     it('exibe título de edição em modo edit', async () => {
       const item: Item = {
-        id: 1,
+        id: '1',
         name: 'Espada',
         type: 'mundane',
         description: 'Uma espada de ferro',
@@ -104,7 +95,7 @@ describe('ItemFormDialog.vue', () => {
   describe('Pré-preenchimento em modo edit', () => {
     it('preenche o formulário com dados do item em modo edit', async () => {
       const item: Item = {
-        id: 1,
+        id: '1',
         name: 'Espada Longa',
         type: 'mundane',
         description: 'Uma arma branca efetiva',
@@ -114,7 +105,7 @@ describe('ItemFormDialog.vue', () => {
       await nextTick();
 
       const inputs = wrapper.findAll('input');
-      expect(inputs[0].element.value).toBe('Espada Longa');
+      expect(inputs[0]!.element.value).toBe('Espada Longa');
     });
 
     it('limpa o formulário em modo create', async () => {
@@ -122,7 +113,7 @@ describe('ItemFormDialog.vue', () => {
       await nextTick();
 
       const inputs = wrapper.findAll('input');
-      expect(inputs[0].element.value).toBe('');
+      expect(inputs[0]!.element.value).toBe('');
     });
   });
 
@@ -139,7 +130,7 @@ describe('ItemFormDialog.vue', () => {
       const wrapper = mountDialog({ mode: 'create' });
       await nextTick();
 
-      const nameInput = wrapper.findAll('input')[0];
+      const nameInput = wrapper.findAll('input')[0]!;
       const typeSelect = wrapper.find('select');
 
       await nameInput.setValue('Poção');
@@ -154,7 +145,7 @@ describe('ItemFormDialog.vue', () => {
       const wrapper = mountDialog({ mode: 'create' });
       await nextTick();
 
-      const nameInput = wrapper.findAll('input')[0];
+      const nameInput = wrapper.findAll('input')[0]!;
       const typeSelect = wrapper.find('select');
 
       await nameInput.setValue('   ');
@@ -170,7 +161,7 @@ describe('ItemFormDialog.vue', () => {
       await nextTick();
 
       const longName = 'a'.repeat(81);
-      const nameInput = wrapper.findAll('input')[0];
+      const nameInput = wrapper.findAll('input')[0]!;
 
       await nameInput.setValue(longName);
       await nextTick();
@@ -183,7 +174,7 @@ describe('ItemFormDialog.vue', () => {
       const wrapper = mountDialog({ mode: 'create' });
       await nextTick();
 
-      const nameInput = wrapper.findAll('input')[0];
+      const nameInput = wrapper.findAll('input')[0]!;
       await nameInput.setValue('Item');
       await nextTick();
 
@@ -196,9 +187,9 @@ describe('ItemFormDialog.vue', () => {
       await nextTick();
 
       const longDesc = 'a'.repeat(501);
-      const nameInput = wrapper.findAll('input')[0];
+      const nameInput = wrapper.findAll('input')[0]!;
       const typeSelect = wrapper.find('select');
-      const descInput = wrapper.findAll('input')[1];
+      const descInput = wrapper.findAll('input')[1]!;
 
       await nameInput.setValue('Item');
       await typeSelect.setValue('mundane');
@@ -215,9 +206,9 @@ describe('ItemFormDialog.vue', () => {
       const wrapper = mountDialog({ mode: 'create' });
       await nextTick();
 
-      const nameInput = wrapper.findAll('input')[0];
+      const nameInput = wrapper.findAll('input')[0]!;
       const typeSelect = wrapper.find('select');
-      const descInput = wrapper.findAll('input')[1];
+      const descInput = wrapper.findAll('input')[1]!;
 
       await nameInput.setValue('Maçã');
       await typeSelect.setValue('consumable');
@@ -257,7 +248,7 @@ describe('ItemFormDialog.vue', () => {
       const wrapper = mountDialog({ mode: 'create' });
       await nextTick();
 
-      const nameInput = wrapper.findAll('input')[0];
+      const nameInput = wrapper.findAll('input')[0]!;
       const typeSelect = wrapper.find('select');
 
       await nameInput.setValue('Item válido');

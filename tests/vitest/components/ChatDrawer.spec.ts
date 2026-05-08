@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick, ref } from 'vue';
-import { Quasar } from 'quasar';
 import { createPinia, setActivePinia } from 'pinia';
 import ChatDrawer from 'src/components/ChatDrawer.vue';
 
@@ -27,7 +26,7 @@ const mountOptions = {
     modelValue: true,
   },
   global: {
-    plugins: [[Quasar, {}]],
+    plugins: [],
     stubs: {
       QDrawer: { template: '<div><slot /></div>' },
       QBtn: { template: '<button @click="$emit(\'click\')"><slot /></button>' },
@@ -121,7 +120,7 @@ describe('ChatDrawer.vue', () => {
     const wrapper = mount(ChatDrawer, {
       props: { modelValue: true },
       global: {
-        plugins: [[Quasar, {}]],
+        plugins: [],
         stubs: {
           QDrawer: { template: '<div><slot /></div>' },
           QBtn: {

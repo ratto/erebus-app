@@ -17,10 +17,7 @@ export default defineConfig({
       // Quasar CLI gera este alias em runtime; em Vitest precisamos apontar
       // para o pacote @quasar/app-vite que contém os wrappers no-op de tipagem.
       '#q-app/wrappers': fileURLToPath(
-        new URL(
-          './node_modules/@quasar/app-vite/exports/wrappers/wrappers.js',
-          import.meta.url,
-        ),
+        new URL('./node_modules/@quasar/app-vite/exports/wrappers/wrappers.js', import.meta.url),
       ),
     },
   },
@@ -30,7 +27,7 @@ export default defineConfig({
   ],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     setupFiles: ['tests/vitest/setup.ts'],
     include: ['tests/vitest/**/*.test.ts', 'tests/vitest/**/*.spec.ts'],
     coverage: {

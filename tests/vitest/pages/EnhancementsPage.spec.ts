@@ -1,17 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick, ref } from 'vue';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 import EnhancementsPage from 'src/pages/EnhancementsPage.vue';
 import type { Enhancement } from 'src/model/types/enhancement.type';
-
-const i18nInstance = createI18n({
-  locale: 'pt-BR',
-  legacy: false,
-  messages,
-});
 
 const { mockLoading, mockEnhancements, mockFetchEnhancements } = vi.hoisted(() => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/consistent-type-imports
@@ -50,7 +41,7 @@ const enhancementsFixture: Enhancement[] = [
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}], i18nInstance],
+    plugins: [],
     stubs: {
       QPage: { template: '<div class="q-page"><slot /></div>' },
       QCard: { template: '<div class="q-card"><slot /></div>' },

@@ -1,18 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 import IndexPage from 'src/pages/IndexPage.vue';
-
-const i18nInstance = createI18n({
-  locale: 'pt-BR',
-  legacy: false,
-  messages,
-});
 
 const mountOptions = {
   global: {
-    plugins: [i18nInstance],
+    plugins: [],
     stubs: {
       QPage: { template: '<div class="q-page"><slot /></div>' },
     },

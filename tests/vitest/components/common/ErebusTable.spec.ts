@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { Quasar, type QTableColumn } from 'quasar';
+import { type QTableColumn } from 'quasar';
 import ErebusTable from 'src/components/common/ErebusTable.vue';
 
 // ─── Mount helper ─────────────────────────────────────────────────────────────
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}]] as [typeof Quasar, Record<string, unknown>][],
+    plugins: [],
   },
 };
 

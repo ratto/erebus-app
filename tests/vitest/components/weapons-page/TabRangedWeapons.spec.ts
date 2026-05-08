@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
+
 
 import type { Weapon } from 'src/model/types/weapon.type';
 
@@ -91,7 +91,7 @@ const weaponsFixture: Weapon[] = [
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}]] as [typeof Quasar, Record<string, unknown>][],
+    plugins: [],
   },
 };
 
