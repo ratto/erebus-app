@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { Quasar } from 'quasar';
+
 import ErebusInput from 'src/components/common/ErebusInput.vue';
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}]],
+    plugins: [],
     stubs: {
       QInput: {
         template: `<input

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
+
 
 import WeaponsPage from '../../../src/pages/WeaponsPage.vue';
 
@@ -9,7 +9,7 @@ import WeaponsPage from '../../../src/pages/WeaponsPage.vue';
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}]] as [typeof Quasar, Record<string, unknown>][],
+    plugins: [],
     stubs: {
       // QPage requires QLayout to avoid console warnings; simple div stub avoids the issue.
       QPage: { template: '<div><slot /></div>' },

@@ -19,13 +19,15 @@ const enhancementsFixture: Enhancement[] = [
   {
     id: 1,
     nome: 'Foco',
-    tipo: 'Mental',
+    tipo: 'positivo',
+    custo: 10,
     descricao: 'Aumenta concentração',
   },
   {
     id: 2,
     nome: 'Resistência',
-    tipo: 'Físico',
+    tipo: 'negativo',
+    custo: -5,
     descricao: 'Aumenta capacidade corporal',
   },
 ];

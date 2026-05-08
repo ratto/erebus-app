@@ -13,7 +13,7 @@ export default {
   },
   options: {
     all: 'All',
-    posistive: 'Positive',
+    positive: 'Positive',
     negative: 'Negative',
   },
   columns: {

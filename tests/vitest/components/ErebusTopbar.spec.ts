@@ -1,10 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
-
 // Mock i18n boot para que useConfigStore não falhe ao importar i18n
 vi.mock('src/boot/i18n', () => ({
   i18n: {
@@ -16,12 +12,10 @@ vi.mock('src/boot/i18n', () => ({
 
 import ErebusTopbar from '../../../src/components/ErebusTopbar.vue';
 
-const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
-
 function mountTopbar() {
   return mount(ErebusTopbar, {
     global: {
-      plugins: [[Quasar, {}], i18nInstance],
+      plugins: [],
       stubs: {
         QHeader: { template: '<div><slot /></div>' },
       },

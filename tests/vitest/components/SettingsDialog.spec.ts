@@ -1,10 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
-
 vi.mock('src/boot/i18n', () => ({
   i18n: {
     global: {
@@ -16,13 +12,11 @@ vi.mock('src/boot/i18n', () => ({
 import SettingsDialog from '../../../src/components/SettingsDialog.vue';
 import { useConfigStore } from 'src/stores/config.store';
 
-const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
-
 function mountDialog(modelValue = true) {
   return mount(SettingsDialog, {
     props: { modelValue },
     global: {
-      plugins: [[Quasar, {}], i18nInstance],
+      plugins: [],
       stubs: {
         QDialog: { template: '<div><slot /></div>' },
       },

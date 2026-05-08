@@ -1,19 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 import DeleteItemDialog from 'src/components/items-page/DeleteItemDialog.vue';
 import type { Item } from 'src/model/types/item.type';
 
-const i18nInstance = createI18n({
-  locale: 'pt-BR',
-  legacy: false,
-  messages,
-});
-
 const testItem: Item = {
-  id: 1,
+  id: '1',
   name: 'Espada Longa',
   type: 'mundane',
   description: 'Uma espada de ferro',
@@ -25,7 +17,7 @@ const mountOptions = {
     item: testItem,
   },
   global: {
-    plugins: [i18nInstance],
+    plugins: [],
     stubs: {
       QDialog: { template: '<div><slot /></div>' },
       QCard: { template: '<div class="q-card"><slot /></div>' },
@@ -117,7 +109,7 @@ describe('DeleteItemDialog.vue', () => {
     const wrapper = mountDialog();
 
     const newItem: Item = {
-      id: 2,
+      id: '2',
       name: 'Poção Mágica',
       type: 'consumable',
       description: 'Uma poção rara',

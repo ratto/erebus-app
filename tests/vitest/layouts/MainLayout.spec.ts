@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { Quasar } from 'quasar';
+
 import { createPinia, setActivePinia } from 'pinia';
 import { nextTick } from 'vue';
 
@@ -16,7 +16,7 @@ import ErebusFooter from 'src/components/ErebusFooter.vue';
 // seguindo o mesmo padrão dos outros componentes filhos.
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}]] as [typeof Quasar, Record<string, unknown>][],
+    plugins: [],
     stubs: {
       ErebusTopbar: true,
       MenuDrawer: true,
