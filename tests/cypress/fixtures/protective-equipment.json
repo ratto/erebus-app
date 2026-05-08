@@ -1,0 +1,89 @@
+{
+  "locale": "pt-BR",
+  "protectiveEquipment": [
+    {
+      "id": 1,
+      "name": "Cota de Malha",
+      "cost": null,
+      "availability": null,
+      "weightKg": null,
+      "dexPenalty": 3,
+      "agiPenalty": 2,
+      "description": "Anéis metálicos entrelaçados cobrindo torso, ombros e braços.",
+      "source": "TREVAS, 3ª ed.",
+      "protectiveIndex": [
+        { "damageType": "KINETIC", "ipValue": 6 },
+        { "damageType": "BALLISTIC", "ipValue": 2 },
+        { "damageType": "FIRE", "ipValue": 0 },
+        { "damageType": "COLD", "ipValue": 0 },
+        { "damageType": "GAS", "ipValue": 0 },
+        { "damageType": "ACID", "ipValue": 0 },
+        { "damageType": "VACUUM", "ipValue": 0 },
+        { "damageType": "ELECTRIC", "ipValue": 0 }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Couro Reforçado",
+      "cost": null,
+      "availability": null,
+      "weightKg": null,
+      "dexPenalty": 1,
+      "agiPenalty": 0,
+      "description": "Couro graxado e temperado com inserções metálicas nas áreas vitais.",
+      "source": "TREVAS, 3ª ed.",
+      "protectiveIndex": [
+        { "damageType": "KINETIC", "ipValue": 3 },
+        { "damageType": "BALLISTIC", "ipValue": 1 },
+        { "damageType": "FIRE", "ipValue": 1 },
+        { "damageType": "COLD", "ipValue": 0 },
+        { "damageType": "GAS", "ipValue": 0 },
+        { "damageType": "ACID", "ipValue": 0 },
+        { "damageType": "VACUUM", "ipValue": 0 },
+        { "damageType": "ELECTRIC", "ipValue": 0 }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Colete de Kevlar",
+      "cost": null,
+      "availability": null,
+      "weightKg": null,
+      "dexPenalty": 0,
+      "agiPenalty": 0,
+      "description": "Material moderno de proteção contra projéteis. Efetivo contra balística.",
+      "source": "Livro de Sobrevivência Moderno",
+      "protectiveIndex": [
+        { "damageType": "KINETIC", "ipValue": 2 },
+        { "damageType": "BALLISTIC", "ipValue": 5 },
+        { "damageType": "FIRE", "ipValue": 0 },
+        { "damageType": "COLD", "ipValue": 0 },
+        { "damageType": "GAS", "ipValue": 0 },
+        { "damageType": "ACID", "ipValue": 0 },
+        { "damageType": "VACUUM", "ipValue": 0 },
+        { "damageType": "ELECTRIC", "ipValue": 0 }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Manto Alquímico",
+      "cost": null,
+      "availability": null,
+      "weightKg": null,
+      "dexPenalty": 2,
+      "agiPenalty": 1,
+      "description": "Tecido impregnado com óleos alquímicos que oferecem proteção mágica.",
+      "source": "TREVAS, 3ª ed.",
+      "protectiveIndex": [
+        { "damageType": "KINETIC", "ipValue": 1 },
+        { "damageType": "BALLISTIC", "ipValue": 0 },
+        { "damageType": "FIRE", "ipValue": 3 },
+        { "damageType": "COLD", "ipValue": 3 },
+        { "damageType": "GAS", "ipValue": 2 },
+        { "damageType": "ACID", "ipValue": 4 },
+        { "damageType": "VACUUM", "ipValue": 0 },
+        { "damageType": "ELECTRIC", "ipValue": 2 }
+      ]
+    }
+  ]
+}
