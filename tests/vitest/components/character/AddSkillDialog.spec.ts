@@ -1,15 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { createI18n } from 'vue-i18n';
-import ptBR from 'src/i18n/pt-BR';
 import AddSkillDialog from 'src/components/character/AddSkillDialog.vue';
-
-const i18n = createI18n({
-  locale: 'pt-BR',
-  legacy: false,
-  messages: { 'pt-BR': ptBR },
-});
 
 const QSelectStub = {
   template: `<select
@@ -59,7 +51,7 @@ function mountDialog(props: { modelValue?: boolean; skillOptions?: typeof skillO
       ...props,
     },
     global: {
-      plugins: [i18n],
+      plugins: [],
       stubs: {
         QDialog: { template: '<div><slot /></div>' },
         QCard: { template: '<div class="q-card"><slot /></div>' },

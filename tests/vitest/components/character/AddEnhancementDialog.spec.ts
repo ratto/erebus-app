@@ -1,15 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { nextTick, h } from 'vue';
-import { createI18n } from 'vue-i18n';
-import ptBR from 'src/i18n/pt-BR';
+import { nextTick } from 'vue';
 import AddEnhancementDialog from 'src/components/character/AddEnhancementDialog.vue';
-
-const i18n = createI18n({
-  locale: 'pt-BR',
-  legacy: false,
-  messages: { 'pt-BR': ptBR },
-});
 
 interface EnhancementOption {
   id: number;
@@ -67,7 +59,7 @@ function mountDialog(options: EnhancementOption[] = enhancementOptions) {
       enhancementOptions: options,
     },
     global: {
-      plugins: [i18n],
+      plugins: [],
       stubs: {
         QDialog: { template: '<div><slot /></div>' },
         QCard: { template: '<div class="q-card"><slot /></div>' },
