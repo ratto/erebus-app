@@ -1,9 +1,10 @@
 # PRD: Erebus Web App (SPA)
 
-**Versão:** 1.0  
+**Versão:** 0.2.0  
 **Data de Criação:** 16/03/2026  
-**Status:** Iniciado  
-**Repositório:** `github.com/org/erebus-app`
+**Última Atualização:** 09/05/2026  
+**Status:** Em Desenvolvimento  
+**Repositório:** `github.com/ratto/erebus-app`
 
 ---
 
@@ -474,84 +475,62 @@ data: {"type":"SkillTested","characterId":"char-123","skillName":"Espada","succe
 
 ## 7. Arquitetura Técnica
 
-### Estrutura de Diretórios
+### Estrutura de Diretórios (Sprint 2 — Estado Atual)
 
 ```
 erebus-app/
 ├── src/
 │   ├── components/              # Componentes Vue reutilizáveis
-│   │   ├── CharacterForm.vue
-│   │   ├── SkillSelector.vue
-│   │   ├── CombatBoard.vue
-│   │   ├── LogViewer.vue
+│   │   ├── ErebusTopbar.vue
+│   │   ├── ErebusFooter.vue
+│   │   └── MenuDrawer.vue
+│   ├── pages/                   # Páginas (rotas) — 9 implementadas
+│   │   ├── IndexPage.vue            # rota: /
+│   │   ├── SkillsPage.vue           # rota: /pericias
+│   │   ├── WeaponsPage.vue          # rota: /armas
+│   │   ├── EnhancementsPage.vue     # rota: /aprimoramentos
+│   │   ├── ProtectiveEquipmentPage.vue # rota: /equipamentos-protecao
+│   │   ├── ItemsPage.vue            # rota: /itens
+│   │   ├── CombatSkillsPage.vue     # rota: /pericias-combate
+│   │   ├── CharacterPage.vue        # rota: /personagem
+│   │   └── ErrorNotFound.vue        # fallback 404
+│   ├── composables/             # Lógica de negócio (padrão: composable → gateway → API)
+│   │   ├── skills.composable.ts
+│   │   ├── capacity.composable.ts
 │   │   └── ...
-│   ├── pages/                   # Páginas (rotas)
-│   │   ├── HomePage.vue
-│   │   ├── CharacterCreator.vue
-│   │   ├── CharacterSheet.vue
-│   │   ├── SkillTesting.vue
-│   │   ├── CombatSimulator.vue
-│   │   ├── LogsPage.vue
-│   │   └── ApiDocsPage.vue
-│   ├── stores/                  # Pinia stores (state management)
-│   │   ├── character.ts
-│   │   ├── ui.ts
-│   │   ├── logs.ts
-│   │   └── api.ts
-│   ├── services/                # API client e serviços
-│   │   ├── api.ts              # Axios instance, base config
-│   │   ├── character.service.ts
-│   │   ├── skill.service.ts
-│   │   ├── combat.service.ts
-│   │   └── logs.service.ts     # SSE handler
-│   ├── types/                   # TypeScript interfaces
-│   │   ├── character.ts
-│   │   ├── skill.ts
-│   │   ├── combat.ts
-│   │   └── api.ts
-│   ├── utils/                   # Funções utilitárias
-│   │   ├── formatters.ts       # Formatação de valores
-│   │   ├── validators.ts       # Validação de inputs
-│   │   └── constants.ts
-│   ├── assets/                  # Imagens, ícones, fontes
-│   │   ├── images/
-│   │   ├── icons/
-│   │   └── styles/
+│   ├── model/
+│   │   ├── gateways/            # HTTP client (Axios) por domínio
+│   │   │   ├── base.gateway.ts
+│   │   │   ├── skills.gateway.ts
+│   │   │   └── capacity.gateway.ts
+│   │   └── types/               # Tipos TypeScript da camada de dados
+│   │       ├── skill.type.ts
+│   │       └── capacity.type.ts
+│   ├── layouts/
+│   │   └── MainLayout.vue
+│   ├── stores/                  # Pinia (apenas example-store.ts — stores de domínio planejados)
 │   ├── css/                     # Estilos globais
-│   │   ├── app.css
-│   │   ├── variables.css       # CSS variables para tema
-│   │   └── ...
-│   ├── App.vue                 # Componente raiz
-│   ├── main.ts                 # Entry point
-│   ├── router.ts               # Vue Router config
-│   └── quasar.conf.ts          # Quasar config
+│   ├── App.vue
+│   ├── main.ts
+│   └── router/                  # Vue Router config
 ├── tests/
 │   ├── cypress/                 # Testes E2E (Cypress)
-│   │   ├── e2e/                 # Specs (.cy.ts)
-│   │   ├── fixtures/            # Dados de teste
-│   │   └── support/             # Comandos customizados e setup
-│   └── vitest/                  # Testes unitários e de componente (espelha /src)
-│       ├── components/          # *.spec.ts para .vue
-│       ├── layouts/
+│   │   ├── e2e/
+│   │   ├── fixtures/
+│   │   └── support/
+│   └── vitest/                  # Testes unitários (espelha /src)
 │       ├── pages/
-│       ├── stores/              # *.test.ts para .ts
-│       ├── services/
+│       ├── layouts/
 │       └── composables/
-├── public/                      # Arquivos estáticos (favicon, manifest)
-├── .netlify/                    # Configuração do Netlify
-│   └── netlify.toml
-├── .github/workflows/           # CI/CD
-│   └── deploy.yml
-├── .env.example
+├── public/
 ├── package.json
 ├── tsconfig.json
 ├── quasar.config.ts
 ├── vitest.config.ts
-├── cypress.config.ts
-├── README.md
-├── CONTRIBUTING.md
-└── LICENSE (MIT/Apache 2.0)
+└── cypress.config.ts
 ```
+
+> Nota: Não existe `src/services/`. O padrão adotado é: **composable → gateway → API**.
 
 ### Stack Técnica
 
@@ -791,5 +770,5 @@ jobs:
 
 ---
 
-**Próximo Review:** 30/04/2026  
-**Última Atualização:** 17/03/2026
+**Próximo Review:** 30/06/2026  
+**Última Atualização:** 09/05/2026

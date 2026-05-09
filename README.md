@@ -9,7 +9,7 @@ Este repositório é **um dos três pilares do ecossistema Erebus**:
 | Repositório     | Stack                          | Responsabilidade                     |
 | --------------- | ------------------------------ | ------------------------------------ |
 | `erebus-engine` | C++17                          | Núcleo de mecânicas de jogo          |
-| `erebus-api`    | Node.js + TypeScript + Fastify | API REST que expõe o engine          |
+| `erebus-api`    | Node.js + TypeScript + Express | API REST que expõe o engine          |
 | `erebus-app`    | Vue 3 + Quasar                 | **Este repositório** — interface web |
 
 ---
@@ -24,24 +24,39 @@ O frontend é uma **SPA** construída com **Vue 3 + Quasar Framework**, utilizan
 - **vue-i18n** para internacionalização
 - **Vite** como bundler — porque a vida é curta demais para esperar o Webpack
 
-### Páginas planejadas
+### Páginas implementadas
 
-| Página             | Descrição                                  |
-| ------------------ | ------------------------------------------ |
-| `CharacterCreator` | Criação e geração aleatória de personagens |
-| `CharacterSheet`   | Visualização da ficha do personagem        |
-| `SkillTesting`     | Teste de perícias com rolagem de dados     |
-| `CombatSimulator`  | Simulação de turnos de combate             |
-| `ApiDocsPage`      | Documentação interativa da API (Swagger)   |
+| Página                       | Rota                     | Descrição                                      |
+| ---------------------------- | ------------------------ | ---------------------------------------------- |
+| `IndexPage`                  | `/`                      | Landing page / início                          |
+| `SkillsPage`                 | `/pericias`              | Listagem das 195 perícias do Sistema Daemon    |
+| `WeaponsPage`                | `/armas`                 | Listagem de armamentos                         |
+| `EnhancementsPage`           | `/aprimoramentos`        | Listagem de aprimoramentos                     |
+| `ProtectiveEquipmentPage`    | `/equipamentos-protecao` | Equipamentos de proteção com IPs por dano      |
+| `ItemsPage`                  | `/itens`                 | Listagem de itens                              |
+| `CombatSkillsPage`           | `/pericias-combate`      | Perícias de combate do Sistema Daemon          |
+| `CharacterPage`              | `/personagem`            | Ficha e validação de personagem                |
+| `ErrorNotFound`              | fallback 404             | Página de erro                                 |
+
+### Arquitetura de dados
+
+O padrão adotado é **composable → gateway → API** (sem camada `src/services/`):
+
+| Camada        | Localização                     | Responsabilidade                     |
+| ------------- | ------------------------------- | ------------------------------------ |
+| `composable`  | `src/composables/`              | Lógica de negócio, loading state     |
+| `gateway`     | `src/model/gateways/`           | Chamadas HTTP via Axios              |
+| `types`       | `src/model/types/`              | Tipos TypeScript da camada de dados  |
 
 ### Stores (Pinia)
 
-| Store          | Responsabilidade                        |
-| -------------- | --------------------------------------- |
-| `character.ts` | Personagem atual e histórico de geração |
-| `ui.ts`        | Estado de página e tema                 |
-| `logs.ts`      | Eventos SSE e status de conexão         |
-| `api.ts`       | Configurações e estado da API           |
+| Store             | Status      | Responsabilidade                        |
+| ----------------- | ----------- | --------------------------------------- |
+| `example-store`   | Placeholder | —                                       |
+| `character`       | Planejado   | Personagem atual e histórico de geração |
+| `ui`              | Planejado   | Estado de página e tema                 |
+| `logs`            | Planejado   | Eventos SSE e status de conexão         |
+| `api`             | Planejado   | Configurações e estado da API           |
 
 ---
 
