@@ -15,6 +15,7 @@ export default {
     combatSkills: 'COMBAT SKILLS',
     character: 'CHARACTER',
     protectiveEquipment: 'PROTECTIVE EQUIPMENT',
+    capacity: 'CAPACITY',
   },
   footer: {
     copyright: 'EREBUS ENGINE © 2026',
