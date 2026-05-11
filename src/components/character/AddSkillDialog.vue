@@ -1,63 +1,48 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)">
-    <q-card class="erebus-card dialog-card">
-      <q-card-section class="card-header">
-        {{ t('pages.character.dialog.selectSkill') }}
-      </q-card-section>
+  <ErebusDialog
+    :model-value="modelValue"
+    :title="t('pages.character.dialog.selectSkill')"
+    :confirm-label="t('pages.character.dialog.confirm')"
+    :cancel-label="t('pages.character.dialog.cancel')"
+    :disable-confirm="!canConfirm"
+    @update:model-value="$emit('update:modelValue', $event)"
+    @confirm="confirm"
+    @cancel="$emit('update:modelValue', false)"
+  >
+    <div class="add-skill-body q-gutter-md">
+      <ErebusSelect
+        v-model="selectedSkillId"
+        :options="skillBaseOptions"
+        data-testid="select-skill"
+      />
 
-      <q-card-section class="card-body q-gutter-md">
-        <q-select
-          v-model="selectedSkill"
-          :options="skillOptions"
-          option-label="nome"
-          option-value="id"
-          :label="t('pages.character.dialog.selectSkill')"
-          dense
-          outlined
-          emit-value
-          map-options
-        />
-
-        <q-input
-          v-model.number="points"
-          type="number"
-          :label="t('pages.character.dialog.points')"
-          :min="10"
-          :max="50"
-          dense
-          outlined
-        />
-      </q-card-section>
-
-      <q-card-actions align="right">
-        <q-btn
-          flat
-          :label="t('pages.character.dialog.cancel')"
-          @click="$emit('update:modelValue', false)"
-          class="btn-ghost"
-        />
-        <q-btn
-          :label="t('pages.character.dialog.confirm')"
-          :disable="!canConfirm"
-          @click="confirm"
-          class="btn-primary"
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+      <q-input
+        v-model.number="points"
+        type="number"
+        :label="t('pages.character.dialog.points')"
+        :min="10"
+        :max="50"
+        dense
+        outlined
+        data-testid="input-skill-points"
+      />
+    </div>
+  </ErebusDialog>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { CharacterSkill } from 'src/model/types/character.type';
+import ErebusDialog from 'src/components/common/ErebusDialog.vue';
+import ErebusSelect from 'src/components/common/ErebusSelect.vue';
 
 interface SkillOption {
   id: number;
   nome: string;
 }
 
-defineProps<{
+const props = defineProps<{
   modelValue: boolean;
   skillOptions: SkillOption[];
 }>();
@@ -69,11 +54,19 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const selectedSkill = ref<SkillOption | null>(null);
+const selectedSkillId = ref<number | null>(null);
 const points = ref<number>(10);
 
+const selectedSkill = computed(() =>
+  props.skillOptions.find((s) => s.id === selectedSkillId.value) ?? null,
+);
+
+const skillBaseOptions = computed(() =>
+  props.skillOptions.map((s) => ({ label: s.nome, value: s.id })),
+);
+
 const canConfirm = computed(
-  () => selectedSkill.value !== null && points.value >= 10 && points.value <= 50,
+  () => selectedSkillId.value !== null && points.value >= 10 && points.value <= 50,
 );
 
 function confirm(): void {
@@ -85,14 +78,14 @@ function confirm(): void {
     pontos: points.value,
   });
 
-  selectedSkill.value = null;
+  selectedSkillId.value = null;
   points.value = 10;
   emit('update:modelValue', false);
 }
 </script>
 
 <style scoped lang="scss">
-.dialog-card {
+.add-skill-body {
   min-width: 320px;
 }
 </style>
