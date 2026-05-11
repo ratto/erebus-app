@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 
 import type { CombatSkill } from 'src/model/types/combat-skill.type';
 
@@ -61,11 +58,8 @@ const combatSkillsFixture: CombatSkill[] = [
 
 // ─── Mount helper ─────────────────────────────────────────────────────────────
 
-const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
-
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}], i18nInstance],
     stubs: {
       QPage: { template: '<div><slot /></div>' },
       ErebusInput: {

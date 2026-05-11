@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 
 import type { CharacterSkill, CharacterEnhancement, CharacterValidationError } from 'src/model/types/character.type';
 
@@ -83,8 +80,6 @@ import CharacterPage from '../../../src/pages/CharacterPage.vue';
 
 // ─── Mount helper ─────────────────────────────────────────────────────────────
 
-const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
-
 // Stubs para componentes filhos que têm dependências próprias
 const AddSkillDialogStub = {
   name: 'AddSkillDialog',
@@ -102,7 +97,6 @@ const AddEnhancementDialogStub = {
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}], i18nInstance],
     stubs: {
       QPage: { template: '<div><slot /></div>' },
       AttributeInput: { template: '<div />', props: ['modelValue', 'label', 'tooltip'] },

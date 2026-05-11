@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 
 import type { Skill } from 'src/model/types/skill.type';
 
@@ -65,11 +62,8 @@ const skillsFixture: Skill[] = [
 
 // ─── Helper de montagem ───────────────────────────────────────────────────────
 
-// const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
-
 const mountOptions = {
   global: {
-    // plugins: [[Quasar, {}], i18nInstance],
     stubs: {
       // QPage exige QLayout para não emitir warnings; stub simples evita o problema
       QPage: { template: '<div><slot /></div>' },
