@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { Quasar } from 'quasar';
 import ErebusDialog from 'src/components/common/ErebusDialog.vue';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -26,7 +25,6 @@ function mountDialog(props: ErebusDialogProps = {}, slots: Record<string, string
     props: { modelValue: true, title: 'Título de teste', ...props },
     slots,
     global: {
-      plugins: [[Quasar, {}]],
       stubs: { QDialog: { template: '<div><slot /></div>' } },
     },
   });
