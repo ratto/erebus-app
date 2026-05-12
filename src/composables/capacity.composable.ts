@@ -1,12 +1,11 @@
 import { ref } from 'vue';
 import { CapacityGateway } from 'src/model/gateways/capacity.gateway';
-import type { CapacityResult } from 'src/model/types/capacity.type';
 
 export const useCapacity = () => {
   const gateway = CapacityGateway();
 
   const loading = ref<boolean>(false);
-  const result = ref<CapacityResult | null>(null);
+  const result = ref<number | null>(null);
   const error = ref<string | null>(null);
 
   async function calculateY(attribute: number, k: number): Promise<void> {

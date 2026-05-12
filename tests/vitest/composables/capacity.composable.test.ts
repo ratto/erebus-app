@@ -1,5 +1,4 @@
 import { vi, describe, test, expect, beforeEach } from 'vitest';
-import type { CapacityResult } from 'src/model/types/capacity.type';
 
 const { mockCalculateY, mockCalculateK, mockCalculateDamageBonus } = vi.hoisted(() => {
   return {
@@ -19,7 +18,7 @@ vi.mock('src/model/gateways/capacity.gateway', () => ({
 
 import { useCapacity } from 'src/composables/capacity.composable';
 
-const resultFixture: CapacityResult = { value: 39.37 };
+const resultFixture = 39.37;
 
 describe('useCapacity', () => {
   beforeEach(() => {
@@ -66,12 +65,12 @@ describe('useCapacity', () => {
       const { result, calculateY } = useCapacity();
       await calculateY(10, 12.4);
 
-      expect(result.value).toEqual(resultFixture);
+      expect(result.value).toBe(39.37);
     });
 
     test('loading deve ser true durante a chamada e false após', async () => {
       let resolvePromise!: (value: CapacityResult) => void;
-      const deferred = new Promise<CapacityResult>((resolve) => {
+      const deferred = new Promise<number>((resolve) => {
         resolvePromise = resolve;
       });
       mockCalculateY.mockReturnValue(deferred);
@@ -135,12 +134,12 @@ describe('useCapacity', () => {
       const { result, calculateK } = useCapacity();
       await calculateK(10, 39.37);
 
-      expect(result.value).toEqual(resultFixture);
+      expect(result.value).toBe(39.37);
     });
 
     test('loading deve ser true durante a chamada e false após', async () => {
       let resolvePromise!: (value: CapacityResult) => void;
-      const deferred = new Promise<CapacityResult>((resolve) => {
+      const deferred = new Promise<number>((resolve) => {
         resolvePromise = resolve;
       });
       mockCalculateK.mockReturnValue(deferred);
@@ -194,12 +193,12 @@ describe('useCapacity', () => {
       const { result, calculateDamageBonus } = useCapacity();
       await calculateDamageBonus(16);
 
-      expect(result.value).toEqual(resultFixture);
+      expect(result.value).toBe(39.37);
     });
 
     test('loading deve ser true durante a chamada e false após', async () => {
       let resolvePromise!: (value: CapacityResult) => void;
-      const deferred = new Promise<CapacityResult>((resolve) => {
+      const deferred = new Promise<number>((resolve) => {
         resolvePromise = resolve;
       });
       mockCalculateDamageBonus.mockReturnValue(deferred);

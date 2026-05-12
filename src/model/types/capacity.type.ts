@@ -1,7 +1,3 @@
-export type CapacityResult = {
-  value: number;
-};
-
 export type CapacityYParams = {
   attribute: number;
   k: number;

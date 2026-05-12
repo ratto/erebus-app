@@ -114,7 +114,7 @@
       <q-card v-if="result !== null" class="erebus-card" data-testid="capacity-result">
         <q-card-section>
           <div class="result-label">Resultado</div>
-          <div class="result-value" data-testid="result-value">{{ result.value }}</div>
+          <div class="result-value" data-testid="result-value">{{ result }}</div>
         </q-card-section>
       </q-card>
 

@@ -2,8 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
 
-import type { CapacityResult } from 'src/model/types/capacity.type';
-
 const {
   mockLoading,
   mockResult,
@@ -16,7 +14,7 @@ const {
   const { ref } = require('vue') as typeof import('vue');
   return {
     mockLoading: ref(false),
-    mockResult: ref<CapacityResult | null>(null),
+    mockResult: ref<number | null>(null),
     mockError: ref<string | null>(null),
     mockCalculateY: vi.fn().mockResolvedValue(undefined),
     mockCalculateK: vi.fn().mockResolvedValue(undefined),
@@ -249,7 +247,7 @@ describe('CapacityPage.vue', () => {
     });
 
     it('data-testid="capacity-result" visível quando result não é null', async () => {
-      mockResult.value = { value: 39.76 };
+      mockResult.value = 39.76;
       const wrapper = mountPage();
       await nextTick();
 
@@ -257,7 +255,7 @@ describe('CapacityPage.vue', () => {
     });
 
     it('data-testid="result-value" exibe o valor de result.value', async () => {
-      mockResult.value = { value: 39.76 };
+      mockResult.value = 39.76;
       const wrapper = mountPage();
       await nextTick();
 

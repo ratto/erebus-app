@@ -1,6 +1,5 @@
 import type { AxiosResponse } from 'axios';
 import { vi, describe, test, expect, beforeEach } from 'vitest';
-import type { CapacityResult } from 'src/model/types/capacity.type';
 
 const { mockPost } = vi.hoisted(() => {
   return {
@@ -16,7 +15,7 @@ vi.mock('src/model/gateways/base.gateway', () => ({
 
 import { CapacityGateway } from 'src/model/gateways/capacity.gateway';
 
-const resultFixture: CapacityResult = { value: 39.37 };
+const resultFixture = 39.37;
 
 describe('CapacityGateway', () => {
   beforeEach(() => {
@@ -25,7 +24,7 @@ describe('CapacityGateway', () => {
 
   describe('calculateY', () => {
     test('deve chamar post com o endpoint e payload corretos', async () => {
-      const mockResponse: Partial<AxiosResponse<CapacityResult>> = {
+      const mockResponse: Partial<AxiosResponse<number>> = {
         data: resultFixture,
         status: 200,
         statusText: 'OK',
@@ -37,7 +36,7 @@ describe('CapacityGateway', () => {
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith('capacity/calculate-y', { attribute: 10, k: 12.4 });
-      expect(actual).toEqual(resultFixture);
+      expect(actual).toBe(resultFixture);
     });
 
     test('deve propagar o erro quando a API falhar', async () => {
@@ -52,7 +51,7 @@ describe('CapacityGateway', () => {
 
   describe('calculateK', () => {
     test('deve chamar post com o endpoint e payload corretos', async () => {
-      const mockResponse: Partial<AxiosResponse<CapacityResult>> = {
+      const mockResponse: Partial<AxiosResponse<number>> = {
         data: resultFixture,
         status: 200,
         statusText: 'OK',
@@ -64,7 +63,7 @@ describe('CapacityGateway', () => {
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith('capacity/calculate-k', { attribute: 10, y: 39.37 });
-      expect(actual).toEqual(resultFixture);
+      expect(actual).toBe(resultFixture);
     });
 
     test('deve propagar o erro quando a API falhar', async () => {
@@ -79,8 +78,8 @@ describe('CapacityGateway', () => {
 
   describe('calculateDamageBonus', () => {
     test('deve chamar post com o endpoint e payload corretos', async () => {
-      const mockResponse: Partial<AxiosResponse<CapacityResult>> = {
-        data: { value: 1 },
+      const mockResponse: Partial<AxiosResponse<number>> = {
+        data: 1,
         status: 200,
         statusText: 'OK',
       };
@@ -91,7 +90,7 @@ describe('CapacityGateway', () => {
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith('capacity/damage-bonus', { fr: 16 });
-      expect(actual).toEqual({ value: 1 });
+      expect(actual).toBe(1);
     });
 
     test('deve propagar o erro quando a API falhar', async () => {
