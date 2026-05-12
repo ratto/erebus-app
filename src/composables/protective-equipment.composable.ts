@@ -1,9 +1,13 @@
 import { ref } from 'vue';
 import { ProtectiveEquipmentGateway } from 'src/model/gateways/protective-equipment.gateway';
 import type { ProtectiveEquipment, ProtectiveEquipmentFilters } from 'src/model/types/protective-equipment.type';
+import { useI18n } from 'vue-i18n';
+import { erebusMessage } from 'src/model/utils/message';
 
 export const useProtectiveEquipment = () => {
   const gateway = ProtectiveEquipmentGateway();
+  const { t } = useI18n();
+  const notify = erebusMessage();
 
   const loading = ref<boolean>(false);
   const protectiveEquipments = ref<ProtectiveEquipment[]>([]);
@@ -21,6 +25,7 @@ export const useProtectiveEquipment = () => {
       })
       .catch((err) => {
         console.error(err);
+        notify.danger(t('common.errors.fetchFailed'));
       })
       .finally(() => {
         loading.value = false;

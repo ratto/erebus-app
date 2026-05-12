@@ -82,6 +82,18 @@ body {
   font-family: var(--font-body);
 }
 
+// ── Componentes de notificação ──────────────────────────
+.erebus-notify {
+  border-radius: var(--radius-md);
+  border-left: 4px solid transparent;
+
+  &--success   { border-left-color: var(--verdant-400);   background: rgba(37, 138, 74, 0.15); }
+  &--info      { border-left-color: var(--mist-400);      background: rgba(37, 136, 174, 0.15); }
+  &--warning   { border-left-color: var(--brimstone-400); background: rgba(176, 126, 0, 0.15); }
+  &--danger    { border-left-color: var(--ichor-400);     background: rgba(196, 34, 56, 0.15); }
+  &--continuous { border-left-color: var(--bone-500);     background: rgba(133, 117, 112, 0.15); }
+}
+
 // ── Estilos de páginas ──────────────────────────────────
 .erebus-page {
   h1 {

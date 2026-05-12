@@ -13,6 +13,20 @@ vi.mock('src/model/gateways/weapons.gateway', () => ({
   }),
 }));
 
+vi.mock('src/model/utils/message', () => ({
+  erebusMessage: () => ({
+    success: vi.fn(),
+    info: vi.fn(),
+    warning: vi.fn(),
+    danger: vi.fn(),
+    continuous: vi.fn(() => ({ dismiss: vi.fn() })),
+  }),
+}));
+
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({ t: (key: string) => key }),
+}));
+
 import { useWeapons } from 'src/composables/weapons.composable';
 
 const weaponsFixture: Weapon[] = [

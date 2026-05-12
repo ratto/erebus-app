@@ -2,6 +2,8 @@ import { computed, ref } from 'vue';
 import type { CharacterAttributes, CharacterEnhancement, CharacterSkill } from 'src/model/types/character.type';
 import { CharactersGateway } from 'src/model/gateways/characters.gateway';
 import { useCharacterStore } from 'src/stores/character.store';
+import { useI18n } from 'vue-i18n';
+import { erebusMessage } from 'src/model/utils/message';
 
 const ATTRIBUTE_BUDGET = 111;
 const ENHANCEMENT_BUDGET = 6;
@@ -16,6 +18,8 @@ function buildInitialAttributes(): CharacterAttributes {
 export const useCharacterBuilder = () => {
   const gateway = CharactersGateway();
   const characterStore = useCharacterStore();
+  const { t } = useI18n();
+  const notify = erebusMessage();
 
   // --- State ---
   const name = ref<string>('');
@@ -100,6 +104,7 @@ export const useCharacterBuilder = () => {
       return false;
     } catch (err) {
       console.error(err);
+      notify.danger(t('common.errors.fetchFailed'));
       return false;
     }
   }

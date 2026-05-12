@@ -261,15 +261,15 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useQuasar } from 'quasar';
 import { useCharacterBuilder } from 'src/composables/character.composable';
 import type { CharacterEnhancement, CharacterSkill, CharacterValidationError } from 'src/model/types/character.type';
 import AttributeInput from 'src/components/character/AttributeInput.vue';
 import AddSkillDialog from 'src/components/character/AddSkillDialog.vue';
 import AddEnhancementDialog from 'src/components/character/AddEnhancementDialog.vue';
+import { erebusMessage } from 'src/model/utils/message';
 
 const { t } = useI18n();
-const $q = useQuasar();
+const notify = erebusMessage();
 
 const {
   name,
@@ -352,24 +352,12 @@ async function handleSubmit(): Promise<void> {
     const success = await submit();
 
     if (success) {
-      $q.notify({
-        type: 'positive',
-        message: t('pages.character.validation.success'),
-        position: 'top',
-      });
+      notify.success(t('pages.character.validation.success'));
     } else {
-      $q.notify({
-        type: 'negative',
-        message: t('pages.character.validation.failed'),
-        position: 'top',
-      });
+      notify.danger(t('pages.character.validation.failed'));
     }
   } catch {
-    $q.notify({
-      type: 'negative',
-      message: t('pages.character.validation.networkError'),
-      position: 'top',
-    });
+    notify.danger(t('pages.character.validation.networkError'));
   } finally {
     loading.value = false;
   }

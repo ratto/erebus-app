@@ -104,16 +104,17 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useQuasar, type QTableColumn } from 'quasar';
+import { type QTableColumn } from 'quasar';
 import ErebusTable from 'src/components/common/ErebusTable.vue';
 import { storeToRefs } from 'pinia';
 import { useItemsStore } from 'src/stores/items.store';
 import type { Item, ItemInput, ItemType } from 'src/model/types/item.type';
 import ItemFormDialog from 'src/components/items-page/ItemFormDialog.vue';
 import DeleteItemDialog from 'src/components/items-page/DeleteItemDialog.vue';
+import { erebusMessage } from 'src/model/utils/message';
 
 const { t } = useI18n();
-const $q = useQuasar();
+const notify = erebusMessage();
 const store = useItemsStore();
 const { items } = storeToRefs(store);
 
@@ -187,10 +188,10 @@ function openDeleteDialog(item: Item): void {
 function handleFormConfirm(input: ItemInput): void {
   if (formMode.value === 'create') {
     store.addItem(input);
-    $q.notify({ type: 'positive', message: t('pages.items.notify.created') });
+    notify.success(t('pages.items.notify.created'));
   } else if (selectedItem.value) {
     store.updateItem(selectedItem.value.id, input);
-    $q.notify({ type: 'positive', message: t('pages.items.notify.updated') });
+    notify.success(t('pages.items.notify.updated'));
   }
   formDialogOpen.value = false;
 }
@@ -198,7 +199,7 @@ function handleFormConfirm(input: ItemInput): void {
 function handleDeleteConfirm(): void {
   if (!itemToDelete.value) return;
   store.removeItem(itemToDelete.value.id);
-  $q.notify({ type: 'positive', message: t('pages.items.notify.removed') });
+  notify.success(t('pages.items.notify.removed'));
   itemToDelete.value = undefined;
 }
 </script>
