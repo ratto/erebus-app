@@ -26,7 +26,7 @@
 
             <div class="col-12 col-md-4 col-lg-2">
               <erebus-select
-                v-model="selectedGrupo"
+                v-model="selectedGroup"
                 :options="grupoOptions"
                 :label="t('pages.skills.filters.selectGroup.label')"
                 data-testid="select-grupo"
@@ -67,8 +67,8 @@
                 data-testid="chevron-btn"
               />
             </q-td>
-            <q-td key="nome" :props="props">{{ props.row.nome }}</q-td>
-            <q-td key="grupo" :props="props">{{ props.row.grupo ?? '—' }}</q-td>
+            <q-td key="name" :props="props">{{ props.row.name }}</q-td>
+            <q-td key="group" :props="props">{{ props.row.group ?? '—' }}</q-td>
             <q-td v-if="!$q.screen.lt.md" key="atributoBase" :props="props">{{
               props.row.atributoBase ?? '—'
             }}</q-td>
@@ -76,13 +76,13 @@
               <q-badge v-if="!props.row.apenasComTreinamento" color="negative" label="Não" />
               <q-badge v-else color="positive" label="Sim" />
             </q-td>
-            <q-td v-if="!$q.screen.lt.md" key="sinergia" :props="props">{{
-              props.row.sinergia ?? '—'
+            <q-td v-if="!$q.screen.lt.md" key="synergy" :props="props">{{
+              props.row.synergy ?? '—'
             }}</q-td>
           </q-tr>
           <q-tr v-if="expanded.has(props.row.id)" :props="props">
             <q-td colspan="100%" class="skill-description">
-              {{ props.row.descricao }}
+              {{ props.row.description }}
             </q-td>
           </q-tr>
         </template>
@@ -109,7 +109,7 @@ const { loading, skills, getAllSkills } = useSkills();
 const expanded = reactive(new Set<number>());
 
 const searchText = ref('');
-const selectedGrupo = ref<string | null>(null);
+const selectedGroup = ref<string | null>(null);
 const selectedAtributo = ref<string | null>(null);
 
 const pagination = ref({
@@ -124,32 +124,32 @@ const atributoOptions = [
 ];
 
 const grupoOptions = computed(() => {
-  const grupos = new Set<string>();
+  const groups = new Set<string>();
   skills.value.forEach((s) => {
-    if (s.grupo) grupos.add(s.grupo);
+    if (s.group) groups.add(s.group);
   });
-  return [{ label: '', value: null }, ...[...grupos].sort().map((g) => ({ label: g, value: g }))];
+  return [{ label: '', value: null }, ...[...groups].sort().map((g) => ({ label: g, value: g }))];
 });
 
 const filterComputed = computed(() => ({
-  nome: searchText.value,
-  grupo: selectedGrupo.value,
+  name: searchText.value,
+  group: selectedGroup.value,
   atributo: selectedAtributo.value,
 }));
 
 const allColumns = computed<QTableColumn[]>(() => [
   { name: 'expand', label: '', field: 'id', align: 'left' },
   {
-    name: 'nome',
+    name: 'name',
     label: t('pages.skills.columns.name'),
-    field: 'nome',
+    field: 'name',
     sortable: true,
     align: 'left',
   },
   {
-    name: 'grupo',
+    name: 'group',
     label: t('pages.skills.columns.group'),
-    field: 'grupo',
+    field: 'group',
     sortable: true,
     align: 'left',
   },
@@ -166,30 +166,30 @@ const allColumns = computed<QTableColumn[]>(() => [
     field: 'apenasComTreinamento',
     align: 'center',
   },
-  { name: 'sinergia', label: t('pages.skills.columns.synergy'), field: 'sinergia', align: 'left' },
+  { name: 'synergy', label: t('pages.skills.columns.synergy'), field: 'synergy', align: 'left' },
   { name: 'actions', label: '', field: 'id', align: 'right' },
 ]);
 
 const visibleColumnsConfig = computed<QTableColumn[]>(() => {
   if ($q.screen.lt.md) {
-    return allColumns.value.filter((c) => !['atributoBase', 'sinergia'].includes(c.name));
+    return allColumns.value.filter((c) => !['atributoBase', 'synergy'].includes(c.name));
   }
   return allColumns.value;
 });
 
 function filterMethod(
   rows: readonly Skill[],
-  terms: { nome: string; grupo: string | null; atributo: string | null },
+  terms: { name: string; group: string | null; atributo: string | null },
 ): Skill[] {
   return (rows as Skill[]).filter((row) => {
-    const matchNome = !terms.nome || row.nome.toLowerCase().includes(terms.nome.toLowerCase());
-    const matchGrupo = !terms.grupo || row.grupo === terms.grupo;
+    const matchName = !terms.name || row.name.toLowerCase().includes(terms.name.toLowerCase());
+    const matchGroup = !terms.group || row.group === terms.group;
     const matchAtributo =
       !terms.atributo ||
       (terms.atributo === '__none__'
         ? row.atributoBase === null
         : row.atributoBase === terms.atributo);
-    return matchNome && matchGrupo && matchAtributo;
+    return matchName && matchGroup && matchAtributo;
   });
 }
 
