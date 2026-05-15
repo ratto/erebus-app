@@ -69,7 +69,7 @@ describe('useCapacity', () => {
     });
 
     test('loading deve ser true durante a chamada e false após', async () => {
-      let resolvePromise!: (value: CapacityResult) => void;
+      let resolvePromise!: (value: number) => void;
       const deferred = new Promise<number>((resolve) => {
         resolvePromise = resolve;
       });
@@ -138,7 +138,7 @@ describe('useCapacity', () => {
     });
 
     test('loading deve ser true durante a chamada e false após', async () => {
-      let resolvePromise!: (value: CapacityResult) => void;
+      let resolvePromise!: (value: number) => void;
       const deferred = new Promise<number>((resolve) => {
         resolvePromise = resolve;
       });
@@ -197,7 +197,7 @@ describe('useCapacity', () => {
     });
 
     test('loading deve ser true durante a chamada e false após', async () => {
-      let resolvePromise!: (value: CapacityResult) => void;
+      let resolvePromise!: (value: number) => void;
       const deferred = new Promise<number>((resolve) => {
         resolvePromise = resolve;
       });
