@@ -1,9 +1,9 @@
 export type Skill = {
   id: number;
-  nome: string;
-  grupo: string | null;
+  name: string;
+  group: string | null;
   atributoBase: string | null;
   apenasComTreinamento: boolean;
-  sinergia: string | null;
-  descricao: string;
+  synergy: string | null;
+  description: string;
 };

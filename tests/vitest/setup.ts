@@ -20,6 +20,7 @@ import ptBR from 'src/i18n/pt-BR';
 import ErebusInput from 'src/components/common/ErebusInput.vue';
 import ErebusSelect from 'src/components/common/ErebusSelect.vue';
 import ErebusTable from 'src/components/common/ErebusTable.vue';
+import ErebusDialog from 'src/components/common/ErebusDialog.vue';
 
 // Instância de i18n compartilhada por todos os testes.
 // Legacy: false é obrigatório para Composition API (useI18n).
@@ -43,4 +44,5 @@ config.global.components = {
   ErebusInput,
   ErebusSelect,
   ErebusTable,
+  ErebusDialog,
 };

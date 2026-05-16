@@ -15,6 +15,7 @@ export default {
     combatSkills: 'PERÍCIAS DE COMBATE',
     character: 'PERSONAGEM',
     protectiveEquipment: 'EQUIPAMENTOS DE PROTEÇÃO',
+    capacity: 'CAPACIDADE',
   },
   footer: {
     copyright: 'EREBUS ENGINE © 2026',

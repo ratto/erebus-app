@@ -26,17 +26,18 @@ O frontend é uma **SPA** construída com **Vue 3 + Quasar Framework**, utilizan
 
 ### Páginas implementadas
 
-| Página                       | Rota                     | Descrição                                      |
-| ---------------------------- | ------------------------ | ---------------------------------------------- |
-| `IndexPage`                  | `/`                      | Landing page / início                          |
-| `SkillsPage`                 | `/pericias`              | Listagem das 195 perícias do Sistema Daemon    |
-| `WeaponsPage`                | `/armas`                 | Listagem de armamentos                         |
-| `EnhancementsPage`           | `/aprimoramentos`        | Listagem de aprimoramentos                     |
-| `ProtectiveEquipmentPage`    | `/equipamentos-protecao` | Equipamentos de proteção com IPs por dano      |
-| `ItemsPage`                  | `/itens`                 | Listagem de itens                              |
-| `CombatSkillsPage`           | `/pericias-combate`      | Perícias de combate do Sistema Daemon          |
-| `CharacterPage`              | `/personagem`            | Ficha e validação de personagem                |
-| `ErrorNotFound`              | fallback 404             | Página de erro                                 |
+| Página                       | Rota                     | Descrição                                                    |
+| ---------------------------- | ------------------------ | ------------------------------------------------------------ |
+| `IndexPage`                  | `/`                      | Landing page / início                                        |
+| `SkillsPage`                 | `/pericias`              | Listagem das 195 perícias (i18n pt-BR/en-US)                 |
+| `WeaponsPage`                | `/armas`                 | Listagem de armamentos                                       |
+| `EnhancementsPage`           | `/aprimoramentos`        | Listagem de aprimoramentos                                   |
+| `ProtectiveEquipmentPage`    | `/equipamentos-protecao` | Equipamentos de proteção com IPs por dano                    |
+| `ItemsPage`                  | `/itens`                 | Listagem de itens                                            |
+| `CombatSkillsPage`           | `/pericias-combate`      | Perícias de combate do Sistema Daemon                        |
+| `CharacterPage`              | `/personagem`            | Ficha e validação de personagem (notificações erebusMessage) |
+| `CapacityPage`               | `/capacidade`            | Calculadora de capacidade física (fórmula Y = K × 2^(FR/6)) |
+| `ErrorNotFound`              | fallback 404             | Página de erro                                               |
 
 ### Arquitetura de dados
 
@@ -50,13 +51,15 @@ O padrão adotado é **composable → gateway → API** (sem camada `src/service
 
 ### Stores (Pinia)
 
-| Store             | Status      | Responsabilidade                        |
-| ----------------- | ----------- | --------------------------------------- |
-| `example-store`   | Placeholder | —                                       |
-| `character`       | Planejado   | Personagem atual e histórico de geração |
-| `ui`              | Planejado   | Estado de página e tema                 |
-| `logs`            | Planejado   | Eventos SSE e status de conexão         |
-| `api`             | Planejado   | Configurações e estado da API           |
+| Store       | Status       | Responsabilidade                        |
+| ----------- | ------------ | --------------------------------------- |
+| `character` | Implementado | Personagem atual e histórico de geração |
+| `chat`      | Implementado | Estado do chat de assistência           |
+| `config`    | Implementado | Configurações gerais (locale, tema)     |
+| `items`     | Implementado | Gerenciamento de itens                  |
+| `ui`        | Planejado    | Estado de página e tema                 |
+| `logs`      | Planejado    | Eventos SSE e status de conexão         |
+| `api`       | Planejado    | Configurações e estado da API           |
 
 ---
 

@@ -1,8 +1,8 @@
 # PRD: Erebus Web App (SPA)
 
-**Versão:** 0.2.0  
+**Versão:** 0.3.0  
 **Data de Criação:** 16/03/2026  
-**Última Atualização:** 09/05/2026  
+**Última Atualização:** 16/05/2026  
 **Status:** Em Desenvolvimento  
 **Repositório:** `github.com/ratto/erebus-app`
 
@@ -475,7 +475,7 @@ data: {"type":"SkillTested","characterId":"char-123","skillName":"Espada","succe
 
 ## 7. Arquitetura Técnica
 
-### Estrutura de Diretórios (Sprint 2 — Estado Atual)
+### Estrutura de Diretórios (Sprint 3 — Estado Atual)
 
 ```
 erebus-app/
@@ -483,32 +483,76 @@ erebus-app/
 │   ├── components/              # Componentes Vue reutilizáveis
 │   │   ├── ErebusTopbar.vue
 │   │   ├── ErebusFooter.vue
-│   │   └── MenuDrawer.vue
-│   ├── pages/                   # Páginas (rotas) — 9 implementadas
+│   │   ├── MenuDrawer.vue
+│   │   ├── ChatDrawer.vue
+│   │   ├── SettingsDialog.vue
+│   │   ├── character-page/
+│   │   │   ├── AddEnhancementDialog.vue
+│   │   │   ├── AddSkillDialog.vue
+│   │   │   └── AttributeInput.vue
+│   │   ├── common/
+│   │   │   ├── ErebusDialog.vue
+│   │   │   ├── ErebusInput.vue
+│   │   │   ├── ErebusSelect.vue
+│   │   │   └── ErebusTable.vue
+│   │   ├── items-page/
+│   │   │   ├── DeleteItemDialog.vue
+│   │   │   └── ItemFormDialog.vue
+│   │   └── weapons-page/
+│   │       ├── TabFirearmWeapons.vue
+│   │       ├── TabMeeleeWeapons.vue
+│   │       └── TabRangedWeapons.vue
+│   ├── pages/                   # Páginas (rotas) — 10 implementadas
 │   │   ├── IndexPage.vue            # rota: /
-│   │   ├── SkillsPage.vue           # rota: /pericias
+│   │   ├── SkillsPage.vue           # rota: /pericias (i18n pt-BR/en-US)
 │   │   ├── WeaponsPage.vue          # rota: /armas
 │   │   ├── EnhancementsPage.vue     # rota: /aprimoramentos
 │   │   ├── ProtectiveEquipmentPage.vue # rota: /equipamentos-protecao
 │   │   ├── ItemsPage.vue            # rota: /itens
 │   │   ├── CombatSkillsPage.vue     # rota: /pericias-combate
 │   │   ├── CharacterPage.vue        # rota: /personagem
+│   │   ├── CapacityPage.vue         # rota: /capacidade
 │   │   └── ErrorNotFound.vue        # fallback 404
 │   ├── composables/             # Lógica de negócio (padrão: composable → gateway → API)
-│   │   ├── skills.composable.ts
 │   │   ├── capacity.composable.ts
-│   │   └── ...
+│   │   ├── character.composable.ts
+│   │   ├── chat.composable.ts
+│   │   ├── combat-skills.composable.ts
+│   │   ├── enhancements.composable.ts
+│   │   ├── protective-equipment.composable.ts
+│   │   ├── skills.composable.ts
+│   │   └── weapons.composable.ts
 │   ├── model/
+│   │   ├── enums/
+│   │   │   └── damage-type.enum.ts
 │   │   ├── gateways/            # HTTP client (Axios) por domínio
 │   │   │   ├── base.gateway.ts
+│   │   │   ├── capacity.gateway.ts
+│   │   │   ├── characters.gateway.ts
+│   │   │   ├── combat-skills.gateway.ts
+│   │   │   ├── dice.gateway.ts
+│   │   │   ├── enhancements.gateway.ts
+│   │   │   ├── protective-equipment.gateway.ts
 │   │   │   ├── skills.gateway.ts
-│   │   │   └── capacity.gateway.ts
+│   │   │   └── weapons.gateway.ts
 │   │   └── types/               # Tipos TypeScript da camada de dados
+│   │       ├── capacity.type.ts
+│   │       ├── character.type.ts
+│   │       ├── combat-skill.type.ts
+│   │       ├── enhancement.type.ts
+│   │       ├── item.type.ts
+│   │       ├── protective-equipment.type.ts
 │   │       ├── skill.type.ts
-│   │       └── capacity.type.ts
+│   │       ├── weapon-damage.type.ts
+│   │       └── weapon.type.ts
 │   ├── layouts/
 │   │   └── MainLayout.vue
-│   ├── stores/                  # Pinia (apenas example-store.ts — stores de domínio planejados)
+│   ├── stores/                  # Pinia
+│   │   ├── character.store.ts   # Personagem atual e histórico de geração
+│   │   ├── chat.ts              # Estado do chat de assistência
+│   │   ├── config.store.ts      # Configurações gerais (locale, tema)
+│   │   ├── items.store.ts       # Gerenciamento de itens
+│   │   └── index.ts
 │   ├── css/                     # Estilos globais
 │   ├── App.vue
 │   ├── main.ts
@@ -577,38 +621,22 @@ App.vue
 
 ### State Management (Pinia)
 
-```typescript
-// stores/character.ts
-export const useCharacterStore = defineStore('character', () => {
-  const currentCharacter = ref<Character | null>(null);
-  const generationHistory = ref<Character[]>([]);
-  
-  const generateCharacter = async (mode: 'realistic' | 'adventure') => { /* ... */ }
-  const setCurrentCharacter = (char: Character) => { /* ... */ }
-  
-  return { currentCharacter, generationHistory, generateCharacter, setCurrentCharacter }
-})
+Stores implementados na Sprint 3:
 
-// stores/ui.ts
-export const useUIStore = defineStore('ui', () => {
-  const currentPage = ref('home');
-  const isDarkMode = ref(false);
-  
-  const navigateTo = (page: string) => { /* ... */ }
-  const toggleDarkMode = () => { /* ... */ }
-})
+| Store               | Arquivo              | Responsabilidade                        |
+| ------------------- | -------------------- | --------------------------------------- |
+| `character`         | character.store.ts   | Personagem atual e histórico de geração |
+| `chat`              | chat.ts              | Estado do chat de assistência           |
+| `config`            | config.store.ts      | Configurações gerais (locale, tema)     |
+| `items`             | items.store.ts       | Gerenciamento de itens                  |
 
-// stores/logs.ts
-export const useLogsStore = defineStore('logs', () => {
-  const logs = ref<GameEvent[]>([]);
-  const isConnected = ref(false);
-  const filter = ref('all');
-  
-  const addLog = (event: GameEvent) => { /* ... */ }
-  const clearLogs = () => { /* ... */ }
-  const setConnection = (connected: boolean) => { /* ... */ }
-})
-```
+Stores planejados (não implementados):
+
+| Store | Responsabilidade                |
+| ----- | ------------------------------- |
+| `ui`  | Estado de página e tema         |
+| `logs`| Eventos SSE e status de conexão |
+| `api` | Configurações e estado da API   |
 
 ---
 
@@ -770,5 +798,31 @@ jobs:
 
 ---
 
+---
+
+## 16. Histórico de Sprints
+
+### Sprint 3 (mai/2026) — Encerramento
+
+**Incrementos entregues:**
+
+| US | Descrição | Status |
+|----|-----------|--------|
+| US-018 | Sistema de capacidade física — calculadora Y = K × 2^(FR/6) (`CapacityPage`) | ✅ |
+| US-042 | Reestruturação de skills para padrão i18n bilíngue (pt-BR/en-US) | ✅ |
+| US-050 | Componente `ErebusDialog` — 5 diálogos migrados para padrão centralizado | ✅ |
+| US-051 | `erebusMessage` — factory centralizada de notificações Quasar | ✅ |
+| US-058 | Testes de componentes da `CharacterPage` (dialogs de atributo, skill, aprimoramento) | ✅ |
+| US-059 | Testes de gateways (characters, combat-skills, dice, enhancements, protective-equipment, weapons) | ✅ |
+| US-060 | Testes de páginas (CharacterPage, CapacityPage, CombatSkillsPage, ProtectiveEquipmentPage) | ✅ |
+
+**Destaques técnicos:**
+- Padrão `erebusMessage` substituiu uso direto de `Notify.create` — notificações unificadas com classes CSS `erebus-notify--success/danger`
+- `ErebusDialog` como wrapper reutilizável para todos os dialogs do projeto
+- Skills com campos bilíngues `name_pt` / `name_en` e `description_pt` / `description_en`
+- Suite de testes expandida: 421 testes (erebus-app) + 169 testes (erebus-api) passando
+
+---
+
 **Próximo Review:** 30/06/2026  
-**Última Atualização:** 09/05/2026
+**Última Atualização:** 16/05/2026
