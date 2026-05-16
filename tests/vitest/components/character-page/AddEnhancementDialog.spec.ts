@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import AddEnhancementDialog from 'src/components/character/AddEnhancementDialog.vue';
+import AddEnhancementDialog from 'src/components/character-page/AddEnhancementDialog.vue';
 
 interface EnhancementOption {
   id: number;

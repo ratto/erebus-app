@@ -1,21 +1,30 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import AddSkillDialog from 'src/components/character/AddSkillDialog.vue';
+import AddSkillDialog from 'src/components/character-page/AddSkillDialog.vue';
 
-const QSelectStub = {
-  template: `<select
-    :value="modelValue"
-    @change="$emit('update:modelValue', parseSelectValue($event.target.value))"
-  >
-    <option v-for="opt in options" :key="opt.id" :value="opt.id">
-      {{ opt.nome }}
-    </option>
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({ t: (key: string) => key }),
+}));
+
+const ErebusDialogStub = {
+  template: `<div>
+    <slot />
+    <button data-testid="btn-cancel" @click="$emit('cancel'); $emit('update:modelValue', false)">{{ cancelLabel }}</button>
+    <button data-testid="btn-confirm" :disabled="disableConfirm" @click="$emit('confirm')">{{ confirmLabel }}</button>
+  </div>`,
+  props: ['modelValue', 'title', 'confirmLabel', 'cancelLabel', 'disableConfirm', 'hideCancelButton', 'type', 'persistent'],
+  emits: ['update:modelValue', 'confirm', 'cancel'],
+};
+
+const ErebusSelectStub = {
+  template: `<select :value="modelValue" @change="$emit('update:modelValue', parseVal($event.target.value))">
+    <option v-for="opt in options" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
   </select>`,
-  props: ['modelValue', 'options', 'optionLabel', 'optionValue', 'emitValue', 'mapOptions'],
+  props: ['modelValue', 'options', 'dataTestid', 'innerClass'],
   emits: ['update:modelValue'],
   methods: {
-    parseSelectValue(val: string) {
+    parseVal(val: string) {
       const num = Number(val);
       return isNaN(num) ? val : num;
     },
@@ -23,19 +32,9 @@ const QSelectStub = {
 };
 
 const QInputStub = {
-  template: `<input
-    type="number"
-    :value="modelValue"
-    @input="$emit('update:modelValue', Number($event.target.value))"
-  />`,
+  template: `<input type="number" :value="modelValue" @input="$emit('update:modelValue', Number($event.target.value))" />`,
   props: ['modelValue', 'type', 'label', 'min', 'max', 'dense', 'outlined'],
   emits: ['update:modelValue'],
-};
-
-const QBtnStub = {
-  template: '<button @click="$emit(\'click\')" :disabled="disable"><slot /></button>',
-  props: ['disable', 'label', 'flat', 'class'],
-  emits: ['click'],
 };
 
 const skillOptions = [
@@ -53,13 +52,9 @@ function mountDialog(props: { modelValue?: boolean; skillOptions?: typeof skillO
     global: {
       plugins: [],
       stubs: {
-        QDialog: { template: '<div><slot /></div>' },
-        QCard: { template: '<div class="q-card"><slot /></div>' },
-        QCardSection: { template: '<div class="q-card-section"><slot /></div>' },
-        QCardActions: { template: '<div class="q-card-actions"><slot /></div>' },
-        QSelect: QSelectStub,
+        ErebusDialog: ErebusDialogStub,
+        ErebusSelect: ErebusSelectStub,
         QInput: QInputStub,
-        QBtn: QBtnStub,
       },
     },
   });
@@ -71,7 +66,7 @@ describe('AddSkillDialog.vue', () => {
     expect(wrapper.exists()).toBe(true);
   });
 
-  it('QSelect exibe as opções de perícia', () => {
+  it('ErebusSelect exibe as opções de perícia', () => {
     const wrapper = mountDialog();
     const options = wrapper.findAll('option');
     expect(options).toHaveLength(skillOptions.length);
@@ -81,64 +76,59 @@ describe('AddSkillDialog.vue', () => {
 
   it('botão Confirmar está desabilitado sem perícia selecionada', () => {
     const wrapper = mountDialog();
-    const buttons = wrapper.findAll('button');
-    const confirmBtn = buttons[buttons.length - 1]!;
+    const confirmBtn = wrapper.find('[data-testid="btn-confirm"]');
     expect(confirmBtn.attributes('disabled')).toBeDefined();
   });
 
   it('botão Confirmar está desabilitado com points abaixo do mínimo (< 10)', async () => {
     const wrapper = mountDialog();
     const vm = wrapper.vm as unknown as {
-      selectedSkill: { id: number; nome: string } | null;
+      selectedSkillId: number | null;
       points: number;
     };
-    vm.selectedSkill = { id: 1, nome: 'Espada' };
+    vm.selectedSkillId = 1;
     vm.points = 9;
     await nextTick();
-    const buttons = wrapper.findAll('button');
-    const confirmBtn = buttons[buttons.length - 1]!;
+    const confirmBtn = wrapper.find('[data-testid="btn-confirm"]');
     expect(confirmBtn.attributes('disabled')).toBeDefined();
   });
 
   it('botão Confirmar está desabilitado com points acima do máximo (> 50)', async () => {
     const wrapper = mountDialog();
     const vm = wrapper.vm as unknown as {
-      selectedSkill: { id: number; nome: string } | null;
+      selectedSkillId: number | null;
       points: number;
     };
-    vm.selectedSkill = { id: 1, nome: 'Espada' };
+    vm.selectedSkillId = 1;
     vm.points = 51;
     await nextTick();
-    const buttons = wrapper.findAll('button');
-    const confirmBtn = buttons[buttons.length - 1]!;
+    const confirmBtn = wrapper.find('[data-testid="btn-confirm"]');
     expect(confirmBtn.attributes('disabled')).toBeDefined();
   });
 
   it('botão Confirmar está habilitado com seleção válida e points no range', async () => {
     const wrapper = mountDialog();
     const vm = wrapper.vm as unknown as {
-      selectedSkill: { id: number; nome: string } | null;
+      selectedSkillId: number | null;
       points: number;
     };
-    vm.selectedSkill = { id: 1, nome: 'Espada' };
+    vm.selectedSkillId = 1;
     vm.points = 20;
     await nextTick();
-    const buttons = wrapper.findAll('button');
-    const confirmBtn = buttons[buttons.length - 1]!;
+    const confirmBtn = wrapper.find('[data-testid="btn-confirm"]');
     expect(confirmBtn.attributes('disabled')).toBeUndefined();
   });
 
   it('emite add com CharacterSkill correto ao confirmar', async () => {
     const wrapper = mountDialog();
     const vm = wrapper.vm as unknown as {
-      selectedSkill: { id: number; nome: string } | null;
+      selectedSkillId: number | null;
       points: number;
     };
-    vm.selectedSkill = { id: 1, nome: 'Espada' };
+    vm.selectedSkillId = 1;
     vm.points = 20;
     await nextTick();
-    const buttons = wrapper.findAll('button');
-    const confirmBtn = buttons[buttons.length - 1]!;
+    const confirmBtn = wrapper.find('[data-testid="btn-confirm"]');
     await confirmBtn.trigger('click');
     const emitted = wrapper.emitted('add');
     expect(emitted).toBeTruthy();
@@ -148,14 +138,13 @@ describe('AddSkillDialog.vue', () => {
   it('emite update:modelValue=false após confirmação', async () => {
     const wrapper = mountDialog();
     const vm = wrapper.vm as unknown as {
-      selectedSkill: { id: number; nome: string } | null;
+      selectedSkillId: number | null;
       points: number;
     };
-    vm.selectedSkill = { id: 2, nome: 'Arco' };
+    vm.selectedSkillId = 2;
     vm.points = 30;
     await nextTick();
-    const buttons = wrapper.findAll('button');
-    const confirmBtn = buttons[buttons.length - 1]!;
+    const confirmBtn = wrapper.find('[data-testid="btn-confirm"]');
     await confirmBtn.trigger('click');
     const emitted = wrapper.emitted('update:modelValue');
     expect(emitted).toBeTruthy();
@@ -163,27 +152,25 @@ describe('AddSkillDialog.vue', () => {
     expect(lastEmit).toEqual([false]);
   });
 
-  it('estado reseta após confirmação (selectedSkill=null, points=10)', async () => {
+  it('estado reseta após confirmação (selectedSkillId=null, points=10)', async () => {
     const wrapper = mountDialog();
     const vm = wrapper.vm as unknown as {
-      selectedSkill: { id: number; nome: string } | null;
+      selectedSkillId: number | null;
       points: number;
     };
-    vm.selectedSkill = { id: 1, nome: 'Espada' };
+    vm.selectedSkillId = 1;
     vm.points = 25;
     await nextTick();
-    const buttons = wrapper.findAll('button');
-    const confirmBtn = buttons[buttons.length - 1]!;
+    const confirmBtn = wrapper.find('[data-testid="btn-confirm"]');
     await confirmBtn.trigger('click');
     await nextTick();
-    expect(vm.selectedSkill).toBeNull();
+    expect(vm.selectedSkillId).toBeNull();
     expect(vm.points).toBe(10);
   });
 
   it('cancelar emite update:modelValue=false', async () => {
     const wrapper = mountDialog();
-    const buttons = wrapper.findAll('button');
-    const cancelBtn = buttons[0]!;
+    const cancelBtn = wrapper.find('[data-testid="btn-cancel"]');
     await cancelBtn.trigger('click');
     const emitted = wrapper.emitted('update:modelValue');
     expect(emitted).toBeTruthy();

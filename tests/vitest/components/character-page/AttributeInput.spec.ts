@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import AttributeInput from 'src/components/character/AttributeInput.vue';
+import AttributeInput from 'src/components/character-page/AttributeInput.vue';
 
 const QInputStub = {
   template: `<div class="q-input-stub">
