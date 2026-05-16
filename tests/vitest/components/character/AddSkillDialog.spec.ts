@@ -88,7 +88,10 @@ describe('AddSkillDialog.vue', () => {
 
   it('botão Confirmar está desabilitado com points abaixo do mínimo (< 10)', async () => {
     const wrapper = mountDialog();
-    const vm = wrapper.vm as unknown as { selectedSkill: { id: number; nome: string } | null; points: number };
+    const vm = wrapper.vm as unknown as {
+      selectedSkill: { id: number; nome: string } | null;
+      points: number;
+    };
     vm.selectedSkill = { id: 1, nome: 'Espada' };
     vm.points = 9;
     await nextTick();
@@ -99,7 +102,10 @@ describe('AddSkillDialog.vue', () => {
 
   it('botão Confirmar está desabilitado com points acima do máximo (> 50)', async () => {
     const wrapper = mountDialog();
-    const vm = wrapper.vm as unknown as { selectedSkill: { id: number; nome: string } | null; points: number };
+    const vm = wrapper.vm as unknown as {
+      selectedSkill: { id: number; nome: string } | null;
+      points: number;
+    };
     vm.selectedSkill = { id: 1, nome: 'Espada' };
     vm.points = 51;
     await nextTick();
@@ -110,7 +116,10 @@ describe('AddSkillDialog.vue', () => {
 
   it('botão Confirmar está habilitado com seleção válida e points no range', async () => {
     const wrapper = mountDialog();
-    const vm = wrapper.vm as unknown as { selectedSkill: { id: number; nome: string } | null; points: number };
+    const vm = wrapper.vm as unknown as {
+      selectedSkill: { id: number; nome: string } | null;
+      points: number;
+    };
     vm.selectedSkill = { id: 1, nome: 'Espada' };
     vm.points = 20;
     await nextTick();
@@ -121,7 +130,10 @@ describe('AddSkillDialog.vue', () => {
 
   it('emite add com CharacterSkill correto ao confirmar', async () => {
     const wrapper = mountDialog();
-    const vm = wrapper.vm as unknown as { selectedSkill: { id: number; nome: string } | null; points: number };
+    const vm = wrapper.vm as unknown as {
+      selectedSkill: { id: number; nome: string } | null;
+      points: number;
+    };
     vm.selectedSkill = { id: 1, nome: 'Espada' };
     vm.points = 20;
     await nextTick();
@@ -135,7 +147,10 @@ describe('AddSkillDialog.vue', () => {
 
   it('emite update:modelValue=false após confirmação', async () => {
     const wrapper = mountDialog();
-    const vm = wrapper.vm as unknown as { selectedSkill: { id: number; nome: string } | null; points: number };
+    const vm = wrapper.vm as unknown as {
+      selectedSkill: { id: number; nome: string } | null;
+      points: number;
+    };
     vm.selectedSkill = { id: 2, nome: 'Arco' };
     vm.points = 30;
     await nextTick();
@@ -150,7 +165,10 @@ describe('AddSkillDialog.vue', () => {
 
   it('estado reseta após confirmação (selectedSkill=null, points=10)', async () => {
     const wrapper = mountDialog();
-    const vm = wrapper.vm as unknown as { selectedSkill: { id: number; nome: string } | null; points: number };
+    const vm = wrapper.vm as unknown as {
+      selectedSkill: { id: number; nome: string } | null;
+      points: number;
+    };
     vm.selectedSkill = { id: 1, nome: 'Espada' };
     vm.points = 25;
     await nextTick();

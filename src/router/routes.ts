@@ -13,6 +13,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'pericias-de-combate', name: 'CombatSkills', component: () => import('pages/CombatSkillsPage.vue') },
       { path: 'personagem', name: 'Character', component: () => import('pages/CharacterPage.vue') },
       { path: 'equipamentos-protecao', name: 'ProtectiveEquipment', component: () => import('pages/ProtectiveEquipmentPage.vue') },
+      { path: 'capacidade', name: 'Capacity', component: () => import('pages/CapacityPage.vue') },
     ],
   },
 
