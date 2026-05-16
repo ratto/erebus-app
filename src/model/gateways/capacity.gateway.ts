@@ -10,7 +10,7 @@ export const CapacityGateway = () => {
   }
 
   async function calculateK(params: CapacityKParams): Promise<number> {
-    const response = await base.post('capacity/calculate-k', { attribute: params.attribute, y: params.y });
+    const response = await base.post('capacity/calculate-k', { y: params.y });
     return response.data as number;
   }
 

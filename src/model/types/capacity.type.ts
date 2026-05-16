@@ -4,7 +4,6 @@ export type CapacityYParams = {
 };
 
 export type CapacityKParams = {
-  attribute: number;
   y: number;
 };
 

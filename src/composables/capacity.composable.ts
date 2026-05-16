@@ -22,13 +22,13 @@ export const useCapacity = () => {
     }
   }
 
-  async function calculateK(attribute: number, y: number): Promise<void> {
+  async function calculateK(y: number): Promise<void> {
     loading.value = true;
     result.value = null;
     error.value = null;
 
     try {
-      result.value = await gateway.calculateK({ attribute, y });
+      result.value = await gateway.calculateK({ y });
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Erro ao calcular K';
     } finally {

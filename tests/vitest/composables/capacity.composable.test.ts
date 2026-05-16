@@ -123,16 +123,16 @@ describe('useCapacity', () => {
       mockCalculateK.mockResolvedValue(resultFixture);
 
       const { calculateK } = useCapacity();
-      await calculateK(10, 39.37);
+      await calculateK(39.37);
 
-      expect(mockCalculateK).toHaveBeenCalledWith({ attribute: 10, y: 39.37 });
+      expect(mockCalculateK).toHaveBeenCalledWith({ y: 39.37 });
     });
 
     test('deve atualizar result com o valor retornado pelo gateway', async () => {
       mockCalculateK.mockResolvedValue(resultFixture);
 
       const { result, calculateK } = useCapacity();
-      await calculateK(10, 39.37);
+      await calculateK(39.37);
 
       expect(result.value).toBe(39.37);
     });
@@ -146,7 +146,7 @@ describe('useCapacity', () => {
 
       const { loading, calculateK } = useCapacity();
 
-      const fetchPromise = calculateK(10, 39.37);
+      const fetchPromise = calculateK(39.37);
       expect(loading.value).toBe(true);
 
       resolvePromise(resultFixture);
@@ -160,7 +160,7 @@ describe('useCapacity', () => {
       mockCalculateK.mockRejectedValue(new Error('Network Error'));
 
       const { loading, calculateK } = useCapacity();
-      await calculateK(10, 39.37);
+      await calculateK(39.37);
 
       expect(loading.value).toBe(false);
     });
@@ -171,7 +171,7 @@ describe('useCapacity', () => {
 
       const { calculateK } = useCapacity();
 
-      await expect(calculateK(10, 39.37)).resolves.toBeUndefined();
+      await expect(calculateK(39.37)).resolves.toBeUndefined();
     });
   });
 

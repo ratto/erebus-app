@@ -59,10 +59,10 @@ describe('CapacityGateway', () => {
       mockPost.mockResolvedValue(mockResponse);
 
       const gateway = CapacityGateway();
-      const actual = await gateway.calculateK({ attribute: 10, y: 39.37 });
+      const actual = await gateway.calculateK({ y: 39.37 });
 
       expect(mockPost).toHaveBeenCalledTimes(1);
-      expect(mockPost).toHaveBeenCalledWith('capacity/calculate-k', { attribute: 10, y: 39.37 });
+      expect(mockPost).toHaveBeenCalledWith('capacity/calculate-k', { y: 39.37 });
       expect(actual).toBe(resultFixture);
     });
 
@@ -72,7 +72,7 @@ describe('CapacityGateway', () => {
 
       const gateway = CapacityGateway();
 
-      await expect(gateway.calculateK({ attribute: 10, y: 39.37 })).rejects.toThrow('Network Error');
+      await expect(gateway.calculateK({ y: 39.37 })).rejects.toThrow('Network Error');
     });
   });
 

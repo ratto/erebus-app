@@ -58,16 +58,6 @@
               <div class="row q-col-gutter-md q-mb-md">
                 <div class="col-12 col-md-4">
                   <q-input
-                    v-model.number="kAttribute"
-                    type="number"
-                    label="Atributo"
-                    dense
-                    outlined
-                    data-testid="input-k-attribute"
-                  />
-                </div>
-                <div class="col-12 col-md-4">
-                  <q-input
                     v-model.number="kY"
                     type="number"
                     label="Y"
@@ -137,7 +127,6 @@ const activeTab = ref<string>('calculateY');
 const yAttribute = ref<number | null>(null);
 const yK = ref<number | null>(null);
 
-const kAttribute = ref<number | null>(null);
 const kY = ref<number | null>(null);
 
 const fr = ref<number | null>(null);
@@ -148,8 +137,8 @@ function handleCalculateY(): void {
 }
 
 function handleCalculateK(): void {
-  if (kAttribute.value === null || kY.value === null) return;
-  void calculateK(kAttribute.value, kY.value);
+  if (kY.value === null) return;
+  void calculateK(kY.value);
 }
 
 function handleCalculateDamageBonus(): void {
