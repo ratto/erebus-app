@@ -101,7 +101,6 @@ const AddEnhancementDialogStub = {
 
 const mountOptions = {
   global: {
-    plugins: [],
     stubs: {
       QPage: { template: '<div><slot /></div>' },
       AttributeInput: { template: '<div />', props: ['modelValue', 'label', 'tooltip'] },

@@ -8,11 +8,7 @@
     <main class="q-gutter-lg">
       <q-card class="erebus-card">
         <q-card-section>
-          <q-tabs
-            v-model="activeTab"
-            dense
-            align="left"
-          >
+          <q-tabs v-model="activeTab" dense align="left">
             <q-tab name="calculateY" label="Calcular Y" data-testid="tab-calculate-y" />
             <q-tab name="calculateK" label="Calcular K" data-testid="tab-calculate-k" />
             <q-tab name="damageBonus" label="Bônus de Dano" data-testid="tab-damage-bonus" />
@@ -56,16 +52,6 @@
             <!-- Tab: Calcular K -->
             <q-tab-panel name="calculateK">
               <div class="row q-col-gutter-md q-mb-md">
-                <div class="col-12 col-md-4">
-                  <q-input
-                    v-model.number="kAttribute"
-                    type="number"
-                    label="Atributo"
-                    dense
-                    outlined
-                    data-testid="input-k-attribute"
-                  />
-                </div>
                 <div class="col-12 col-md-4">
                   <q-input
                     v-model.number="kY"
@@ -114,7 +100,7 @@
       <q-card v-if="result !== null" class="erebus-card" data-testid="capacity-result">
         <q-card-section>
           <div class="result-label">Resultado</div>
-          <div class="result-value" data-testid="result-value">{{ result.value }}</div>
+          <div class="result-value" data-testid="result-value">{{ result }}</div>
         </q-card-section>
       </q-card>
 
@@ -137,7 +123,6 @@ const activeTab = ref<string>('calculateY');
 const yAttribute = ref<number | null>(null);
 const yK = ref<number | null>(null);
 
-const kAttribute = ref<number | null>(null);
 const kY = ref<number | null>(null);
 
 const fr = ref<number | null>(null);
@@ -148,8 +133,8 @@ function handleCalculateY(): void {
 }
 
 function handleCalculateK(): void {
-  if (kAttribute.value === null || kY.value === null) return;
-  void calculateK(kAttribute.value, kY.value);
+  if (kY.value === null) return;
+  void calculateK(kY.value);
 }
 
 function handleCalculateDamageBonus(): void {

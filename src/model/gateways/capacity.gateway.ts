@@ -1,6 +1,5 @@
 import BaseGateway from './base.gateway';
 import type {
-  CapacityResult,
   CapacityYParams,
   CapacityKParams,
   DamageBonusParams,
@@ -9,25 +8,22 @@ import type {
 export const CapacityGateway = () => {
   const base = BaseGateway();
 
-  async function calculateY(params: CapacityYParams): Promise<CapacityResult> {
-    const response = await base.get<CapacityResult>('capacity/y', {
-      params: { attribute: params.attribute, k: params.k },
+  async function calculateY(params: CapacityYParams): Promise<number> {
+    const response = await base.post('capacity/calculate-y', {
+      attribute: params.attribute,
+      k: params.k,
     });
-    return response.data;
+    return response.data as number;
   }
 
-  async function calculateK(params: CapacityKParams): Promise<CapacityResult> {
-    const response = await base.get<CapacityResult>('capacity/k', {
-      params: { attribute: params.attribute, y: params.y },
-    });
-    return response.data;
+  async function calculateK(params: CapacityKParams): Promise<number> {
+    const response = await base.post('capacity/calculate-k', { y: params.y });
+    return response.data as number;
   }
 
-  async function calculateDamageBonus(params: DamageBonusParams): Promise<CapacityResult> {
-    const response = await base.get<CapacityResult>('capacity/damage-bonus', {
-      params: { fr: params.fr },
-    });
-    return response.data;
+  async function calculateDamageBonus(params: DamageBonusParams): Promise<number> {
+    const response = await base.post('capacity/damage-bonus', { fr: params.fr });
+    return response.data as number;
   }
 
   return {

@@ -6,6 +6,7 @@ import enhancements from './enhancements';
 import combatSkills from './combat-skills';
 import character from './character';
 import protectiveEquipment from './protective-equipment';
+import capacity from './capacity';
 
 export default {
   home,
@@ -16,4 +17,5 @@ export default {
   combatSkills,
   character,
   protectiveEquipment,
+  capacity,
 };

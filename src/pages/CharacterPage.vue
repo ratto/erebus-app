@@ -75,11 +75,21 @@
             <div class="budget-info">
               <span class="budget-label">{{ t('pages.character.budget.balance') }}:</span>
               <q-badge
-                :color="attributeBalance === 0 ? 'positive' : attributeBalance > 0 ? 'warning' : 'negative'"
+                :color="
+                  attributeBalance === 0
+                    ? 'positive'
+                    : attributeBalance > 0
+                      ? 'warning'
+                      : 'negative'
+                "
                 :label="attributeBalance"
                 data-testid="attribute-balance"
               />
-              <span class="budget-label q-ml-sm">{{ t('pages.character.budget.used') }}: {{ attributeBudgetUsed }}/{{ attributeBudget }}</span>
+              <span class="budget-label q-ml-sm"
+                >{{ t('pages.character.budget.used') }}: {{ attributeBudgetUsed }}/{{
+                  attributeBudget
+                }}</span
+              >
             </div>
           </div>
         </q-card-section>
@@ -99,7 +109,9 @@
 
       <!-- Computed Values -->
       <q-card class="erebus-card">
-        <q-card-section class="card-header">{{ t('pages.character.sections.computed') }}</q-card-section>
+        <q-card-section class="card-header">{{
+          t('pages.character.sections.computed')
+        }}</q-card-section>
         <q-card-section class="card-body">
           <div class="row q-col-gutter-md">
             <div class="col-6 col-md-3">
@@ -113,7 +125,9 @@
               <div class="computed-value">
                 <div class="computed-label">{{ t('pages.character.computed.iniciativa') }}</div>
                 <div class="computed-number">{{ iniciativa }}</div>
-                <div class="computed-formula">{{ t('pages.character.computed.iniciativaFormula') }}</div>
+                <div class="computed-formula">
+                  {{ t('pages.character.computed.iniciativaFormula') }}
+                </div>
               </div>
             </div>
           </div>
@@ -128,7 +142,13 @@
             <div class="budget-info">
               <span class="budget-label">{{ t('pages.character.budget.balance') }}:</span>
               <q-badge
-                :color="enhancementBalance === 0 ? 'positive' : enhancementBalance > 0 ? 'warning' : 'negative'"
+                :color="
+                  enhancementBalance === 0
+                    ? 'positive'
+                    : enhancementBalance > 0
+                      ? 'warning'
+                      : 'negative'
+                "
                 :label="enhancementBalance"
                 data-testid="enhancement-balance"
               />
@@ -175,7 +195,9 @@
             <div class="budget-info">
               <span class="budget-label">{{ t('pages.character.budget.balance') }}:</span>
               <q-badge
-                :color="skillBalance >= 0 ? (skillBalance > 0 ? 'warning' : 'positive') : 'negative'"
+                :color="
+                  skillBalance >= 0 ? (skillBalance > 0 ? 'warning' : 'positive') : 'negative'
+                "
                 :label="skillBalance"
                 data-testid="skill-balance"
               />
@@ -184,9 +206,7 @@
           </div>
         </q-card-section>
         <q-card-section class="card-body">
-          <div v-if="skills.length === 0" class="empty-list">
-            Nenhuma perícia adicionada.
-          </div>
+          <div v-if="skills.length === 0" class="empty-list">Nenhuma perícia adicionada.</div>
           <q-list v-else dense>
             <q-item
               v-for="(skill, idx) in skills"
@@ -263,10 +283,14 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import { useCharacterBuilder } from 'src/composables/character.composable';
-import type { CharacterEnhancement, CharacterSkill, CharacterValidationError } from 'src/model/types/character.type';
-import AttributeInput from 'src/components/character/AttributeInput.vue';
-import AddSkillDialog from 'src/components/character/AddSkillDialog.vue';
-import AddEnhancementDialog from 'src/components/character/AddEnhancementDialog.vue';
+import type {
+  CharacterEnhancement,
+  CharacterSkill,
+  CharacterValidationError,
+} from 'src/model/types/character.type';
+import AttributeInput from 'src/components/character-page/AttributeInput.vue';
+import AddSkillDialog from 'src/components/character-page/AddSkillDialog.vue';
+import AddEnhancementDialog from 'src/components/character-page/AddEnhancementDialog.vue';
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -316,12 +340,11 @@ const availableEnhancementOptions = computed(() => [
   { id: 5, nome: 'Covarde', custo: -2 },
 ]);
 
-const errorSkillIds = computed(() =>
-  new Set(
-    validationErrors.value
-      .filter((e) => e.skillId !== undefined)
-      .map((e) => e.skillId as number),
-  ),
+const errorSkillIds = computed(
+  () =>
+    new Set(
+      validationErrors.value.filter((e) => e.skillId !== undefined).map((e) => e.skillId as number),
+    ),
 );
 
 function isSkillError(skillId: number): boolean {

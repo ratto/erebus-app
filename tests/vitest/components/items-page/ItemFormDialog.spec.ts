@@ -4,6 +4,14 @@ import { nextTick } from 'vue';
 import ItemFormDialog from 'src/components/items-page/ItemFormDialog.vue';
 import type { Item } from 'src/model/types/item.type';
 
+/**
+ * Após a migração para ErebusDialog, os botões usam:
+ *   data-testid="btn-confirm" (salvar)
+ *   data-testid="btn-cancel" (cancelar)
+ *
+ * Os campos de formulário agora são ErebusInput e ErebusSelect, registrados
+ * globalmente no setup.ts. O stub de QDialog continua necessário (interno ao ErebusDialog).
+ */
 const defaultMountOptions = {
   props: {
     modelValue: true,
@@ -13,9 +21,6 @@ const defaultMountOptions = {
     plugins: [],
     stubs: {
       QDialog: { template: '<div><slot /></div>' },
-      QCard: { template: '<div class="q-card"><slot /></div>' },
-      QCardSection: { template: '<div class="q-card-section"><slot /></div>' },
-      QCardActions: { template: '<div class="q-card-actions"><slot /></div>' },
       QForm: {
         template: '<form ref="formRef"><slot /></form>',
         methods: { validate: vi.fn().mockResolvedValue(true) },
@@ -118,15 +123,15 @@ describe('ItemFormDialog.vue', () => {
   });
 
   describe('Validação do formulário', () => {
-    it('desabilita o botão save quando o formulário é inválido (name vazio)', async () => {
+    it('desabilita o botão salvar quando o formulário é inválido (name vazio)', async () => {
       const wrapper = mountDialog({ mode: 'create' });
       await nextTick();
 
-      const saveBtn = wrapper.find('[data-testid="btn-save"]');
+      const saveBtn = wrapper.find('[data-testid="btn-confirm"]');
       expect(saveBtn.attributes('disabled')).toBeDefined();
     });
 
-    it('habilita o botão save quando o formulário é válido', async () => {
+    it('habilita o botão salvar quando o formulário é válido', async () => {
       const wrapper = mountDialog({ mode: 'create' });
       await nextTick();
 
@@ -137,7 +142,7 @@ describe('ItemFormDialog.vue', () => {
       await typeSelect.setValue('consumable');
       await nextTick();
 
-      const saveBtn = wrapper.find('[data-testid="btn-save"]');
+      const saveBtn = wrapper.find('[data-testid="btn-confirm"]');
       expect(saveBtn.attributes('disabled')).not.toBeDefined();
     });
 
@@ -152,7 +157,7 @@ describe('ItemFormDialog.vue', () => {
       await typeSelect.setValue('consumable');
       await nextTick();
 
-      const saveBtn = wrapper.find('[data-testid="btn-save"]');
+      const saveBtn = wrapper.find('[data-testid="btn-confirm"]');
       expect(saveBtn.attributes('disabled')).toBeDefined();
     });
 
@@ -166,7 +171,7 @@ describe('ItemFormDialog.vue', () => {
       await nameInput.setValue(longName);
       await nextTick();
 
-      const saveBtn = wrapper.find('[data-testid="btn-save"]');
+      const saveBtn = wrapper.find('[data-testid="btn-confirm"]');
       expect(saveBtn.attributes('disabled')).toBeDefined();
     });
 
@@ -178,7 +183,7 @@ describe('ItemFormDialog.vue', () => {
       await nameInput.setValue('Item');
       await nextTick();
 
-      const saveBtn = wrapper.find('[data-testid="btn-save"]');
+      const saveBtn = wrapper.find('[data-testid="btn-confirm"]');
       expect(saveBtn.attributes('disabled')).toBeDefined();
     });
 
@@ -196,7 +201,7 @@ describe('ItemFormDialog.vue', () => {
       await descInput.setValue(longDesc);
       await nextTick();
 
-      const saveBtn = wrapper.find('[data-testid="btn-save"]');
+      const saveBtn = wrapper.find('[data-testid="btn-confirm"]');
       expect(saveBtn.attributes('disabled')).toBeDefined();
     });
   });
@@ -215,7 +220,7 @@ describe('ItemFormDialog.vue', () => {
       await descInput.setValue('Fruta vermelha');
       await nextTick();
 
-      const saveBtn = wrapper.find('[data-testid="btn-save"]');
+      const saveBtn = wrapper.find('[data-testid="btn-confirm"]');
       await saveBtn.trigger('click');
 
       const emitted = wrapper.emitted('confirm');
@@ -255,7 +260,7 @@ describe('ItemFormDialog.vue', () => {
       await typeSelect.setValue('mundane');
       await nextTick();
 
-      const saveBtn = wrapper.find('[data-testid="btn-save"]');
+      const saveBtn = wrapper.find('[data-testid="btn-confirm"]');
       expect(saveBtn.attributes('disabled')).not.toBeDefined();
     });
   });

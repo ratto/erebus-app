@@ -2,8 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
 
-import type { CapacityResult } from 'src/model/types/capacity.type';
-
 const {
   mockLoading,
   mockResult,
@@ -16,7 +14,7 @@ const {
   const { ref } = require('vue') as typeof import('vue');
   return {
     mockLoading: ref(false),
-    mockResult: ref<CapacityResult | null>(null),
+    mockResult: ref<number | null>(null),
     mockError: ref<string | null>(null),
     mockCalculateY: vi.fn().mockResolvedValue(undefined),
     mockCalculateK: vi.fn().mockResolvedValue(undefined),
@@ -39,7 +37,6 @@ import CapacityPage from '../../../src/pages/CapacityPage.vue';
 
 const mountOptions = {
   global: {
-    plugins: [],
     stubs: {
       QPage: { template: '<div><slot /></div>' },
     },
@@ -149,10 +146,10 @@ describe('CapacityPage.vue', () => {
   // ── Tab calculateK ─────────────────────────────────────────────────────────
 
   describe('Tab calculateK', () => {
-    // Ao navegar para calculateK, apenas os QInputs dessa tab estão disponíveis no DOM.
-    // inputs[0]=kAttribute, inputs[1]=kY na tab ativa.
+    // Ao navegar para calculateK, apenas o QInput de Y está disponível no DOM.
+    // inputs[0]=kY na tab ativa.
 
-    it('botão chama calculateK com os valores dos inputs', async () => {
+    it('botão chama calculateK com o valor do input Y', async () => {
       const wrapper = mountPage();
 
       // Navega para aba calculateK
@@ -160,31 +157,13 @@ describe('CapacityPage.vue', () => {
       await nextTick();
 
       const inputs = wrapper.findAllComponents({ name: 'QInput' });
-      await inputs[0]!.vm.$emit('update:modelValue', 10);
-      await inputs[1]!.vm.$emit('update:modelValue', 39.76);
+      await inputs[0]!.vm.$emit('update:modelValue', 39.76);
       await nextTick();
 
       await wrapper.find('[data-testid="btn-calculate-k"]').trigger('click');
       await flushPromises();
 
-      expect(mockCalculateK).toHaveBeenCalledWith(10, 39.76);
-    });
-
-    it('guard: não chama calculateK se kAttribute for null', async () => {
-      const wrapper = mountPage();
-
-      await wrapper.findComponent({ name: 'QTabs' }).vm.$emit('update:modelValue', 'calculateK');
-      await nextTick();
-
-      // Só kY preenchido, kAttribute permanece null
-      const inputs = wrapper.findAllComponents({ name: 'QInput' });
-      await inputs[1]!.vm.$emit('update:modelValue', 39.76);
-      await nextTick();
-
-      await wrapper.find('[data-testid="btn-calculate-k"]').trigger('click');
-      await flushPromises();
-
-      expect(mockCalculateK).not.toHaveBeenCalled();
+      expect(mockCalculateK).toHaveBeenCalledWith(39.76);
     });
 
     it('guard: não chama calculateK se kY for null', async () => {
@@ -193,11 +172,7 @@ describe('CapacityPage.vue', () => {
       await wrapper.findComponent({ name: 'QTabs' }).vm.$emit('update:modelValue', 'calculateK');
       await nextTick();
 
-      // Só kAttribute preenchido, kY permanece null
-      const inputs = wrapper.findAllComponents({ name: 'QInput' });
-      await inputs[0]!.vm.$emit('update:modelValue', 10);
-      await nextTick();
-
+      // kY permanece null
       await wrapper.find('[data-testid="btn-calculate-k"]').trigger('click');
       await flushPromises();
 
@@ -250,7 +225,7 @@ describe('CapacityPage.vue', () => {
     });
 
     it('data-testid="capacity-result" visível quando result não é null', async () => {
-      mockResult.value = { value: 39.76 };
+      mockResult.value = 39.76;
       const wrapper = mountPage();
       await nextTick();
 
@@ -258,7 +233,7 @@ describe('CapacityPage.vue', () => {
     });
 
     it('data-testid="result-value" exibe o valor de result.value', async () => {
-      mockResult.value = { value: 39.76 };
+      mockResult.value = 39.76;
       const wrapper = mountPage();
       await nextTick();
 

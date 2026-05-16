@@ -71,7 +71,8 @@ describe('SettingsDialog.vue', () => {
 
   it('emite update:modelValue ao fechar o diálogo', async () => {
     const wrapper = mountDialog(true);
-    const closeBtn = wrapper.find('[data-testid="btn-close-settings"]');
+    // Após migração para ErebusDialog, o botão de fechar usa data-testid="btn-close"
+    const closeBtn = wrapper.find('[data-testid="btn-close"]');
     await closeBtn.trigger('click');
     expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     expect(wrapper.emitted('update:modelValue')![0]).toEqual([false]);

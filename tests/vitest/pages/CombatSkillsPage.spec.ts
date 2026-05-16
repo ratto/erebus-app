@@ -60,7 +60,6 @@ const combatSkillsFixture: CombatSkill[] = [
 
 const mountOptions = {
   global: {
-    plugins: [],
     stubs: {
       QPage: { template: '<div><slot /></div>' },
       ErebusInput: {

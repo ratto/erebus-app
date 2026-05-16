@@ -112,6 +112,19 @@
         </q-item-section>
         <q-item-section>{{ $t('nav.character') }}</q-item-section>
       </q-item>
+
+      <q-item
+        clickable
+        :to="{ name: 'Capacity' }"
+        active-class="nav-item-active"
+        class="nav-item"
+        data-testid="nav-capacity"
+      >
+        <q-item-section avatar>
+          <q-icon name="fitness_center" />
+        </q-item-section>
+        <q-item-section>{{ $t('nav.capacity') }}</q-item-section>
+      </q-item>
     </q-list>
   </q-drawer>
 </template>
