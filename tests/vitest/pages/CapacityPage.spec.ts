@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 
 import type { CapacityResult } from 'src/model/types/capacity.type';
 
@@ -40,11 +37,9 @@ vi.mock('src/composables/capacity.composable', () => ({
 
 import CapacityPage from '../../../src/pages/CapacityPage.vue';
 
-const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
-
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}], i18nInstance],
+    plugins: [],
     stubs: {
       QPage: { template: '<div><slot /></div>' },
     },
@@ -298,9 +293,9 @@ describe('CapacityPage.vue', () => {
       const wrapper = mountPage();
       await nextTick();
 
-      const btn = wrapper.findAllComponents({ name: 'QBtn' }).find(
-        (b) => b.attributes('data-testid') === 'btn-calculate-y',
-      );
+      const btn = wrapper
+        .findAllComponents({ name: 'QBtn' })
+        .find((b) => b.attributes('data-testid') === 'btn-calculate-y');
       expect(btn).toBeDefined();
       expect(btn!.props('loading')).toBe(true);
     });
@@ -310,9 +305,9 @@ describe('CapacityPage.vue', () => {
       const wrapper = mountPage();
       await nextTick();
 
-      const btn = wrapper.findAllComponents({ name: 'QBtn' }).find(
-        (b) => b.attributes('data-testid') === 'btn-calculate-y',
-      );
+      const btn = wrapper
+        .findAllComponents({ name: 'QBtn' })
+        .find((b) => b.attributes('data-testid') === 'btn-calculate-y');
       expect(btn!.props('loading')).toBe(false);
     });
   });

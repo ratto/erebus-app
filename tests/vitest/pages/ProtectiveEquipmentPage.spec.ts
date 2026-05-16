@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 
 import type { ProtectiveEquipment } from 'src/model/types/protective-equipment.type';
 
@@ -50,15 +47,14 @@ const equipmentFixture: ProtectiveEquipment[] = [
 
 // ─── Mount helper ─────────────────────────────────────────────────────────────
 
-const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
-
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}], i18nInstance],
+    plugins: [],
     stubs: {
       QPage: { template: '<div><slot /></div>' },
       ErebusInput: {
-        template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+        template:
+          '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
         props: ['modelValue', 'label', 'placeholder', 'innerClass'],
         emits: ['update:modelValue'],
       },
@@ -69,7 +65,7 @@ const mountOptions = {
         props: ['modelValue', 'options', 'label'],
         emits: ['update:modelValue'],
       },
-      [ErebusTableComponent]: {
+      ErebusTableComponent: {
         template: `<div class="erebus-table">
           <div v-if="rows.length === 0">{{ noDataLabel }}</div>
           <template v-for="row in rows" :key="row.id">

@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 
 import type { CombatSkill } from 'src/model/types/combat-skill.type';
 
@@ -61,15 +58,14 @@ const combatSkillsFixture: CombatSkill[] = [
 
 // ─── Mount helper ─────────────────────────────────────────────────────────────
 
-const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
-
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}], i18nInstance],
+    plugins: [],
     stubs: {
       QPage: { template: '<div><slot /></div>' },
       ErebusInput: {
-        template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+        template:
+          '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
         props: ['modelValue', 'label', 'placeholder', 'innerClass'],
         emits: ['update:modelValue'],
       },
@@ -158,9 +154,9 @@ describe('CombatSkillsPage.vue', () => {
       const wrapper = mountPage();
       await flushPromises();
 
-      const meeleeBadge = wrapper.findAllComponents({ name: 'QBadge' }).find(
-        (b) => b.props('color') === 'warning',
-      );
+      const meeleeBadge = wrapper
+        .findAllComponents({ name: 'QBadge' })
+        .find((b) => b.props('color') === 'warning');
       expect(meeleeBadge).toBeDefined();
     });
 
@@ -168,9 +164,9 @@ describe('CombatSkillsPage.vue', () => {
       const wrapper = mountPage();
       await flushPromises();
 
-      const rangedBadge = wrapper.findAllComponents({ name: 'QBadge' }).find(
-        (b) => b.props('color') === 'info',
-      );
+      const rangedBadge = wrapper
+        .findAllComponents({ name: 'QBadge' })
+        .find((b) => b.props('color') === 'info');
       expect(rangedBadge).toBeDefined();
     });
 
@@ -178,9 +174,9 @@ describe('CombatSkillsPage.vue', () => {
       const wrapper = mountPage();
       await flushPromises();
 
-      const shieldBadge = wrapper.findAllComponents({ name: 'QBadge' }).find(
-        (b) => b.props('color') === 'secondary',
-      );
+      const shieldBadge = wrapper
+        .findAllComponents({ name: 'QBadge' })
+        .find((b) => b.props('color') === 'secondary');
       expect(shieldBadge).toBeDefined();
     });
 
@@ -188,9 +184,9 @@ describe('CombatSkillsPage.vue', () => {
       const wrapper = mountPage();
       await flushPromises();
 
-      const meeleeBadge = wrapper.findAllComponents({ name: 'QBadge' }).find(
-        (b) => b.props('color') === 'warning',
-      );
+      const meeleeBadge = wrapper
+        .findAllComponents({ name: 'QBadge' })
+        .find((b) => b.props('color') === 'warning');
       // 'Corpo a Corpo' é a tradução pt-BR para melee
       expect(meeleeBadge!.props('label')).toBe('Corpo a Corpo');
     });
@@ -252,10 +248,17 @@ describe('CombatSkillsPage.vue', () => {
     it('filtra por nome — correspondência parcial case-insensitive', () => {
       const wrapper = mountPage();
       const vm = wrapper.vm as InstanceType<typeof CombatSkillsPage> & {
-        filterMethod: (rows: CombatSkill[], terms: { nome: string; tipo: string | null; atributo: string | null }) => CombatSkill[];
+        filterMethod: (
+          rows: CombatSkill[],
+          terms: { nome: string; tipo: string | null; atributo: string | null },
+        ) => CombatSkill[];
       };
 
-      const result = vm.filterMethod(combatSkillsFixture, { nome: 'lut', tipo: null, atributo: null });
+      const result = vm.filterMethod(combatSkillsFixture, {
+        nome: 'lut',
+        tipo: null,
+        atributo: null,
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0]!.nome).toBe('Luta');
@@ -264,7 +267,10 @@ describe('CombatSkillsPage.vue', () => {
     it('filtro por nome vazio retorna todas as rows', () => {
       const wrapper = mountPage();
       const vm = wrapper.vm as InstanceType<typeof CombatSkillsPage> & {
-        filterMethod: (rows: CombatSkill[], terms: { nome: string; tipo: string | null; atributo: string | null }) => CombatSkill[];
+        filterMethod: (
+          rows: CombatSkill[],
+          terms: { nome: string; tipo: string | null; atributo: string | null },
+        ) => CombatSkill[];
       };
 
       const result = vm.filterMethod(combatSkillsFixture, { nome: '', tipo: null, atributo: null });
@@ -275,10 +281,17 @@ describe('CombatSkillsPage.vue', () => {
     it('filtra por tipo melee — retorna apenas melee', () => {
       const wrapper = mountPage();
       const vm = wrapper.vm as InstanceType<typeof CombatSkillsPage> & {
-        filterMethod: (rows: CombatSkill[], terms: { nome: string; tipo: string | null; atributo: string | null }) => CombatSkill[];
+        filterMethod: (
+          rows: CombatSkill[],
+          terms: { nome: string; tipo: string | null; atributo: string | null },
+        ) => CombatSkill[];
       };
 
-      const result = vm.filterMethod(combatSkillsFixture, { nome: '', tipo: 'melee', atributo: null });
+      const result = vm.filterMethod(combatSkillsFixture, {
+        nome: '',
+        tipo: 'melee',
+        atributo: null,
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0]!.tipo).toBe('melee');
@@ -287,7 +300,10 @@ describe('CombatSkillsPage.vue', () => {
     it('filtra por tipo null retorna tudo', () => {
       const wrapper = mountPage();
       const vm = wrapper.vm as InstanceType<typeof CombatSkillsPage> & {
-        filterMethod: (rows: CombatSkill[], terms: { nome: string; tipo: string | null; atributo: string | null }) => CombatSkill[];
+        filterMethod: (
+          rows: CombatSkill[],
+          terms: { nome: string; tipo: string | null; atributo: string | null },
+        ) => CombatSkill[];
       };
 
       const result = vm.filterMethod(combatSkillsFixture, { nome: '', tipo: null, atributo: null });
@@ -298,7 +314,10 @@ describe('CombatSkillsPage.vue', () => {
     it('filtra por atributo FR — retorna linhas com atributoAtaque=FR ou atributoDefesa=FR', () => {
       const wrapper = mountPage();
       const vm = wrapper.vm as InstanceType<typeof CombatSkillsPage> & {
-        filterMethod: (rows: CombatSkill[], terms: { nome: string; tipo: string | null; atributo: string | null }) => CombatSkill[];
+        filterMethod: (
+          rows: CombatSkill[],
+          terms: { nome: string; tipo: string | null; atributo: string | null },
+        ) => CombatSkill[];
       };
 
       const result = vm.filterMethod(combatSkillsFixture, { nome: '', tipo: null, atributo: 'FR' });
@@ -312,10 +331,17 @@ describe('CombatSkillsPage.vue', () => {
     it('filtra por atributo DEX — retorna Arco (atributoAtaque=DEX)', () => {
       const wrapper = mountPage();
       const vm = wrapper.vm as InstanceType<typeof CombatSkillsPage> & {
-        filterMethod: (rows: CombatSkill[], terms: { nome: string; tipo: string | null; atributo: string | null }) => CombatSkill[];
+        filterMethod: (
+          rows: CombatSkill[],
+          terms: { nome: string; tipo: string | null; atributo: string | null },
+        ) => CombatSkill[];
       };
 
-      const result = vm.filterMethod(combatSkillsFixture, { nome: '', tipo: null, atributo: 'DEX' });
+      const result = vm.filterMethod(combatSkillsFixture, {
+        nome: '',
+        tipo: null,
+        atributo: 'DEX',
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0]!.nome).toBe('Arco');

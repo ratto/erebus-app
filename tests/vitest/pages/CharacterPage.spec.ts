@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { Quasar } from 'quasar';
-import { createI18n } from 'vue-i18n';
-import messages from 'src/i18n';
 
-import type { CharacterSkill, CharacterEnhancement, CharacterValidationError } from 'src/model/types/character.type';
+import type {
+  CharacterSkill,
+  CharacterEnhancement,
+  CharacterValidationError,
+} from 'src/model/types/character.type';
 
 // mockNotify é usado para espiar chamadas a $q.notify na instância montada.
 const mockNotify = vi.fn();
@@ -83,8 +84,6 @@ import CharacterPage from '../../../src/pages/CharacterPage.vue';
 
 // ─── Mount helper ─────────────────────────────────────────────────────────────
 
-const i18nInstance = createI18n({ locale: 'pt-BR', legacy: false, messages });
-
 // Stubs para componentes filhos que têm dependências próprias
 const AddSkillDialogStub = {
   name: 'AddSkillDialog',
@@ -102,7 +101,7 @@ const AddEnhancementDialogStub = {
 
 const mountOptions = {
   global: {
-    plugins: [[Quasar, {}], i18nInstance],
+    plugins: [],
     stubs: {
       QPage: { template: '<div><slot /></div>' },
       AttributeInput: { template: '<div />', props: ['modelValue', 'label', 'tooltip'] },
@@ -125,7 +124,16 @@ describe('CharacterPage.vue', () => {
     mockName.value = '';
     mockAge.value = 25;
     mockLevel.value = 1;
-    mockAttributes.value = { FR: 10, DEX: 10, AGI: 10, CON: 10, INT: 10, WILL: 10, CAR: 10, PER: 10 };
+    mockAttributes.value = {
+      FR: 10,
+      DEX: 10,
+      AGI: 10,
+      CON: 10,
+      INT: 10,
+      WILL: 10,
+      CAR: 10,
+      PER: 10,
+    };
     mockEnhancements.value = [];
     mockSkills.value = [];
     mockPv.value = 0;
@@ -232,9 +240,9 @@ describe('CharacterPage.vue', () => {
       const wrapper = mountPage();
       await nextTick();
 
-      const qBtn = wrapper.findAllComponents({ name: 'QBtn' }).find(
-        (b) => b.attributes('data-testid') === 'btn-save',
-      );
+      const qBtn = wrapper
+        .findAllComponents({ name: 'QBtn' })
+        .find((b) => b.attributes('data-testid') === 'btn-save');
       expect(qBtn).toBeDefined();
       expect(qBtn!.props('disable')).toBe(true);
     });
@@ -244,9 +252,9 @@ describe('CharacterPage.vue', () => {
       const wrapper = mountPage();
       await nextTick();
 
-      const qBtn = wrapper.findAllComponents({ name: 'QBtn' }).find(
-        (b) => b.attributes('data-testid') === 'btn-save',
-      );
+      const qBtn = wrapper
+        .findAllComponents({ name: 'QBtn' })
+        .find((b) => b.attributes('data-testid') === 'btn-save');
       expect(qBtn!.props('disable')).toBe(false);
     });
   });
@@ -259,7 +267,9 @@ describe('CharacterPage.vue', () => {
     // no objeto é vista pelo componente no momento da chamada.
 
     function injectNotifySpy(wrapper: ReturnType<typeof mountPage>): typeof mockNotify {
-      const vm = wrapper.vm as InstanceType<typeof CharacterPage> & { $q: { notify: typeof mockNotify } };
+      const vm = wrapper.vm as InstanceType<typeof CharacterPage> & {
+        $q: { notify: typeof mockNotify };
+      };
       vm.$q.notify = mockNotify;
       return mockNotify;
     }
@@ -274,9 +284,7 @@ describe('CharacterPage.vue', () => {
       await wrapper.find('[data-testid="btn-save"]').trigger('click');
       await flushPromises();
 
-      expect(mockNotify).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'positive' }),
-      );
+      expect(mockNotify).toHaveBeenCalledWith(expect.objectContaining({ type: 'positive' }));
     });
 
     it('submit() resolve false → $q.notify chamado com type="negative"', async () => {
@@ -289,9 +297,7 @@ describe('CharacterPage.vue', () => {
       await wrapper.find('[data-testid="btn-save"]').trigger('click');
       await flushPromises();
 
-      expect(mockNotify).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'negative' }),
-      );
+      expect(mockNotify).toHaveBeenCalledWith(expect.objectContaining({ type: 'negative' }));
     });
 
     it('submit() lança exceção → $q.notify chamado com type="negative"', async () => {
@@ -304,9 +310,7 @@ describe('CharacterPage.vue', () => {
       await wrapper.find('[data-testid="btn-save"]').trigger('click');
       await flushPromises();
 
-      expect(mockNotify).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'negative' }),
-      );
+      expect(mockNotify).toHaveBeenCalledWith(expect.objectContaining({ type: 'negative' }));
     });
   });
 
@@ -464,7 +468,9 @@ describe('CharacterPage.vue', () => {
       const vm = wrapper.vm as InstanceType<typeof CharacterPage> & {
         validationErrors: CharacterValidationError[];
       };
-      vm.validationErrors = [{ code: 'ATTRIBUTE_BUDGET', message: 'A soma dos atributos deve ser exatamente 111' }];
+      vm.validationErrors = [
+        { code: 'ATTRIBUTE_BUDGET', message: 'A soma dos atributos deve ser exatamente 111' },
+      ];
       await nextTick();
 
       const banner = wrapper.find('[data-testid="validation-errors"]');
