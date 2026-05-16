@@ -64,7 +64,7 @@ const mountOptions = {
         props: ['modelValue', 'options', 'label'],
         emits: ['update:modelValue'],
       },
-      [ErebusTableComponent]: {
+      ErebusTableComponent: {
         template: `<div class="erebus-table">
           <div v-if="rows.length === 0">{{ noDataLabel }}</div>
           <template v-for="row in rows" :key="row.id">
