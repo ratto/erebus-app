@@ -18,21 +18,21 @@ import { useSkills } from 'src/composables/skills.composable';
 const skillsFixture: Skill[] = [
   {
     id: 1,
-    nome: 'Espada',
-    grupo: 'Combate',
-    atributoBase: 'FR',
+    name: 'Acrobatics',
+    group: 'Physical',
+    atributoBase: 'AGI',
     apenasComTreinamento: false,
-    sinergia: 'Escudo',
-    descricao: 'Habilidade com lâminas longas e combate direto.',
+    synergy: null,
+    description: 'Habilidade em realizar contorções e acrobacias.',
   },
   {
     id: 2,
-    nome: 'Furtividade',
-    grupo: 'Furtivo',
+    name: 'Stealth',
+    group: 'Furtive',
     atributoBase: 'AGI',
     apenasComTreinamento: true,
-    sinergia: null,
-    descricao: 'Mover-se sem ser detectado.',
+    synergy: null,
+    description: 'Mover-se sem ser detectado.',
   },
 ];
 

@@ -33,30 +33,30 @@ import SkillsPage from '../../../src/pages/SkillsPage.vue';
 const skillsFixture: Skill[] = [
   {
     id: 1,
-    nome: 'Espada',
-    grupo: 'Combate',
+    name: 'Sword',
+    group: 'Combat',
     atributoBase: 'FR',
     apenasComTreinamento: false,
-    sinergia: 'Escudo',
-    descricao: 'Habilidade com lâminas longas e combate direto.',
+    synergy: 'Shield',
+    description: 'Habilidade com lâminas longas e combate direto.',
   },
   {
     id: 2,
-    nome: 'Furtividade',
-    grupo: 'Furtivo',
+    name: 'Stealth',
+    group: 'Furtive',
     atributoBase: 'AGI',
     apenasComTreinamento: true,
-    sinergia: null,
-    descricao: 'Mover-se sem ser detectado.',
+    synergy: null,
+    description: 'Mover-se sem ser detectado.',
   },
   {
     id: 3,
-    nome: 'Ocultismo',
-    grupo: 'Magia',
+    name: 'Occultism',
+    group: 'Magic',
     atributoBase: 'INT',
     apenasComTreinamento: true,
-    sinergia: null,
-    descricao: 'Conhecimento de artes arcanas e rituais.',
+    synergy: null,
+    description: 'Conhecimento de artes arcanas e rituais.',
   },
 ];
 
@@ -135,9 +135,9 @@ describe('SkillsPage.vue', () => {
       await flushPromises();
 
       const text = wrapper.text();
-      expect(text).toContain('Espada');
-      expect(text).toContain('Furtividade');
-      expect(text).toContain('Ocultismo');
+      expect(text).toContain('Sword');
+      expect(text).toContain('Stealth');
+      expect(text).toContain('Occultism');
     });
 
     it('exibe um badge por linha (v-if/v-else em apenasComTreinamento)', async () => {
@@ -209,7 +209,7 @@ describe('SkillsPage.vue', () => {
       const wrapper = mountPage();
       await flushPromises();
 
-      // Expande apenas a primeira linha (Espada)
+      // Expande apenas a primeira linha (Sword)
       await wrapper.findAll('[data-testid="chevron-btn"]')[0]!.trigger('click');
 
       expect(wrapper.text()).toContain('Habilidade com lâminas longas');
@@ -277,34 +277,34 @@ describe('SkillsPage.vue', () => {
       const wrapper = mountPage();
       await flushPromises();
 
-      await typeSearch(wrapper, 'Espad');
+      await typeSearch(wrapper, 'Swor');
 
       const text = wrapper.text();
-      expect(text).toContain('Espada');
-      expect(text).not.toContain('Furtividade');
-      expect(text).not.toContain('Ocultismo');
+      expect(text).toContain('Sword');
+      expect(text).not.toContain('Stealth');
+      expect(text).not.toContain('Occultism');
     });
 
     it('filtro por nome é case-insensitive', async () => {
       const wrapper = mountPage();
       await flushPromises();
 
-      await typeSearch(wrapper, 'espad');
+      await typeSearch(wrapper, 'swor');
 
-      expect(wrapper.text()).toContain('Espada');
+      expect(wrapper.text()).toContain('Sword');
     });
 
     it('limpar o campo restaura todas as skills', async () => {
       const wrapper = mountPage();
       await flushPromises();
 
-      await typeSearch(wrapper, 'Espad');
+      await typeSearch(wrapper, 'Swor');
       await typeSearch(wrapper, '');
 
       const text = wrapper.text();
-      expect(text).toContain('Espada');
-      expect(text).toContain('Furtividade');
-      expect(text).toContain('Ocultismo');
+      expect(text).toContain('Sword');
+      expect(text).toContain('Stealth');
+      expect(text).toContain('Occultism');
     });
 
     it('busca sem correspondência exibe mensagem de estado vazio', async () => {
@@ -329,13 +329,13 @@ describe('SkillsPage.vue', () => {
       await flushPromises();
 
       const select = findSelectByTestId(wrapper, 'select-grupo');
-      await select.vm.$emit('update:modelValue', 'Combate');
+      await select.vm.$emit('update:modelValue', 'Combat');
       await nextTick();
 
       const text = wrapper.text();
-      expect(text).toContain('Espada');
-      expect(text).not.toContain('Furtividade');
-      expect(text).not.toContain('Ocultismo');
+      expect(text).toContain('Sword');
+      expect(text).not.toContain('Stealth');
+      expect(text).not.toContain('Occultism');
     });
 
     it('selecionar null remove o filtro de grupo e exibe todas as skills', async () => {
@@ -343,16 +343,16 @@ describe('SkillsPage.vue', () => {
       await flushPromises();
 
       const select = findSelectByTestId(wrapper, 'select-grupo');
-      await select.vm.$emit('update:modelValue', 'Combate');
+      await select.vm.$emit('update:modelValue', 'Combat');
       await nextTick();
 
       await select.vm.$emit('update:modelValue', null);
       await nextTick();
 
       const text = wrapper.text();
-      expect(text).toContain('Espada');
-      expect(text).toContain('Furtividade');
-      expect(text).toContain('Ocultismo');
+      expect(text).toContain('Sword');
+      expect(text).toContain('Stealth');
+      expect(text).toContain('Occultism');
     });
   });
 
@@ -372,9 +372,9 @@ describe('SkillsPage.vue', () => {
       await nextTick();
 
       const text = wrapper.text();
-      expect(text).toContain('Furtividade');
-      expect(text).not.toContain('Espada');
-      expect(text).not.toContain('Ocultismo');
+      expect(text).toContain('Stealth');
+      expect(text).not.toContain('Sword');
+      expect(text).not.toContain('Occultism');
     });
 
     it('valor __none__ filtra skills sem atributo base', async () => {
@@ -382,12 +382,12 @@ describe('SkillsPage.vue', () => {
         ...skillsFixture,
         {
           id: 4,
-          nome: 'Sorte',
-          grupo: null,
+          name: 'Luck',
+          group: null,
           atributoBase: null,
           apenasComTreinamento: false,
-          sinergia: null,
-          descricao: 'Depende inteiramente do destino.',
+          synergy: null,
+          description: 'Depende inteiramente do destino.',
         },
       ];
       const wrapper = mountPage();
@@ -398,9 +398,9 @@ describe('SkillsPage.vue', () => {
       await nextTick();
 
       const text = wrapper.text();
-      expect(text).toContain('Sorte');
-      expect(text).not.toContain('Espada');
-      expect(text).not.toContain('Furtividade');
+      expect(text).toContain('Luck');
+      expect(text).not.toContain('Sword');
+      expect(text).not.toContain('Stealth');
     });
 
     it('selecionar null remove o filtro e exibe todas as skills', async () => {
@@ -415,9 +415,9 @@ describe('SkillsPage.vue', () => {
       await nextTick();
 
       const text = wrapper.text();
-      expect(text).toContain('Espada');
-      expect(text).toContain('Furtividade');
-      expect(text).toContain('Ocultismo');
+      expect(text).toContain('Sword');
+      expect(text).toContain('Stealth');
+      expect(text).toContain('Occultism');
     });
   });
 });
