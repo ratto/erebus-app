@@ -11,6 +11,12 @@ const testItem: Item = {
   description: 'Uma espada de ferro',
 };
 
+/**
+ * Após a migração para ErebusDialog, o componente usa ErebusDialog como wrapper.
+ * O stub de QDialog (interno ao ErebusDialog) ainda é necessário.
+ * Os botões agora usam data-testid="btn-cancel" e data-testid="btn-confirm"
+ * do ErebusDialog, não mais os data-testid específicos do DeleteItemDialog.
+ */
 const mountOptions = {
   props: {
     modelValue: true,
@@ -20,14 +26,6 @@ const mountOptions = {
     plugins: [],
     stubs: {
       QDialog: { template: '<div><slot /></div>' },
-      QCard: { template: '<div class="q-card"><slot /></div>' },
-      QCardSection: { template: '<div class="q-card-section"><slot /></div>' },
-      QCardActions: { template: '<div class="q-card-actions"><slot /></div>' },
-      QBtn: {
-        template: '<button @click="$emit(\'click\')" :data-testid="dataTestid"><slot /></button>',
-        props: ['dataTestid'],
-        emits: ['click'],
-      },
     },
   },
 };
@@ -65,21 +63,21 @@ describe('DeleteItemDialog.vue', () => {
   it('renderiza botão de cancel', () => {
     const wrapper = mountDialog();
 
-    const cancelBtn = wrapper.find('[data-testid="btn-delete-cancel"]');
+    const cancelBtn = wrapper.find('[data-testid="btn-cancel"]');
     expect(cancelBtn.exists()).toBe(true);
   });
 
   it('renderiza botão de confirmação', () => {
     const wrapper = mountDialog();
 
-    const confirmBtn = wrapper.find('[data-testid="btn-delete-confirm"]');
+    const confirmBtn = wrapper.find('[data-testid="btn-confirm"]');
     expect(confirmBtn.exists()).toBe(true);
   });
 
   it('emite update:modelValue=false quando cancel é clicado', async () => {
     const wrapper = mountDialog();
 
-    const cancelBtn = wrapper.find('[data-testid="btn-delete-cancel"]');
+    const cancelBtn = wrapper.find('[data-testid="btn-cancel"]');
     await cancelBtn.trigger('click');
 
     expect(wrapper.emitted('update:modelValue')).toBeDefined();
@@ -88,7 +86,7 @@ describe('DeleteItemDialog.vue', () => {
   it('emite confirm e update:modelValue=false quando botão de confirmação é clicado', async () => {
     const wrapper = mountDialog();
 
-    const confirmBtn = wrapper.find('[data-testid="btn-delete-confirm"]');
+    const confirmBtn = wrapper.find('[data-testid="btn-confirm"]');
     await confirmBtn.trigger('click');
 
     expect(wrapper.emitted('confirm')).toBeDefined();
@@ -98,7 +96,7 @@ describe('DeleteItemDialog.vue', () => {
   it('emite confirm apenas uma vez ao clicar confirm', async () => {
     const wrapper = mountDialog();
 
-    const confirmBtn = wrapper.find('[data-testid="btn-delete-confirm"]');
+    const confirmBtn = wrapper.find('[data-testid="btn-confirm"]');
     await confirmBtn.trigger('click');
 
     const confirmEmitted = wrapper.emitted('confirm');
@@ -122,16 +120,15 @@ describe('DeleteItemDialog.vue', () => {
     expect(wrapper.text()).not.toContain('Espada Longa');
   });
 
-  it('renderiza card com classe delete-item-dialog', () => {
+  it('renderiza card com tipo danger', () => {
     const wrapper = mountDialog();
 
-    expect(wrapper.find('.q-card').exists()).toBe(true);
+    expect(wrapper.find('.erebus-dialog-card--danger').exists()).toBe(true);
   });
 
-  it('renderiza a seção header com classe dialog-header', () => {
+  it('renderiza a seção de corpo do diálogo', () => {
     const wrapper = mountDialog();
 
-    const header = wrapper.find('.q-card-section');
-    expect(header.exists()).toBe(true);
+    expect(wrapper.find('.erebus-dialog-body').exists()).toBe(true);
   });
 });
