@@ -11,6 +11,14 @@ export default {
     fetchingCombatSkills: 'Carregando perícias de combate...',
     fetchingEnhancements: 'Carregando aprimoramentos...',
     fetchingProtectiveEquipment: 'Carregando equipamentos de proteção...',
-    fetchingCharacter: 'Carregando personagem...',
+    fetchingCharacter: 'Validando personagem...',
+  },
+  success: {
+    skillsLoaded: 'Perícias carregadas com sucesso.',
+    weaponsLoaded: 'Armas carregadas com sucesso.',
+    combatSkillsLoaded: 'Perícias de combate carregadas com sucesso.',
+    enhancementsLoaded: 'Aprimoramentos carregados com sucesso.',
+    protectiveEquipmentLoaded: 'Equipamentos de proteção carregados com sucesso.',
+    characterLoaded: 'Personagem validado com sucesso.',
   },
 };

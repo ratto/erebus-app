@@ -84,6 +84,9 @@ export const useCharacterBuilder = () => {
 
   // --- Actions ---
   async function submit(): Promise<boolean> {
+    // Exibe notificação contínua enquanto valida o personagem com a API
+    const { dismiss } = notify.continuous(t('common.loading.fetchingCharacter'));
+
     try {
       const payload = {
         name: name.value,
@@ -98,14 +101,16 @@ export const useCharacterBuilder = () => {
 
       if (response.valid && response.character) {
         characterStore.save(response.character, response.computed);
+        notify.success(t('common.success.characterLoaded'));
         return true;
       }
 
       return false;
     } catch (err) {
-      console.error(err);
-      notify.danger(t('common.errors.fetchFailed'));
+      notify.danger((err as Error).message);
       return false;
+    } finally {
+      dismiss();
     }
   }
 

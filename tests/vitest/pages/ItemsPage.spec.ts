@@ -1,8 +1,26 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import { createPinia, setActivePinia } from 'pinia';
 import ItemsPage from 'src/pages/ItemsPage.vue';
+import type { Item, ItemInput } from 'src/model/types/item.type';
+
+// ─── Mock de erebusMessage (SPEC-051) ─────────────────────────────────────────
+
+const { mockSuccess, mockDanger } = vi.hoisted(() => ({
+  mockSuccess: vi.fn(),
+  mockDanger: vi.fn(),
+}));
+
+vi.mock('src/model/utils/message', () => ({
+  erebusMessage: () => ({
+    success: mockSuccess,
+    info: vi.fn(),
+    warning: vi.fn(),
+    danger: mockDanger,
+    continuous: vi.fn(() => ({ dismiss: vi.fn() })),
+  }),
+}));
 
 const mountOptions = {
   global: {
@@ -57,7 +75,12 @@ const mountOptions = {
         props: ['rows', 'columns', 'noDataLabel'],
         emits: ['update:pagination'],
       },
-      ItemFormDialog: { template: '<div></div>' },
+      ItemFormDialog: {
+        name: 'ItemFormDialog',
+        template: '<div data-testid="item-form-dialog"></div>',
+        emits: ['confirm', 'update:modelValue'],
+        props: ['modelValue', 'mode', 'item'],
+      },
       DeleteItemDialog: { template: '<div></div>' },
     },
   },
@@ -68,7 +91,21 @@ function mountPage() {
   return mount(ItemsPage, mountOptions);
 }
 
+// Helper: simula confirmação no diálogo de item
+async function triggerFormConfirm(
+  wrapper: ReturnType<typeof mountPage>,
+  input: ItemInput = { name: 'Espada', type: 'mundane', description: '' },
+) {
+  const dialog = wrapper.findComponent({ name: 'ItemFormDialog' });
+  await dialog.vm.$emit('confirm', input);
+  await nextTick();
+}
+
 describe('ItemsPage.vue', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe('Inicialização', () => {
     it('renderiza a página sem erros', () => {
       const wrapper = mountPage();
@@ -137,6 +174,30 @@ describe('ItemsPage.vue', () => {
 
       const btn = wrapper.find('[data-testid="btn-new-item"]');
       expect(btn.exists()).toBe(true);
+    });
+  });
+
+  // ── Notificações via erebusMessage (SPEC-051) ─────────────────────────────
+
+  describe('Notificações via erebusMessage', () => {
+    it('confirmar criação de item → erebusMessage().success é chamado', async () => {
+      const wrapper = mountPage();
+      await nextTick();
+
+      await triggerFormConfirm(wrapper);
+
+      expect(mockSuccess).toHaveBeenCalledOnce();
+    });
+
+    it('confirmar segunda criação de item também chama erebusMessage().success', async () => {
+      const wrapper = mountPage();
+      await nextTick();
+
+      // Confirma duas criações distintas
+      await triggerFormConfirm(wrapper, { name: 'Escudo', type: 'mundane', description: '' });
+      await triggerFormConfirm(wrapper, { name: 'Poção', type: 'consumable', description: '' });
+
+      expect(mockSuccess).toHaveBeenCalledTimes(2);
     });
   });
 });

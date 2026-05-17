@@ -16,16 +16,20 @@ export const useEnhancements = () => {
     loading.value = true;
     enhancements.value = [];
 
+    // Exibe notificação contínua enquanto carrega; dismiss é chamado no finally
+    const { dismiss } = notify.continuous(t('common.loading.fetchingEnhancements'));
+
     await gateway
       .getAllEnhancements()
       .then((res) => {
         enhancements.value.push(...res);
+        notify.success(t('common.success.enhancementsLoaded'));
       })
-      .catch((err) => {
-        console.error(err);
-        notify.danger(t('common.errors.fetchFailed'));
+      .catch((err: Error) => {
+        notify.danger(err.message);
       })
       .finally(() => {
+        dismiss();
         loading.value = false;
       });
   };

@@ -11,6 +11,14 @@ export default {
     fetchingCombatSkills: 'Loading combat skills...',
     fetchingEnhancements: 'Loading enhancements...',
     fetchingProtectiveEquipment: 'Loading protective equipment...',
-    fetchingCharacter: 'Loading character...',
+    fetchingCharacter: 'Validating character...',
+  },
+  success: {
+    skillsLoaded: 'Skills loaded successfully.',
+    weaponsLoaded: 'Weapons loaded successfully.',
+    combatSkillsLoaded: 'Combat skills loaded successfully.',
+    enhancementsLoaded: 'Enhancements loaded successfully.',
+    protectiveEquipmentLoaded: 'Protective equipment loaded successfully.',
+    characterLoaded: 'Character validated successfully.',
   },
 };

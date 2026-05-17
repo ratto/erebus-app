@@ -7,6 +7,14 @@ const { mockFetchAllWeapons } = vi.hoisted(() => {
   };
 });
 
+// Spies para verificar chamadas às notificações
+const { mockSuccess, mockDanger, mockContinuous, mockDismiss } = vi.hoisted(() => ({
+  mockSuccess: vi.fn(),
+  mockDanger: vi.fn(),
+  mockContinuous: vi.fn(),
+  mockDismiss: vi.fn(),
+}));
+
 vi.mock('src/model/gateways/weapons.gateway', () => ({
   WeaponsGateway: () => ({
     fetchAllWeapons: mockFetchAllWeapons,
@@ -15,11 +23,11 @@ vi.mock('src/model/gateways/weapons.gateway', () => ({
 
 vi.mock('src/model/utils/message', () => ({
   erebusMessage: () => ({
-    success: vi.fn(),
+    success: mockSuccess,
     info: vi.fn(),
     warning: vi.fn(),
-    danger: vi.fn(),
-    continuous: vi.fn(() => ({ dismiss: vi.fn() })),
+    danger: mockDanger,
+    continuous: mockContinuous.mockReturnValue({ dismiss: mockDismiss }),
   }),
 }));
 
@@ -150,7 +158,6 @@ describe('useWeapons', () => {
     });
 
     test('Deverá definir loading como false após um erro na API', async () => {
-      vi.spyOn(console, 'error').mockImplementation(() => undefined);
       mockFetchAllWeapons.mockRejectedValue(new Error('Network Error'));
 
       const { loading, getAllWeapons } = useWeapons();
@@ -160,7 +167,6 @@ describe('useWeapons', () => {
     });
 
     test('Deverá manter weapons vazio quando a API falhar', async () => {
-      vi.spyOn(console, 'error').mockImplementation(() => undefined);
       mockFetchAllWeapons.mockRejectedValue(new Error('Network Error'));
 
       const { weapons, getAllWeapons } = useWeapons();
@@ -169,16 +175,52 @@ describe('useWeapons', () => {
       expect(weapons.value).toStrictEqual([]);
     });
 
-    test('Deverá logar o erro no console quando a API falhar', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-      const mockError = new Error('Network Error');
+    // ── Cenários de notificação (SPEC-051) ────────────────────────────────────
+
+    test('Deverá chamar notify.continuous com a chave de loading ao iniciar a busca', async () => {
+      mockFetchAllWeapons.mockResolvedValue(weaponsFixture);
+
+      const { getAllWeapons } = useWeapons();
+      await getAllWeapons();
+
+      expect(mockContinuous).toHaveBeenCalledWith('common.loading.fetchingWeapons');
+    });
+
+    test('Deverá chamar notify.success com a chave de sucesso após carregar com êxito', async () => {
+      mockFetchAllWeapons.mockResolvedValue(weaponsFixture);
+
+      const { getAllWeapons } = useWeapons();
+      await getAllWeapons();
+
+      expect(mockSuccess).toHaveBeenCalledWith('common.success.weaponsLoaded');
+    });
+
+    test('Deverá chamar notify.danger com err.message quando o gateway falhar', async () => {
+      const mockError = new Error('Falha de conexão');
       mockFetchAllWeapons.mockRejectedValue(mockError);
 
       const { getAllWeapons } = useWeapons();
       await getAllWeapons();
 
-      expect(consoleSpy).toHaveBeenCalledTimes(1);
-      expect(consoleSpy).toHaveBeenCalledWith(mockError);
+      expect(mockDanger).toHaveBeenCalledWith('Falha de conexão');
+    });
+
+    test('Deverá chamar dismiss() no finally em caso de sucesso', async () => {
+      mockFetchAllWeapons.mockResolvedValue(weaponsFixture);
+
+      const { getAllWeapons } = useWeapons();
+      await getAllWeapons();
+
+      expect(mockDismiss).toHaveBeenCalledOnce();
+    });
+
+    test('Deverá chamar dismiss() no finally em caso de erro', async () => {
+      mockFetchAllWeapons.mockRejectedValue(new Error('Network Error'));
+
+      const { getAllWeapons } = useWeapons();
+      await getAllWeapons();
+
+      expect(mockDismiss).toHaveBeenCalledOnce();
     });
   });
 });

@@ -18,13 +18,21 @@ vi.mock('src/stores/character.store', () => ({
   }),
 }));
 
+// Spies para verificar chamadas às notificações
+const { mockSuccess, mockDanger, mockContinuous, mockDismiss } = vi.hoisted(() => ({
+  mockSuccess: vi.fn(),
+  mockDanger: vi.fn(),
+  mockContinuous: vi.fn(),
+  mockDismiss: vi.fn(),
+}));
+
 vi.mock('src/model/utils/message', () => ({
   erebusMessage: () => ({
-    success: vi.fn(),
+    success: mockSuccess,
     info: vi.fn(),
     warning: vi.fn(),
-    danger: vi.fn(),
-    continuous: vi.fn(() => ({ dismiss: vi.fn() })),
+    danger: mockDanger,
+    continuous: mockContinuous.mockReturnValue({ dismiss: mockDismiss }),
   }),
 }));
 
@@ -288,12 +296,59 @@ describe('useCharacterBuilder', () => {
     });
 
     test('retorna false quando o gateway lança erro', async () => {
-      vi.spyOn(console, 'error').mockImplementation(() => undefined);
       mockValidateCharacter.mockRejectedValue(new Error('Network Error'));
 
       const { submit } = useCharacterBuilder();
       const result = await submit();
       expect(result).toBe(false);
+    });
+
+    // ── Cenários de notificação (SPEC-051) ────────────────────────────────────
+
+    test('submit() chama notify.continuous com a chave de loading ao iniciar', async () => {
+      mockValidateCharacter.mockResolvedValue(validResponse);
+
+      const { submit } = useCharacterBuilder();
+      await submit();
+
+      expect(mockContinuous).toHaveBeenCalledWith('common.loading.fetchingCharacter');
+    });
+
+    test('submit() chama notify.success quando API retorna valid=true', async () => {
+      mockValidateCharacter.mockResolvedValue(validResponse);
+
+      const { submit } = useCharacterBuilder();
+      await submit();
+
+      expect(mockSuccess).toHaveBeenCalledWith('common.success.characterLoaded');
+    });
+
+    test('submit() chama notify.danger com err.message quando o gateway lança erro', async () => {
+      const mockError = new Error('Falha de rede');
+      mockValidateCharacter.mockRejectedValue(mockError);
+
+      const { submit } = useCharacterBuilder();
+      await submit();
+
+      expect(mockDanger).toHaveBeenCalledWith('Falha de rede');
+    });
+
+    test('submit() chama dismiss() em caso de sucesso', async () => {
+      mockValidateCharacter.mockResolvedValue(validResponse);
+
+      const { submit } = useCharacterBuilder();
+      await submit();
+
+      expect(mockDismiss).toHaveBeenCalledOnce();
+    });
+
+    test('submit() chama dismiss() em caso de erro', async () => {
+      mockValidateCharacter.mockRejectedValue(new Error('Network Error'));
+
+      const { submit } = useCharacterBuilder();
+      await submit();
+
+      expect(mockDismiss).toHaveBeenCalledOnce();
     });
   });
 

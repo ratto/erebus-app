@@ -16,16 +16,20 @@ export const useWeapons = () => {
     loading.value = true;
     weapons.value = [];
 
+    // Exibe notificação contínua enquanto carrega; dismiss é chamado no finally
+    const { dismiss } = notify.continuous(t('common.loading.fetchingWeapons'));
+
     await gateway
       .fetchAllWeapons(tipo)
       .then((res) => {
         weapons.value.push(...res);
+        notify.success(t('common.success.weaponsLoaded'));
       })
-      .catch((err) => {
-        console.error(err);
-        notify.danger(t('common.errors.fetchFailed'));
+      .catch((err: Error) => {
+        notify.danger(err.message);
       })
       .finally(() => {
+        dismiss();
         loading.value = false;
       });
   };

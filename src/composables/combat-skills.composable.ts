@@ -16,16 +16,20 @@ export const useCombatSkills = () => {
     loading.value = true;
     combatSkills.value = [];
 
+    // Exibe notificação contínua enquanto carrega; dismiss é chamado no finally
+    const { dismiss } = notify.continuous(t('common.loading.fetchingCombatSkills'));
+
     await gateway
       .fetchAllCombatSkills()
       .then((res) => {
         combatSkills.value.push(...res);
+        notify.success(t('common.success.combatSkillsLoaded'));
       })
-      .catch((err) => {
-        console.error(err);
-        notify.danger(t('common.errors.fetchFailed'));
+      .catch((err: Error) => {
+        notify.danger(err.message);
       })
       .finally(() => {
+        dismiss();
         loading.value = false;
       });
   };

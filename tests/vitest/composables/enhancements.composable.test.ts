@@ -7,6 +7,14 @@ const { mockGetAllEnhancements } = vi.hoisted(() => {
   };
 });
 
+// Spies para verificar chamadas às notificações
+const { mockSuccess, mockDanger, mockContinuous, mockDismiss } = vi.hoisted(() => ({
+  mockSuccess: vi.fn(),
+  mockDanger: vi.fn(),
+  mockContinuous: vi.fn(),
+  mockDismiss: vi.fn(),
+}));
+
 vi.mock('src/model/gateways/enhancements.gateway', () => ({
   EnhancementsGateway: () => ({
     getAllEnhancements: mockGetAllEnhancements,
@@ -15,11 +23,11 @@ vi.mock('src/model/gateways/enhancements.gateway', () => ({
 
 vi.mock('src/model/utils/message', () => ({
   erebusMessage: () => ({
-    success: vi.fn(),
+    success: mockSuccess,
     info: vi.fn(),
     warning: vi.fn(),
-    danger: vi.fn(),
-    continuous: vi.fn(() => ({ dismiss: vi.fn() })),
+    danger: mockDanger,
+    continuous: mockContinuous.mockReturnValue({ dismiss: mockDismiss }),
   }),
 }));
 
@@ -94,7 +102,6 @@ describe('useEnhancements', () => {
     });
 
     test('Deverá definir loading como false após um erro na API', async () => {
-      vi.spyOn(console, 'error').mockImplementation(() => undefined);
       mockGetAllEnhancements.mockRejectedValue(new Error('Network Error'));
 
       const { loading, fetchEnhancements } = useEnhancements();
@@ -104,7 +111,6 @@ describe('useEnhancements', () => {
     });
 
     test('Deverá manter enhancements vazio quando a API falhar', async () => {
-      vi.spyOn(console, 'error').mockImplementation(() => undefined);
       mockGetAllEnhancements.mockRejectedValue(new Error('Network Error'));
 
       const { enhancements, fetchEnhancements } = useEnhancements();
@@ -113,16 +119,52 @@ describe('useEnhancements', () => {
       expect(enhancements.value).toStrictEqual([]);
     });
 
-    test('Deverá logar o erro no console quando a API falhar', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-      const mockError = new Error('Network Error');
+    // ── Cenários de notificação (SPEC-051) ────────────────────────────────────
+
+    test('Deverá chamar notify.continuous com a chave de loading ao iniciar a busca', async () => {
+      mockGetAllEnhancements.mockResolvedValue(enhancementsFixture);
+
+      const { fetchEnhancements } = useEnhancements();
+      await fetchEnhancements();
+
+      expect(mockContinuous).toHaveBeenCalledWith('common.loading.fetchingEnhancements');
+    });
+
+    test('Deverá chamar notify.success com a chave de sucesso após carregar com êxito', async () => {
+      mockGetAllEnhancements.mockResolvedValue(enhancementsFixture);
+
+      const { fetchEnhancements } = useEnhancements();
+      await fetchEnhancements();
+
+      expect(mockSuccess).toHaveBeenCalledWith('common.success.enhancementsLoaded');
+    });
+
+    test('Deverá chamar notify.danger com err.message quando o gateway falhar', async () => {
+      const mockError = new Error('Falha de conexão');
       mockGetAllEnhancements.mockRejectedValue(mockError);
 
       const { fetchEnhancements } = useEnhancements();
       await fetchEnhancements();
 
-      expect(consoleSpy).toHaveBeenCalledTimes(1);
-      expect(consoleSpy).toHaveBeenCalledWith(mockError);
+      expect(mockDanger).toHaveBeenCalledWith('Falha de conexão');
+    });
+
+    test('Deverá chamar dismiss() no finally em caso de sucesso', async () => {
+      mockGetAllEnhancements.mockResolvedValue(enhancementsFixture);
+
+      const { fetchEnhancements } = useEnhancements();
+      await fetchEnhancements();
+
+      expect(mockDismiss).toHaveBeenCalledOnce();
+    });
+
+    test('Deverá chamar dismiss() no finally em caso de erro', async () => {
+      mockGetAllEnhancements.mockRejectedValue(new Error('Network Error'));
+
+      const { fetchEnhancements } = useEnhancements();
+      await fetchEnhancements();
+
+      expect(mockDismiss).toHaveBeenCalledOnce();
     });
   });
 });

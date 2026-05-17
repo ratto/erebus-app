@@ -17,17 +17,21 @@ export const useProtectiveEquipment = () => {
     loading.value = true;
     protectiveEquipments.value = [];
 
+    // Exibe notificação contínua enquanto carrega; dismiss é chamado no finally
+    const { dismiss } = notify.continuous(t('common.loading.fetchingProtectiveEquipment'));
+
     await gateway
       .getAll(filters)
       .then((res) => {
         locale.value = res.locale;
         protectiveEquipments.value.push(...res.protectiveEquipment);
+        notify.success(t('common.success.protectiveEquipmentLoaded'));
       })
-      .catch((err) => {
-        console.error(err);
-        notify.danger(t('common.errors.fetchFailed'));
+      .catch((err: Error) => {
+        notify.danger(err.message);
       })
       .finally(() => {
+        dismiss();
         loading.value = false;
       });
   };
