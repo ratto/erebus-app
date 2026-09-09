@@ -1,0 +1,260 @@
+{
+  "meta": {
+    "system": "erebus-app (Phase 1 - Research Service)",
+    "hld_owner": "rattopedro@gmail.com",
+    "version": "1.0",
+    "date": "2026-09-09"
+  },
+  "objective": {
+    "technical_goal": "Structure erebus-app, currently a plain Vite+React scaffold with no domain logic, as an MVVM application that consumes erebus-api to provide read-only search (listing, search, filter and detail) over the Daemon System tables: weapons, firearms, protections, skills and enhancements. This document covers only the technical how of the solution (architecture, components, flows, data, interfaces, stack, scalability, security and observability); the design system (visual tokens, UI components) is documented separately in erebus-app/docs/design.",
+    "problems_addressed": [
+      "erebus-app has no domain logic, HTTP client, routing or defined layers yet",
+      "No structured, queryable data source exists for the Daemon System rules on the client side",
+      "The future Erebus Engine (Phase 2) has no validated client architecture reference to follow"
+    ],
+    "linked_systems": [
+      "erebus-api (sole external integration, consumed read-only via REST/JSON)"
+    ]
+  },
+  "architecture": {
+    "topology_overview": "Single-page application (SPA) built with React, Vite and TypeScript, organized in MVVM. The Model layer holds per-entity Gateways (Axios) and pure TypeScript types, agnostic of React or any UI library. The ViewModel layer is implemented as domain hooks (one per entity) that consume the Gateways and expose state and methods to the View via destructuring. The View layer is composed of layouts, pages and React components (tsx), with no direct HTTP calls. Routing via React Router DOM, with two layouts (landing and main) containing nested pages.",
+    "technologies": [
+      "React + Vite + TypeScript",
+      "React Router DOM (routing)",
+      "Axios (HTTP client)",
+      "Styled Components + Sass (styling)",
+      "Vitest (unit and integration tests)",
+      "Playwright (E2E tests)"
+    ],
+    "deployment": "cloud",
+    "patterns": [
+      "MVVM (Model / ViewModel / View)",
+      "Gateway pattern in the Model layer (one Axios Gateway per entity, mirroring erebus-api endpoints)",
+      "Domain hooks as ViewModel (e.g. useSkills, useWeapons)",
+      "REST/JSON as the integration protocol with erebus-api",
+      "Client-side search and filter over the full dataset loaded per entity"
+    ]
+  },
+  "components": [
+    {
+      "name": "LandingLayout",
+      "responsibilities": ["Layout for the home page (HomePage)"],
+      "dependencies": ["React Router"]
+    },
+    {
+      "name": "MainLayout",
+      "responsibilities": ["Navigation shell for the remaining pages (AboutPage and the 5 listing pages)"],
+      "dependencies": ["React Router"]
+    },
+    {
+      "name": "HomePage",
+      "responsibilities": ["Institutional home page"],
+      "dependencies": ["LandingLayout"]
+    },
+    {
+      "name": "AboutPage",
+      "responsibilities": ["Institutional About page"],
+      "dependencies": ["MainLayout"]
+    },
+    {
+      "name": "WeaponsListPage",
+      "responsibilities": ["List, search and filter melee and non-firearm ranged weapons"],
+      "dependencies": ["useWeapons", "WeaponDetail"]
+    },
+    {
+      "name": "FirearmsListPage",
+      "responsibilities": ["List, search and filter firearms"],
+      "dependencies": ["useFirearms", "FirearmDetail"]
+    },
+    {
+      "name": "ProtectionsListPage",
+      "responsibilities": ["List, search and filter protections/armor"],
+      "dependencies": ["useProtections", "ProtectionDetail"]
+    },
+    {
+      "name": "SkillsListPage",
+      "responsibilities": ["List, search and filter skills"],
+      "dependencies": ["useSkills", "SkillDetail"]
+    },
+    {
+      "name": "EnhancementsListPage",
+      "responsibilities": ["List, search and filter enhancements"],
+      "dependencies": ["useEnhancements", "EnhancementDetail"]
+    },
+    {
+      "name": "WeaponDetail / FirearmDetail / ProtectionDetail / SkillDetail / EnhancementDetail",
+      "responsibilities": ["Per-entity modal detail components, displaying all fields and the source/trust level"],
+      "dependencies": ["Corresponding Gateway (fetch by id)"]
+    },
+    {
+      "name": "Domain hooks (useWeapons, useFirearms, useProtections, useSkills, useEnhancements)",
+      "responsibilities": ["ViewModel: orchestrate Gateway calls, hold state (data, loading, error), expose in-memory search/filter"],
+      "dependencies": ["Corresponding Gateway"]
+    },
+    {
+      "name": "Gateways (weaponsGateway, firearmsGateway, protectionsGateway, periciasGateway, aprimoramentosGateway)",
+      "responsibilities": ["Encapsulate Axios calls to erebus-api, map responses to Models"],
+      "dependencies": ["Axios", "erebus-api"]
+    },
+    {
+      "name": "Models (pure TS types)",
+      "responsibilities": ["Represent entities coming from the API (Weapon, Firearm, Protection, Skill, Enhancement), including provenance fields"],
+      "dependencies": []
+    },
+    {
+      "name": "Shared UI components (/src/components)",
+      "responsibilities": ["Search bar, source-level filter, generic modal, loading/error indicators"],
+      "dependencies": ["Used by pages and their own page-specific components"]
+    }
+  ],
+  "flows": {
+    "request_flow": [
+      "User navigates to a listing page (e.g. SkillsListPage) inside MainLayout",
+      "Domain hook (useSkills) fires on mount, calling periciasGateway.list()",
+      "Gateway performs GET /pericias on erebus-api, receiving all records at once",
+      "Response is mapped to Skill[] (pure TypeScript Model)",
+      "Hook holds the full list in state and exposes data, loading, error and search/filter methods",
+      "Search and filter are applied in memory, without a new request",
+      "Loading shown via spinner/skeleton; error or empty result shown inline on the page, with a complementary global toast/snackbar notification",
+      "User clicks an item, opening the corresponding modal (e.g. SkillDetail)",
+      "Hook triggers GET /pericias/:id on erebus-api",
+      "Response mapped to the Model and displayed in the modal, including source and trust level",
+      "Loading via spinner/skeleton inside the modal; error inline in the modal with a complementary global notification; no automatic retry"
+    ],
+    "data_flow": [
+      "SQLite (erebus-api) -> JSON REST response -> Gateway (Axios) -> Model (pure TypeScript) -> domain hook state (ViewModel) -> View (props via destructuring) -> rendering"
+    ]
+  },
+  "data_model": {
+    "entities": [
+      "Weapon (melee and non-firearm ranged weapons: knives, clubs, maces, bows, crossbows, slings, thrown knives)",
+      "Firearm (pistols, submachine guns, shotguns)",
+      "Protection (armor/protective gear)",
+      "Skill (with nested subgroups and base attribute)",
+      "Enhancement (with nested levels/costs/effects)"
+    ],
+    "relationships": [
+      "No cross-entity relationships are navigated by the application in this phase; each entity is queried in isolation"
+    ],
+    "source_of_truth": "erebus-api (SQLite). erebus-app does not persist or cache data across sessions (no localStorage/IndexedDB); every page load triggers a fresh request. All entities include the common provenance fields defined by erebus-api: nivelFonte, fonte and, when applicable, edicaoOuVersao."
+  },
+  "interfaces": [
+    {
+      "name": "erebus-app (web application)",
+      "kind": "api",
+      "protocol": "HTTPS",
+      "exposure": "external",
+      "sla_limits": "Initial load < 2s (hypothesis); in-memory search/filter < 50ms (hypothesis)"
+    },
+    {
+      "name": "GET /armas, /armas/:id",
+      "kind": "api",
+      "protocol": "REST/JSON",
+      "exposure": "internal",
+      "sla_limits": "p95 < 200ms (defined in the erebus-api PRD)"
+    },
+    {
+      "name": "GET /protecoes, /protecoes/:id",
+      "kind": "api",
+      "protocol": "REST/JSON",
+      "exposure": "internal",
+      "sla_limits": "p95 < 200ms"
+    },
+    {
+      "name": "GET /pericias, /pericias/:id",
+      "kind": "api",
+      "protocol": "REST/JSON",
+      "exposure": "internal",
+      "sla_limits": "p95 < 200ms"
+    },
+    {
+      "name": "GET /aprimoramentos, /aprimoramentos/:id",
+      "kind": "api",
+      "protocol": "REST/JSON",
+      "exposure": "internal",
+      "sla_limits": "p95 < 200ms"
+    }
+  ],
+  "scalability_availability": {
+    "strategies": [
+      "Static SPA served via CDN (Netlify); horizontal scaling managed by the platform, no own server to scale",
+      "No automatic retry on erebus-api failure in this phase",
+      "Axios timeout configured; errors handled via inline state on the page/modal, complemented by a global notification"
+    ],
+    "caching": "None (no local caching of API data; no localStorage/IndexedDB)",
+    "partitioning": "Not applicable (static CDN-served frontend)",
+    "sla_target": "99.9% for the web application (hypothesis, Netlify platform), also dependent on erebus-api availability, outside erebus-app's direct control"
+  },
+  "security": {
+    "authentication": "Not applicable in this phase: public, read-only application, no user login",
+    "authorization": "Not applicable in this phase: all queried data is public",
+    "secrets_management": "No real secrets in erebus-app; the VITE_API_BASE_URL environment variable only exposes the public API URL, not a credential. No secret is embedded in the client bundle",
+    "encryption_in_transit": "HTTPS between erebus-app, Netlify and erebus-api",
+    "encryption_at_rest": "Not applicable: no data is persisted on the client (no local cache)",
+    "pii_policy": "Not applicable: no personal data (PII) is collected, displayed or processed"
+  },
+  "observability": {
+    "logs": "Structured console.error for request failures, with no external service integration in this phase",
+    "metrics": [],
+    "tracing": "None in this phase",
+    "dashboards_alerts": [
+      "Limited to the Netlify build/deploy dashboard"
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Catalog growth degrading client-side filtering",
+      "probability": "medium",
+      "impact": "In-memory search and filter become slow if Level 2/3 curation significantly expands the lists",
+      "mitigation": [
+        "Monitor payload size per entity",
+        "Migrate to server-side pagination/filtering if needed"
+      ],
+      "contingency_plan": "Revise domain hooks to adopt server-side filtering, reusing the search parameters already defined in erebus-api endpoints"
+    },
+    {
+      "risk": "Lack of automatic retry on transient network failures",
+      "probability": "medium",
+      "impact": "Momentary API instability appears as a visible error to the user, with no automatic recovery",
+      "mitigation": [
+        "User can retry manually"
+      ],
+      "contingency_plan": "Re-evaluate retry with backoff if the problem proves recurrent in production"
+    },
+    {
+      "risk": "Lack of observability in production",
+      "probability": "high",
+      "impact": "Real production failures may go unnoticed, hindering diagnosis",
+      "mitigation": [
+        "Adopt the lightweight error tracking recommendation described in Observability"
+      ],
+      "contingency_plan": "Manual monitoring via user reports until a dedicated tool is adopted"
+    },
+    {
+      "risk": "Direct coupling between erebus-app Models and the erebus-api response contract",
+      "probability": "medium",
+      "impact": "A schema change in the API without versioning breaks Gateways/Models without prior warning",
+      "mitigation": [
+        "Validate the contract via integration tests (Vitest) with mock responses faithful to the real schema",
+        "Track erebus-api endpoint versioning"
+      ],
+      "contingency_plan": "Adjust Gateways and Models in isolation, with no impact on View/ViewModel, given the MVVM isolation"
+    }
+  ],
+  "adrs_next_steps": {
+    "adrs": [],
+    "pending_decisions": [
+      "Future need for server-side pagination/filtering if the catalog grows",
+      "Adoption of an error tracking tool (e.g. Sentry)"
+    ],
+    "next_steps": [
+      "Structure the project into /src/pages, /src/components, /src/models (Models + Gateways), /src/hooks (ViewModels), /src/layouts",
+      "Implement routing with React Router DOM (LandingLayout -> HomePage; MainLayout -> AboutPage + 5 listing pages)",
+      "Implement Axios Gateways per entity and their corresponding domain hooks",
+      "Configure VITE_API_BASE_URL per environment and the Netlify deploy pipeline",
+      "Write unit/integration tests (Vitest) for Gateways and hooks, and E2E tests (Playwright) for search/filter/detail flows",
+      "Detail the design system in erebus-app/docs/design (outside this HLD)",
+      "Formalize the ADR candidates listed above"
+    ]
+  }
+}
