@@ -2,11 +2,17 @@
   "meta": {
     "system": "erebus-app (Phase 1 - Research Service)",
     "hld_owner": "rattopedro@gmail.com",
-    "version": "1.0",
-    "date": "2026-09-09"
+    "version": "1.1",
+    "date": "2026-09-10",
+    "previous_versions": [
+      { "version": "1.0", "date": "2026-09-09" }
+    ],
+    "changelog": [
+      "1.1 - Weapon pages, hooks, gateways and models re-split into melee / ranged / firearms per ADR-001"
+    ]
   },
   "objective": {
-    "technical_goal": "Structure erebus-app, currently a plain Vite+React scaffold with no domain logic, as an MVVM application that consumes erebus-api to provide read-only search (listing, search, filter and detail) over the Daemon System tables: weapons, firearms, protections, skills and enhancements. This document covers only the technical how of the solution (architecture, components, flows, data, interfaces, stack, scalability, security and observability); the design system (visual tokens, UI components) is documented separately in erebus-app/docs/design.",
+    "technical_goal": "Structure erebus-app, currently a plain Vite+React scaffold with no domain logic, as an MVVM application that consumes erebus-api to provide read-only search (listing, search, filter and detail) over the Daemon System tables: melee weapons, ranged weapons, firearms, protections, skills and enhancements. This document covers only the technical how of the solution (architecture, components, flows, data, interfaces, stack, scalability, security and observability); the design system (visual tokens, UI components) is documented separately in erebus-app/docs/design.",
     "problems_addressed": [
       "erebus-app has no domain logic, HTTP client, routing or defined layers yet",
       "No structured, queryable data source exists for the Daemon System rules on the client side",
@@ -30,7 +36,7 @@
     "patterns": [
       "MVVM (Model / ViewModel / View)",
       "Gateway pattern in the Model layer (one Axios Gateway per entity, mirroring erebus-api endpoints)",
-      "Domain hooks as ViewModel (e.g. useSkills, useWeapons)",
+      "Domain hooks as ViewModel (e.g. useSkills, useMeleeWeapons)",
       "REST/JSON as the integration protocol with erebus-api",
       "Client-side search and filter over the full dataset loaded per entity"
     ]
@@ -43,7 +49,7 @@
     },
     {
       "name": "MainLayout",
-      "responsibilities": ["Navigation shell for the remaining pages (AboutPage and the 5 listing pages)"],
+      "responsibilities": ["Navigation shell for the remaining pages (AboutPage and the 6 listing pages)"],
       "dependencies": ["React Router"]
     },
     {
@@ -57,9 +63,17 @@
       "dependencies": ["MainLayout"]
     },
     {
-      "name": "WeaponsListPage",
-      "responsibilities": ["List, search and filter melee and non-firearm ranged weapons"],
-      "dependencies": ["useWeapons", "WeaponDetail"]
+      "name": "MeleeWeaponsListPage",
+      "responsibilities": ["List, search and filter melee weapons"],
+      "dependencies": ["useMeleeWeapons", "MeleeWeaponDetail"]
+    },
+    {
+      "name": "RangedWeaponsListPage",
+      "responsibilities": [
+        "List, search and filter non-firearm ranged weapons (bows, crossbows) and thrown weapons",
+        "Display a note stating these are canonically tested under the Armas Brancas* skill"
+      ],
+      "dependencies": ["useRangedWeapons", "RangedWeaponDetail"]
     },
     {
       "name": "FirearmsListPage",
@@ -82,23 +96,26 @@
       "dependencies": ["useEnhancements", "EnhancementDetail"]
     },
     {
-      "name": "WeaponDetail / FirearmDetail / ProtectionDetail / SkillDetail / EnhancementDetail",
-      "responsibilities": ["Per-entity modal detail components, displaying all fields and the source/trust level"],
+      "name": "MeleeWeaponDetail / RangedWeaponDetail / FirearmDetail / ProtectionDetail / SkillDetail / EnhancementDetail",
+      "responsibilities": [
+        "Per-entity modal detail components, displaying all fields and the source/trust level",
+        "Weapon details additionally display the governing Daemon skill (skillGroup) as a first-class field"
+      ],
       "dependencies": ["Corresponding Gateway (fetch by id)"]
     },
     {
-      "name": "Domain hooks (useWeapons, useFirearms, useProtections, useSkills, useEnhancements)",
+      "name": "Domain hooks (useMeleeWeapons, useRangedWeapons, useFirearms, useProtections, useSkills, useEnhancements)",
       "responsibilities": ["ViewModel: orchestrate Gateway calls, hold state (data, loading, error), expose in-memory search/filter"],
       "dependencies": ["Corresponding Gateway"]
     },
     {
-      "name": "Gateways (weaponsGateway, firearmsGateway, protectionsGateway, periciasGateway, aprimoramentosGateway)",
+      "name": "Gateways (meleeWeaponsGateway, rangedWeaponsGateway, firearmsGateway, protectionsGateway, skillsGateway, enhancementsGateway)",
       "responsibilities": ["Encapsulate Axios calls to erebus-api, map responses to Models"],
       "dependencies": ["Axios", "erebus-api"]
     },
     {
       "name": "Models (pure TS types)",
-      "responsibilities": ["Represent entities coming from the API (Weapon, Firearm, Protection, Skill, Enhancement), including provenance fields"],
+      "responsibilities": ["Represent entities coming from the API (MeleeWeapon, RangedWeapon, Firearm, Protection, Skill, Enhancement), including provenance fields"],
       "dependencies": []
     },
     {
@@ -110,14 +127,14 @@
   "flows": {
     "request_flow": [
       "User navigates to a listing page (e.g. SkillsListPage) inside MainLayout",
-      "Domain hook (useSkills) fires on mount, calling periciasGateway.list()",
-      "Gateway performs GET /pericias on erebus-api, receiving all records at once",
+      "Domain hook (useSkills) fires on mount, calling skillsGateway.list()",
+      "Gateway performs GET /skills on erebus-api, receiving all records at once",
       "Response is mapped to Skill[] (pure TypeScript Model)",
       "Hook holds the full list in state and exposes data, loading, error and search/filter methods",
       "Search and filter are applied in memory, without a new request",
       "Loading shown via spinner/skeleton; error or empty result shown inline on the page, with a complementary global toast/snackbar notification",
       "User clicks an item, opening the corresponding modal (e.g. SkillDetail)",
-      "Hook triggers GET /pericias/:id on erebus-api",
+      "Hook triggers GET /skills/:id on erebus-api",
       "Response mapped to the Model and displayed in the modal, including source and trust level",
       "Loading via spinner/skeleton inside the modal; error inline in the modal with a complementary global notification; no automatic retry"
     ],
@@ -127,14 +144,15 @@
   },
   "data_model": {
     "entities": [
-      "Weapon (melee and non-firearm ranged weapons: knives, clubs, maces, bows, crossbows, slings, thrown knives)",
+      "MeleeWeapon (knives, daggers, swords, axes, clubs, maces, spears; includes unarmed combat)",
+      "RangedWeapon (bows and crossbows, plus thrown weapons - the latter are the same records returned by MeleeWeapon with isThrown true, not duplicates)",
       "Firearm (pistols, submachine guns, shotguns)",
       "Protection (armor/protective gear)",
       "Skill (with nested subgroups and base attribute)",
       "Enhancement (with nested levels/costs/effects)"
     ],
     "relationships": [
-      "No cross-entity relationships are navigated by the application in this phase; each entity is queried in isolation"
+      "No cross-entity relationships are navigated by the application in this phase; each entity is queried in isolation. The skillGroup field on weapon models is displayed as text, not as a navigable link to the corresponding skill"
     ],
     "source_of_truth": "erebus-api (SQLite). erebus-app does not persist or cache data across sessions (no localStorage/IndexedDB); every page load triggers a fresh request. All entities include the common provenance fields defined by erebus-api: nivelFonte, fonte and, when applicable, edicaoOuVersao."
   },
@@ -147,28 +165,42 @@
       "sla_limits": "Initial load < 2s (hypothesis); in-memory search/filter < 50ms (hypothesis)"
     },
     {
-      "name": "GET /armas, /armas/:id",
+      "name": "GET /melee-weapons, /melee-weapons/:id",
       "kind": "api",
       "protocol": "REST/JSON",
       "exposure": "internal",
       "sla_limits": "p95 < 200ms (defined in the erebus-api PRD)"
     },
     {
-      "name": "GET /protecoes, /protecoes/:id",
+      "name": "GET /ranged-weapons, /ranged-weapons/:id",
       "kind": "api",
       "protocol": "REST/JSON",
       "exposure": "internal",
       "sla_limits": "p95 < 200ms"
     },
     {
-      "name": "GET /pericias, /pericias/:id",
+      "name": "GET /firearms, /firearms/:id",
       "kind": "api",
       "protocol": "REST/JSON",
       "exposure": "internal",
       "sla_limits": "p95 < 200ms"
     },
     {
-      "name": "GET /aprimoramentos, /aprimoramentos/:id",
+      "name": "GET /protections, /protections/:id",
+      "kind": "api",
+      "protocol": "REST/JSON",
+      "exposure": "internal",
+      "sla_limits": "p95 < 200ms"
+    },
+    {
+      "name": "GET /skills, /skills/:id",
+      "kind": "api",
+      "protocol": "REST/JSON",
+      "exposure": "internal",
+      "sla_limits": "p95 < 200ms"
+    },
+    {
+      "name": "GET /enhancements, /enhancements/:id",
       "kind": "api",
       "protocol": "REST/JSON",
       "exposure": "internal",
@@ -231,6 +263,17 @@
       "contingency_plan": "Manual monitoring via user reports until a dedicated tool is adopted"
     },
     {
+      "risk": "Ranged Weapons menu implies a skill that does not exist in the Daemon System",
+      "probability": "medium",
+      "impact": "User infers bows and crossbows are tested under a 'ranged weapons' skill, when they are canonically tested under Armas Brancas*",
+      "mitigation": [
+        "skillGroup displayed as a first-class field on every weapon detail modal",
+        "Explanatory note in the header of RangedWeaponsListPage",
+        "Thrown weapons visibly flagged as also appearing in the melee listing (same record, same id)"
+      ],
+      "contingency_plan": "Merge the melee and ranged listings behind a single Weapons entry with a category filter, should the confusion be reported in use"
+    },
+    {
       "risk": "Direct coupling between erebus-app Models and the erebus-api response contract",
       "probability": "medium",
       "impact": "A schema change in the API without versioning breaks Gateways/Models without prior warning",
@@ -242,14 +285,16 @@
     }
   ],
   "adrs_next_steps": {
-    "adrs": [],
+    "adrs": [
+      "ADR-001 - Three-way weapon taxonomy (melee / ranged / firearms) as the product-facing category (docs/decisions/ADR-001-weapon-taxonomy-melee-ranged-firearms.md)"
+    ],
     "pending_decisions": [
       "Future need for server-side pagination/filtering if the catalog grows",
       "Adoption of an error tracking tool (e.g. Sentry)"
     ],
     "next_steps": [
       "Structure the project into /src/pages, /src/components, /src/models (Models + Gateways), /src/hooks (ViewModels), /src/layouts",
-      "Implement routing with React Router DOM (LandingLayout -> HomePage; MainLayout -> AboutPage + 5 listing pages)",
+      "Implement routing with React Router DOM (LandingLayout -> HomePage; MainLayout -> AboutPage + 6 listing pages)",
       "Implement Axios Gateways per entity and their corresponding domain hooks",
       "Configure VITE_API_BASE_URL per environment and the Netlify deploy pipeline",
       "Write unit/integration tests (Vitest) for Gateways and hooks, and E2E tests (Playwright) for search/filter/detail flows",

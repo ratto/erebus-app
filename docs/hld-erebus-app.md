@@ -1,13 +1,15 @@
 ### HLD: erebus-app (Phase 1 — Search Service)
 
-Version: 1.0
-Date: 2026-09-09
+Version: 1.1
+Date: 2026-09-10 (v1.0: 2026-09-09)
 Owner: rattopedro@gmail.com
+
+Changes in 1.1: weapon pages, hooks, gateways, and models re-split into melee / ranged / firearms per ADR-001 (`docs/decisions/ADR-001-weapon-taxonomy-melee-ranged-firearms.md`).
 
 ---
 
 ### Technical Objective
-Structure `erebus-app`, currently a standard Vite+React scaffold without domain logic, as an MVVM application that consumes `erebus-api` to provide read-only query (listing, search, filter, and detail) access to Daemon System tables: weapons, firearms, protections, skills, and enhancements. This document covers exclusively the technical how of the solution (architecture, components, flows, data, interfaces, stack, scalability, security, and observability); the design system (visual tokens, UI components) is documented separately in `erebus-app/docs/design`.
+Structure `erebus-app`, currently a standard Vite+React scaffold without domain logic, as an MVVM application that consumes `erebus-api` to provide read-only query (listing, search, filter, and detail) access to Daemon System tables: melee weapons, ranged weapons, firearms, protections, skills, and enhancements. This document covers exclusively the technical how of the solution (architecture, components, flows, data, interfaces, stack, scalability, security, and observability); the design system (visual tokens, UI components) is documented separately in `erebus-app/docs/design`.
 
 Dependencies with other systems
 - `erebus-api`: sole external integration, consumed via REST/JSON read-only.
@@ -32,7 +34,7 @@ Main Technologies
 Adopted Patterns
 - MVVM (Model / ViewModel / View)
 - Gateway pattern in Model layer (one Axios Gateway per entity, faithfully mirroring `erebus-api` endpoints)
-- Domain hooks as ViewModel (e.g., `useSkills`, `useWeapons`)
+- Domain hooks as ViewModel (e.g., `useSkills`, `useMeleeWeapons`)
 - REST/JSON as integration protocol with `erebus-api`
 - Client-side filter and search over complete dataset loaded per entity
 
@@ -42,18 +44,19 @@ Adopted Patterns
 | Component | Responsibilities | Dependencies |
 | ----------- | ----------------- | ------------ |
 | `LandingLayout` | Home page layout (`HomePage`) | React Router |
-| `MainLayout` | Navigation shell for other pages (`AboutPage` and 5 listing pages) | React Router |
+| `MainLayout` | Navigation shell for other pages (`AboutPage` and 6 listing pages) | React Router |
 | `HomePage` | Institutional home page | `LandingLayout` |
 | `AboutPage` | Institutional "About" page | `MainLayout` |
-| `WeaponsListPage` | Listing, search, and filter of melee and non-firearm ranged weapons | `useWeapons`, `WeaponDetail` |
+| `MeleeWeaponsListPage` | Listing, search, and filter of melee weapons | `useMeleeWeapons`, `MeleeWeaponDetail` |
+| `RangedWeaponsListPage` | Listing, search, and filter of non-firearm ranged weapons (bows, crossbows) and thrown weapons; displays a note that these are canonically tested under `Armas Brancas*` | `useRangedWeapons`, `RangedWeaponDetail` |
 | `FirearmsListPage` | Listing, search, and filter of firearms | `useFirearms`, `FirearmDetail` |
 | `ProtectionsListPage` | Listing, search, and filter of protections/armor | `useProtections`, `ProtectionDetail` |
 | `SkillsListPage` | Listing, search, and filter of skills | `useSkills`, `SkillDetail` |
 | `EnhancementsListPage` | Listing, search, and filter of enhancements | `useEnhancements`, `EnhancementDetail` |
-| `WeaponDetail` / `FirearmDetail` / `ProtectionDetail` / `SkillDetail` / `EnhancementDetail` | Modal detail components per entity, displaying all fields and source/source level origin | Corresponding Gateway (request by id) |
-| Domain hooks (`useWeapons`, `useFirearms`, `useProtections`, `useSkills`, `useEnhancements`) | ViewModel: orchestrate calls to Gateways, maintain state (data, loading, error), expose in-memory search/filter | Corresponding Gateway |
-| Gateways (`weaponsGateway`, `firearmsGateway`, `protectionsGateway`, `skillsGateway`, `enhancementsGateway`) | Encapsulate Axios calls to `erebus-api`, map response to Models | Axios, `erebus-api` |
-| Models (pure TS types) | Represent entities from API (`Weapon`, `Firearm`, `Protection`, `Skill`, `Enhancement`), including provenance fields | None (pure TypeScript) |
+| `MeleeWeaponDetail` / `RangedWeaponDetail` / `FirearmDetail` / `ProtectionDetail` / `SkillDetail` / `EnhancementDetail` | Modal detail components per entity, displaying all fields and source/source level origin; weapon details additionally display the governing Daemon skill (`skillGroup`) as a first-class field | Corresponding Gateway (request by id) |
+| Domain hooks (`useMeleeWeapons`, `useRangedWeapons`, `useFirearms`, `useProtections`, `useSkills`, `useEnhancements`) | ViewModel: orchestrate calls to Gateways, maintain state (data, loading, error), expose in-memory search/filter | Corresponding Gateway |
+| Gateways (`meleeWeaponsGateway`, `rangedWeaponsGateway`, `firearmsGateway`, `protectionsGateway`, `skillsGateway`, `enhancementsGateway`) | Encapsulate Axios calls to `erebus-api`, map response to Models | Axios, `erebus-api` |
+| Models (pure TS types) | Represent entities from API (`MeleeWeapon`, `RangedWeapon`, `Firearm`, `Protection`, `Skill`, `Enhancement`), including provenance fields | None (pure TypeScript) |
 | Shared UI components (`/src/components`) | Search, filter by source level, generic modal, loading/error indicators | Used by pages and their exclusive components |
 
 ---
@@ -81,8 +84,9 @@ Adopted Patterns
 
 ### Data Model (High Level)
 Main Entities
-- `Weapon` (melee and non-firearm ranged weapons: knives, staffs, clubs, bows, crossbows, slings, throwing knives)
-- `Firearm` (firearms: pistols, machine guns, shotguns)
+- `MeleeWeapon` (knives, daggers, swords, axes, clubs, spears; includes unarmed combat)
+- `RangedWeapon` (bows and crossbows, plus thrown weapons — the latter are the same records returned by `MeleeWeapon` with `isThrown: true`, not duplicates)
+- `Firearm` (firearms: pistols, submachine guns, shotguns)
 - `Protection` (armor/protections)
 - `Skill` (skill, with nested `subgroups` and `baseAttribute`)
 - `Enhancement` (enhancement, with nested `levels`/`costs`/`effects`)
@@ -90,7 +94,7 @@ Main Entities
 All entities include common provenance fields defined by `erebus-api`: `sourceLevel`, `source`, and, when applicable, `editionOrVersion`.
 
 Relations
-- No cross-entity relations are navigated by the application in this phase; each entity is queried in isolation.
+- No cross-entity relations are navigated by the application in this phase; each entity is queried in isolation. The `skillGroup` field on weapon models is displayed as text, not as a navigable link to the corresponding skill.
 
 Source of Truth
 - `erebus-api` (SQLite). `erebus-app` does not persist or cache data between sessions (no localStorage/IndexedDB); each page load triggers a new request.
@@ -101,7 +105,9 @@ Source of Truth
 | Name | Type | Protocol | Exposure | SLAs/Limits |
 | ---- | ---- | ---------- | --------- | ------------- |
 | `erebus-app` (web application) | Web App | HTTPS | External | Initial load < 2s (hypothesis); in-memory search/filter < 50ms (hypothesis) |
-| `GET /weapons`, `/weapons/:id` | API | REST/JSON | Consumed (`erebus-api`) | p95 < 200ms (defined in `erebus-api` PRD) |
+| `GET /melee-weapons`, `/melee-weapons/:id` | API | REST/JSON | Consumed (`erebus-api`) | p95 < 200ms (defined in `erebus-api` PRD) |
+| `GET /ranged-weapons`, `/ranged-weapons/:id` | API | REST/JSON | Consumed (`erebus-api`) | p95 < 200ms |
+| `GET /firearms`, `/firearms/:id` | API | REST/JSON | Consumed (`erebus-api`) | p95 < 200ms |
 | `GET /protections`, `/protections/:id` | API | REST/JSON | Consumed (`erebus-api`) | p95 < 200ms |
 | `GET /skills`, `/skills/:id` | API | REST/JSON | Consumed (`erebus-api`) | p95 < 200ms |
 | `GET /enhancements`, `/enhancements/:id` | API | REST/JSON | Consumed (`erebus-api`) | p95 < 200ms |
@@ -176,6 +182,15 @@ Future Recommendation (Hypothesis)
   - Adopt lightweight error tracking recommendation described in Observability
 - **Contingency Plan:** manual monitoring via user reports until adoption of dedicated tool
 
+#### Ranged Weapons Menu Implies a Skill That Does Not Exist in the Daemon System
+- **Probability:** medium
+- **Impact:** user infers bows and crossbows are tested under a "ranged weapons" skill, when they are canonically tested under `Armas Brancas*`
+- **Mitigation:**
+  - `skillGroup` displayed as a first-class field on every weapon detail modal
+  - Explanatory note in the header of `RangedWeaponsListPage`
+  - Thrown weapons visibly flagged as also appearing in the melee listing (same record, same id)
+- **Contingency Plan:** merge the melee and ranged listings behind a single "Weapons" entry with a category filter, should the confusion be reported in use
+
 #### Direct Coupling Between erebus-app Models and erebus-api Response Contract
 - **Probability:** medium
 - **Impact:** API schema change without versioning breaks Gateways/Models without warning
@@ -188,7 +203,8 @@ Future Recommendation (Hypothesis)
 
 ### ADRs and Next Steps
 Associated ADRs
-- No ADR formalized yet; decisions below are candidates for formal recording.
+- ADR-001 — Three-way weapon taxonomy (melee / ranged / firearms) as the product-facing category (`docs/decisions/ADR-001-weapon-taxonomy-melee-ranged-firearms.md`)
+- Decisions below are candidates for formal recording.
 
 Pending Decisions
 - Future need for server-side pagination/filter, should catalog grow
@@ -196,7 +212,7 @@ Pending Decisions
 
 Next Steps
 - Structure project in `/src/pages`, `/src/components`, `/src/models` (Models + Gateways), `/src/hooks` (ViewModels), `/src/layouts`
-- Implement routing with React Router DOM (`LandingLayout` → `HomePage`; `MainLayout` → `AboutPage` + 5 listing pages)
+- Implement routing with React Router DOM (`LandingLayout` → `HomePage`; `MainLayout` → `AboutPage` + 6 listing pages)
 - Implement Axios Gateways per entity and corresponding domain hooks
 - Configure `VITE_API_BASE_URL` per environment and deploy pipeline on Netlify
 - Write unit/integration tests (Vitest) for Gateways and hooks, and E2E tests (Playwright) for search/filter/detail flows
