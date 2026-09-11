@@ -8,8 +8,12 @@ import html
 import re
 import markdown
 
-SRC = "/home/ratto/Workspace/ErebusProject/erebus-project/erebus-app/docs/lld-erebus-app.md"
-DST = "/home/ratto/Workspace/ErebusProject/erebus-project/erebus-app/docs/lld-erebus-app.html"
+import os
+
+# Resolved relative to this script so the generator works on any machine.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+SRC = os.path.join(_HERE, "lld-erebus-app.md")
+DST = os.path.join(_HERE, "lld-erebus-app.html")
 
 text = open(SRC, encoding="utf-8").read()
 

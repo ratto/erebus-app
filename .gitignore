@@ -8,10 +8,17 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+node_modules/.tmp/
 dist
+dist/
 dist-ssr
 coverage
+coverage/
 *.local
+
+# Test artefacts
+playwright-report/
+test-results/
 
 # Editor directories and files
 .vscode/*
@@ -24,4 +31,7 @@ coverage
 *.sln
 *.sw?
 
+# Environment — .env.example and .env.development are committed on purpose
 .env
+.env.local
+.env.*.local

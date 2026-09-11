@@ -1,10 +1,12 @@
 # LLD: erebus-app
 
-**Version:** 1.0
-**Date:** 2026-09-10
+**Version:** 1.2
+**Date:** 2026-09-10 (v1.0, v1.1: 2026-09-10)
 **Owner:** rattopedro@gmail.com
 **Parent documents:** `docs/prd.md` (Phase 1 PRD), `erebus-app/docs/hld-erebus-app.md` (HLD v1.1), `erebus-app/docs/design/design-system.md` (Códice v1)
 **Sibling contract:** `erebus-api/docs/lld-erebus-api.md` (§5 HTTP contract, §6 data models)
+**Decisions:** `erebus-app/docs/decisions/ADR-003-dev-proxy-base-url-and-ambient-health-probe.md`,
+`erebus-app/docs/decisions/ADR-004-react-compiler-lint-rules-and-the-async-primitive.md`
 **Status:** Normative — binding for all code written in `erebus-app`
 
 ---
@@ -93,6 +95,13 @@ requires the same.
 > pins React 19, Vite 8, TypeScript 6 and ESLint 10; `tech-lead` confirms each
 > resolved version at install time and updates this table **in the same increment**.
 > Never widen a range to make an install succeed — investigate the conflict.
+>
+> **v1.1 (US-02).** The versions below were confirmed against the scaffold at install
+> time. Two floors moved to the current major: `zod` (v3 → **v4**) and
+> `styled-components`. The **set is closed regardless of version** — a package outside
+> §2.1/§2.2 still requires an ADR, and an *unplanned* peer-dependency conflict is
+> escalated to `tech-lead`, never resolved by widening a range or by
+> `--legacy-peer-deps`. The Zod 4 API is reflected in the §7.2 and §12.2 snippets.
 
 ### 2.1 Runtime dependencies
 
@@ -102,9 +111,13 @@ requires the same.
 | `react-dom` | `^19.2.8` | View | DOM renderer (already installed) |
 | `react-router-dom` | `^7.1.0` | View | Routing, nested layouts, URL filter state |
 | `axios` | `^1.7.0` | Model | **The only** HTTP client. Instantiated once (§7.1) |
-| `zod` | `^3.23.0` | Model | Validates every API payload before it becomes an Entity |
-| `styled-components` | `^6.1.0` | View | **The only** way to style a component |
+| `zod` | `^4.0.0` | Model | Validates every API payload before it becomes an Entity. **v4 API** — `z.url()`, not `z.string().url()` |
+| `styled-components` | current major | View | **The only** way to style a component |
 | `react-hot-toast` | `^2.4.1` | View | Global notification surface, wrapped by `src/services/notification.ts` |
+
+Toolchain versions pinned by the scaffold and confirmed in US-02: `react` / `react-dom`
+`^19.2.8`, `vite` `^8.2.2`, `@vitejs/plugin-react` `^6.1.0`, `typescript` `~6.0.2`,
+`eslint` `^10.9.0`, `typescript-eslint` `^8.67.0`, `@types/node` `^24.13.3`.
 
 ### 2.2 Development dependencies
 
@@ -112,18 +125,37 @@ requires the same.
 | --- | --- |
 | `typescript` | Compiler (already installed) |
 | `vite`, `@vitejs/plugin-react` | Dev server and build (already installed) |
-| `sass` | Compiles the **global** stylesheets only (§9.1) |
+| `sass` | Compiles the **global** stylesheets only (§9.1). Plain `sass` with Vite's modern compiler API — `sass-embedded` is deliberately **not** installed (US-02) |
 | `vitest` | Test runner — unit, component and integration |
 | `@vitest/coverage-v8` | Coverage reporting and threshold gates |
 | `jsdom` | DOM environment for Vitest |
 | `@testing-library/react` | Rendering and querying components (QA layer, and `renderHook` for the dev layer) |
+| `@testing-library/dom` | **Declared peer** of `@testing-library/react@16`, which npm does not install automatically; without it every spec fails to resolve. Ratified into the set in v1.2 |
 | `@testing-library/jest-dom` | DOM matchers (`toBeInTheDocument`, …) |
 | `@testing-library/user-event` | Realistic user interaction in component tests |
 | `@playwright/test` | E2E suite (QA layer only) |
 | `eslint`, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh` | Linting (already installed) |
-| `eslint-plugin-import` | Import ordering and layer-boundary enforcement (§2.6) |
+| `eslint-plugin-import` | Import **ordering** only (§11.3). Installed and registered, but `import/order` is **disabled** — see the v1.2 note below. It does **not** enforce any layer boundary; §2.6 uses core rules for that |
 | `prettier` | Formatting |
 | `@types/node`, `@types/react`, `@types/react-dom` | Type definitions (already installed) |
+
+> **v1.2 — `import/order` is disabled, deliberately.** `eslint-plugin-import@2.32.0`
+> crashes on every file under ESLint 10
+> (`TypeError: sourceCode.getTokenOrCommentBefore is not a function`, in
+> `lib/rules/order.js`). The rule is therefore commented out in `eslint.config.js` with
+> the crash recorded inline, and the plugin stays installed and registered — removing it
+> would be an unrecorded change to the closed set, and it is expected back.
+> **Nothing degraded but ordering:** every layer boundary uses a core ESLint rule, which
+> is exactly why §2.6 was designed that way. Import ordering (§11.3) is a **review
+> convention** until the rule returns. Re-enable it the moment a release supports ESLint
+> 10 flat config — that is a one-line change and needs no ADR. Moving to
+> `eslint-plugin-import-x` instead **would** need one (§15 item 10).
+>
+> **v1.2 — declared peers are implicitly in the set.** A package that is a *declared peer
+> dependency* of something already in §2.1/§2.2, and that npm does not install
+> automatically, may be installed without an ADR — it is the same choice, not a new one.
+> It MUST be added to the table in the same increment (as `@testing-library/dom` was), so
+> the set stays literally readable from this document.
 
 ### 2.3 Forbidden dependencies
 
@@ -181,31 +213,67 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
-  css: {
-    preprocessorOptions: {
-      scss: { additionalData: `@use '@/styles/_tokens' as *;\n` },
-    },
+  // No `css` block: Vite 8 removed the legacy Sass API, so `preprocessorOptions.scss.api`
+  // no longer exists and writing it is a compile error. The modern compiler is the only
+  // one there is — the choice of plain `sass` over `sass-embedded` still stands (§2.2).
+  server: {
+    // Local dev reaches erebus-api through this proxy — see ADR-003.
+    proxy: { '/v1': { target: 'http://localhost:3000', changeOrigin: true } },
   },
 });
 ```
 
-The `@` alias MUST be mirrored in `tsconfig.app.json` (`"paths": { "@/*": ["./src/*"] }`,
-`"baseUrl": "."`) and in `vitest.config.ts`. Deep relative imports (`../../../models/…`)
-MUST NOT be written; `./sibling.ts` inside the same folder is fine.
+**v1.1 (US-02) — two changes to this block:**
+
+1. The whole `css` block is **removed**. Two separate reasons, both verified during
+   implementation:
+   - `additionalData` (previously `@use '@/styles/_tokens' as *;`) is injected into
+     *every* `.scss` file, including `_tokens.scss` itself, which Sass rejects; and it
+     has no consumer, because only `main.tsx` imports a stylesheet (§9.1) and every
+     component reads tokens as `var(--token)` through styled-components (§8.9).
+     `global.scss` `@use`s `_tokens` and `_fonts` explicitly instead.
+   - **v1.2:** `preprocessorOptions.scss.api: 'modern-compiler'`, briefly required by
+     v1.1, **cannot be written on Vite 8** — the legacy API was removed, the option no
+     longer exists in `SassPreprocessorOptions`, and setting it fails type-checking
+     (`TS2769`). The decision it documented is unchanged and now unconditional: plain
+     `sass`, modern compiler, `sass-embedded` not installed. `vite.config.ts` carries a
+     comment saying so.
+2. `server.proxy['/v1']` is **added**. `erebus-api` serves no CORS headers, so a direct
+   cross-origin call from the dev server is blocked by the browser. In development
+   `VITE_API_BASE_URL` is the root-relative `/v1` and the proxy forwards it; in
+   preview/production it is an absolute URL. See ADR-003 and §12.2.
+   **Consequence:** the proxy *masks* the missing CORS, which a deployed environment will
+   not. Real CORS on `erebus-api` is a prerequisite of the first deploy (§15 item 8).
+
+The `@` alias MUST be mirrored in `tsconfig.app.json` (`"paths": { "@/*": ["./src/*"] }`)
+and in `vitest.config.ts`. Deep relative imports (`../../../models/…`) MUST NOT be
+written; `./sibling.ts` inside the same folder is fine.
 
 ### 2.6 TypeScript and ESLint gates
 
-`tsconfig.app.json` MUST add to the existing scaffold options:
+`tsconfig.app.json` MUST add to the existing scaffold options. **The scaffold ships with
+no `"strict"` key at all** (verified in US-02) — `strict: true` is therefore *added*
+here, never assumed, and §11.2's "code MUST compile clean under strict" depends on it:
 
 ```jsonc
 {
   "strict": true,
   "noUncheckedIndexedAccess": true,
   "exactOptionalPropertyTypes": true,
-  "baseUrl": ".",
   "paths": { "@/*": ["./src/*"] }
 }
 ```
+
+> **v1.2 — `baseUrl` MUST NOT be set.** TypeScript 6 reports `TS5101` (deprecated,
+> removed in TS 7) unless `ignoreDeprecations` is added, and since TS 5 `paths` is
+> resolved relative to the `tsconfig.json` that declares it — so `paths` alone is exactly
+> equivalent. Adding a deprecation-suppression flag to satisfy the letter of an older
+> snippet would be the worse choice.
+>
+> Two of these flags have consequences the reference slice must absorb, not work around:
+> `erasableSyntaxOnly` (scaffold default) forbids **constructor parameter properties**
+> (§7.4), and `exactOptionalPropertyTypes` forbids passing an explicit `undefined` for an
+> optional property (§7.4's `signal`).
 
 `eslint.config.js` MUST add the **layer-boundary rules**. These are what make the
 dependency rule of §4.1 mechanically enforced rather than merely written down:
@@ -238,7 +306,40 @@ dependency rule of §4.1 mechanically enforced rather than merely written down:
     }],
   },
 },
+{
+  // VIEWMODEL — the hook never knows who renders it (§4.1, §8.8). Added in v1.1.
+  files: ['src/hooks/**/*.ts', 'src/hooks/**/*.tsx'],
+  rules: {
+    'no-restricted-imports': ['error', {
+      patterns: [
+        { group: ['@/pages/*', '@/components/*', '@/layouts/*'],
+          message: 'The ViewModel MUST NOT import the View (LLD §4.1).' },
+      ],
+    }],
+  },
+},
+{
+  // Configuration is read in exactly one file (§12.2). Added in v1.1.
+  files: ['src/**/*.{ts,tsx}'],
+  ignores: ['src/services/config.ts', 'src/vite-env.d.ts'],
+  rules: {
+    'no-restricted-syntax': ['error', {
+      selector: "MemberExpression[object.type='MetaProperty'][property.name='env']",
+      message: 'import.meta.env is read only in src/services/config.ts (LLD §12.2).',
+    }],
+  },
+},
 ```
+
+**v1.1 (US-02) — two zones added** (the ViewModel zone and the `import.meta.env`
+confinement), and one design rule made explicit: **every layer-boundary rule uses a core
+ESLint rule** (`no-restricted-imports`, `no-restricted-syntax`), never a plugin rule.
+`eslint-plugin-import` is used for `import/order` only, so a flat-config incompatibility
+in that plugin degrades import *ordering* — it can never silently disable a *boundary*.
+
+A boundary rule MUST be **verified, not assumed**: introduce one deliberate violation per
+zone, confirm `npm run lint` fails on each, then remove them. An unverified boundary rule
+is worth nothing, and the verification is reported in the increment's dev report.
 
 `npm run lint` MUST pass with `--max-warnings=0` before any increment is reported as
 complete.
@@ -278,7 +379,8 @@ erebus-app/
 │  │  ├─ EmptyState.tsx
 │  │  ├─ ErrorState.tsx
 │  │  ├─ Skeleton.tsx
-│  │  └─ ThemeToggle.tsx
+│  │  ├─ ThemeToggle.tsx
+│  │  └─ ApiStatusBadge.tsx          # ambient API-health indicator (§12.3 exemption)
 │  ├─ hooks/                         # VIEWMODEL — one factory per entity, plus internals
 │  │  ├─ use-melee-weapons.ts
 │  │  ├─ use-melee-weapon.ts
@@ -294,7 +396,8 @@ erebus-app/
 │  │  ├─ use-enhancement.ts
 │  │  ├─ use-async-resource.ts       # internal primitive (§7.5)
 │  │  ├─ use-filter-state.ts         # internal primitive — URL ⇄ state (§7.6)
-│  │  └─ use-theme.ts
+│  │  ├─ use-api-health.ts           # non-entity wiring reference (§12.5)
+│  │  └─ use-theme.ts                # exports ThemeProvider AND useTheme (§9.3)
 │  ├─ layouts/                       # VIEW — route shells
 │  │  ├─ LandingLayout.tsx
 │  │  └─ MainLayout.tsx
@@ -307,6 +410,9 @@ erebus-app/
 │  │  ├─ melee-weapon.filter.ts      # Filter type + pure predicate
 │  │  ├─ melee-weapon.gateway.ts     # concrete class + singleton
 │  │  ├─ … (same five files per entity) …
+│  │  ├─ health.ts                   # non-entity: API health snapshot (§12.5)
+│  │  ├─ health.schema.ts            # non-entity: Zod schema. NO mapper — ADR-003
+│  │  ├─ health.gateway.ts           # non-entity wiring reference (§12.5)
 │  │  └─ api-error.ts                # ApiError + ApiErrorKind (§7.2)
 │  ├─ pages/                         # VIEW — one component per route
 │  │  ├─ HomePage.tsx
@@ -648,7 +754,13 @@ All routes are declared in **one file**, `src/routes.tsx`. A route MUST NOT be
 declared anywhere else.
 
 Route paths MUST be referenced through the exported `ROUTES` constant, never as
-string literals scattered through components:
+string literals scattered through components.
+
+> **v1.1 (US-02).** The snippet below is **the shape once every entity ships**, not a
+> file to write ahead of time. `ROUTES` MUST contain only keys whose routes are actually
+> declared in the route table — a constant pointing at an undeclared route lints clean
+> and 404s at runtime. Each entity US adds its two keys together with its two routes
+> (§7.11 step 9). The boilerplate increment declared `home` and `about` only.
 
 ```ts
 // src/routes.tsx
@@ -1092,6 +1204,14 @@ export function toApiError(error: unknown): ApiError {
 }
 ```
 
+> **v1.1 (US-02) — Zod 4.** `ZodError` is still imported from `zod` and
+> `error instanceof ZodError` still discriminates, so the branch above is unchanged in
+> shape. What changed in v4 and MUST be checked when touching this file: `error.message`
+> is a JSON-formatted string of the issue list (acceptable here — it is logged, never
+> rendered, §7.2 closing rule), and `error.issues` replaces any use of the legacy
+> `error.errors` alias. A parse failure MUST still surface as
+> `ApiError{ kind: 'contract' }`.
+
 `AxiosError` MUST NOT appear outside this file. No `catch` block anywhere else may
 inspect `error.response`.
 
@@ -1144,12 +1264,19 @@ import type { MeleeWeapon } from './melee-weapon';
  * Returns Entities. Never leaks a DTO, an AxiosError or an AxiosResponse.
  */
 export class MeleeWeaponGateway {
+  private readonly client: AxiosInstance;
+
   /** The default argument is the production wiring; tests pass a fake. */
-  constructor(private readonly client: AxiosInstance = http) {}
+  constructor(client: AxiosInstance = http) {
+    this.client = client;
+  }
 
   async list(signal?: AbortSignal): Promise<MeleeWeapon[]> {
     try {
-      const { data } = await this.client.get<unknown>('/melee-weapons', { signal });
+      const { data } = await this.client.get<unknown>(
+        '/melee-weapons',
+        signal ? { signal } : {},
+      );
       return meleeWeaponListDtoSchema.parse(data).map(toMeleeWeapon);
     } catch (error) {
       throw toApiError(error);
@@ -1158,7 +1285,10 @@ export class MeleeWeaponGateway {
 
   async findById(id: number, signal?: AbortSignal): Promise<MeleeWeapon> {
     try {
-      const { data } = await this.client.get<unknown>(`/melee-weapons/${id}`, { signal });
+      const { data } = await this.client.get<unknown>(
+        `/melee-weapons/${id}`,
+        signal ? { signal } : {},
+      );
       return toMeleeWeapon(meleeWeaponDtoSchema.parse(data));
     } catch (error) {
       throw toApiError(error);
@@ -1183,6 +1313,19 @@ Rules for every gateway:
   failure becomes an `ApiError` too.
 - The response type parameter is `<unknown>`, never `<MeleeWeaponDto[]>` — typing it
   would be a lie the schema exists to prevent (§8.5).
+
+> **v1.2 — two shapes in this snippet are forced by the compiler options of §2.6 and are
+> not stylistic. Every entity gateway copies them:**
+>
+> 1. **No constructor parameter property.** `constructor(private readonly client: … )` is
+>    rejected by `erasableSyntaxOnly` (`TS1294`). Declare the field, then assign it in the
+>    constructor body. The public surface is identical and the default-argument test seam
+>    is unchanged.
+> 2. **Never pass `{ signal: undefined }`.** `exactOptionalPropertyTypes` forbids an
+>    explicit `undefined` for an optional property, so the request config is built
+>    conditionally: `signal ? { signal } : {}`. A consequence for tests: a call made with
+>    no signal asserts `toHaveBeenCalledWith('/melee-weapons', {})`, **not**
+>    `{ signal: undefined }` (§10.2).
 
 ### 7.5 The async primitive
 
@@ -1214,12 +1357,15 @@ export function useAsyncResource<T>(
   const [error, setError] = useState<ApiError | null>(null);
   const [nonce, setNonce] = useState(0);
   const fetcherRef = useRef(fetcher);
+  // eslint-disable-next-line react-hooks/refs -- latest-ref pattern; see §7.5 note (ADR-004)
   fetcherRef.current = fetcher;
 
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- entering the loading
+    // state IS this effect's job; see §7.5 note (ADR-004)
     setStatus('loading');
     setError(null);
 
@@ -1248,6 +1394,27 @@ export function useAsyncResource<T>(
   return { data, status, error, reload };
 }
 ```
+
+#### v1.2 — the three lint directives in this file are normative, and confined to it
+
+The scaffold pins `eslint-plugin-react-hooks@7`, whose flat `recommended` set includes
+the React Compiler rules. Two of them reject this primitive as written, and a third was
+already required:
+
+| Directive | Why it stands here |
+| --- | --- |
+| `react-hooks/refs` | The latest-ref write keeps `deps` — not the identity of `fetcher` — in control of when the effect re-runs. Without it, a caller passing an inline fetcher re-fires the request on every render. |
+| `react-hooks/set-state-in-effect` | Entering the loading state *is* this effect's job. The alternative shapes (deriving status, or a reducer) either lose the abort/`active` guard or rename the same write. |
+| `react-hooks/exhaustive-deps` | `deps` is a caller-supplied array spread into the dependency list; the rule cannot see through the spread. |
+
+**The exemption is file-scoped and MUST stay that way.** `src/hooks/use-async-resource.ts`
+is the one place in the application allowed to disable `react-hooks/refs` or
+`react-hooks/set-state-in-effect`. No entity hook may carry either directive: a
+`use<Entities>()` built on this primitive writes no ref during render and calls no
+`setState` inside an effect — it composes `useAsyncResource`, `useFilterState`, `useMemo`
+and `useCallback`. **A directive appearing in any other hook is the signal that the file
+is re-implementing the primitive — stop and escalate to `tech-lead` (§0).** Rationale,
+alternatives and the review test: ADR-004.
 
 ### 7.6 The listing ViewModel — the hook as factory
 
@@ -1900,15 +2067,42 @@ preference, not domain data, and therefore does not violate the HLD rule that
 `localStorage` MUST NOT hold anything else — no catalogue, no filter, no last-visited
 record.
 
+**v1.1 (US-02).** `src/hooks/use-theme.ts` exports a **provider and a hook**, not a bare
+hook: a single `ThemeProvider` owns the state and `useTheme` reads it from Context, so
+two consumers can never desync. `App.tsx` wraps the tree in it (§7.10). This is the one
+Context in the application; §2.3's ban on global state containers targets **domain**
+state, and the theme is UI preference (§4.4).
+
 ```ts
-// src/hooks/use-theme.ts — behaviour contract
+// src/hooks/use-theme.ts — public surface
+export type Theme = 'light' | 'dark';
+
+export interface ThemeContextValue {
+  theme: Theme;
+  /** Flips the theme AND persists the result — the only persisting path. */
+  toggle: () => void;
+}
+
+export function ThemeProvider(props: { children: ReactNode }): JSX.Element;
+
+/** @throws Error when called outside ThemeProvider. */
+export function useTheme(): ThemeContextValue;
+```
+
+```ts
+// behaviour contract — each clause is one unit test
 // 1. Read localStorage['erebus-theme'] ∈ {'light','dark'}.
 // 2. If absent or invalid, follow prefers-color-scheme.
-// 3. Write data-theme on <html> — never on a React element.
+// 3. Write data-theme on <html> — never on a React element, never as a
+//    styled-components theme prop.
 // 4. Persist on every explicit user toggle; NEVER persist the system-derived value.
 // 5. Every localStorage read and write is wrapped in try/catch — private mode and
 //    blocked site data MUST NOT break the app.
+// 6. useTheme() outside ThemeProvider throws a descriptive Error.
 ```
+
+Unit tests for `useTheme` MUST use `renderHook(..., { wrapper: ThemeProvider })`, and
+MUST stub `window.matchMedia` — jsdom does not implement it, and clause 2 calls it.
 
 `ThemeToggle` is rendered in `MainLayout` and `LandingLayout`. The toggle MUST be a
 `<button>` with an accessible name that states the target theme.
@@ -2004,7 +2198,9 @@ describe('MeleeWeaponGateway', () => {
       await gateway.list();
 
       expect(client.get).toHaveBeenCalledTimes(1);
-      expect(client.get).toHaveBeenCalledWith('/melee-weapons', { signal: undefined });
+      // No signal was passed, so the config object is empty — never { signal: undefined },
+      // which exactOptionalPropertyTypes forbids the gateway from constructing (§7.4).
+      expect(client.get).toHaveBeenCalledWith('/melee-weapons', {});
     });
 
     it('maps every payload item onto the entity, preserving provenance', async () => {
@@ -2168,6 +2364,14 @@ Enforced in `vitest.config.ts`; the build fails below these lines:
 Excluded from coverage: `src/main.tsx`, `src/routes.tsx`, `src/styles/**`,
 `src/vite-env.d.ts` — wiring and declarations, verified by the suite booting.
 
+> **v1.1 (US-02) — a threshold glob matching zero files fails the V8 coverage run.**
+> The `src/models/*.mapper.ts` and `src/models/*.filter.ts` rows are therefore
+> **disabled until the first entity US** (EP02, melee weapons), which is the increment
+> that creates the first file matching them and MUST re-enable both rows in the same
+> increment. Every other row is enabled from the boilerplate increment onward.
+> A threshold is never **lowered** to make a run green: add the missing test, or extend
+> the exclusion list and say so explicitly in the PR.
+
 ```ts
 // vitest.config.ts
 import { defineConfig, mergeConfig } from 'vitest/config';
@@ -2279,7 +2483,8 @@ anywhere else.
 import { z } from 'zod';
 
 const envSchema = z.object({
-  VITE_API_BASE_URL: z.string().url(),
+  // Absolute URL (preview/production) OR a root-relative path (dev proxy) — ADR-003.
+  VITE_API_BASE_URL: z.union([z.url(), z.string().regex(/^\/[^\s]*$/)]),
   VITE_REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(8000),
 });
 
@@ -2300,6 +2505,13 @@ export const config = {
 `VITE_API_BASE_URL` MUST include the `/v1` prefix (e.g.
 `https://erebus-api.netlify.app/v1`) so gateways never repeat it. Failing fast at boot
 is deliberate: a missing base URL must not manifest as six identical network errors.
+
+> **v1.1 (US-02) — Zod 4 and the root-relative form.** `z.url()` replaces
+> `z.string().url()` (removed in v4). The union accepts a root-relative value such as
+> `/v1`, which is what `.env.development` sets so the Vite dev proxy (§2.5) can forward
+> to `erebus-api`, whose app registers no CORS middleware. Preview and production MUST
+> set an absolute URL. The regex keeps the relative form narrow: it must start with `/`
+> and contain no whitespace. Rationale and consequences: ADR-003.
 
 ```ts
 // src/vite-env.d.ts
@@ -2338,11 +2550,47 @@ Rules:
 - `notify.success` does not exist in Phase 1: this is a read-only application and
   there is no successful mutation to announce.
 
+> **v1.1 (US-02) — scoped exemption for ambient status indicators.** The "one toast per
+> failure" rule governs **user-initiated actions that failed** (a listing the user asked
+> for, a detail they clicked). An **ambient indicator** — a component mounted in a layout
+> that reports background state the user never requested, such as `ApiStatusBadge` — is
+> exempt: it renders its inline error state and logs exactly one `logger.error`, and
+> emits **no** toast. Without the exemption, a layout-mounted probe would fire a toast on
+> every navigation whenever the API is down. The exemption is narrow: it does **not**
+> extend to any entity hook, and a component claiming it must be mounted in a layout and
+> driven by no user action. See ADR-003.
+
 ### 12.4 Retry
 
 There is **no automatic retry** in this phase (HLD, explicitly). Recovery is a
 user action: `ErrorState` renders a "Try again" button wired to the ViewModel's
 `reload()`. Adding backoff, `axios-retry` or a retry loop requires an ADR.
+
+### 12.5 The non-entity wiring reference — API health (v1.1, US-02)
+
+The boilerplate increment proved the View → ViewModel → Model → HTTP chain with a
+**non-domain** slice, so that no catalogue entity had to be modelled inside an Infra
+increment:
+
+```
+ApiStatusBadge (View) → useApiHealth (ViewModel) → useAsyncResource
+                      → HealthGateway (Model) → Zod → http → GET /health
+```
+
+Its shape is normative for *wiring* questions and **deliberately not normative for
+entities**:
+
+| Aspect | Health slice | Every catalogue entity |
+| --- | --- | --- |
+| Mapper | **none** — the schema output *is* the entity (no vocabulary divergence, no derived field, no provenance) | **required** — §7.3, even when near-identity |
+| Provenance | absent; the payload is operational, exempt by `erebus-api`'s ADR-002 | mandatory on every record (§6.2, §14 items 7–8) |
+| Toast on failure | none (§12.3 exemption) | one toast plus the inline state |
+| Fetch cadence | once on mount, no polling, no retry | identical |
+| Filter / URL state | none | §5.2 + §7.6 |
+
+**§7 (the melee-weapon slice) remains the only reference for adding an entity.** Copying
+the health slice's missing mapper or its toast exemption into an entity is a review
+rejection. See ADR-003.
 
 ---
 
@@ -2449,7 +2697,11 @@ Owned by `tech-lead`. Each becomes an ADR plus an LLD revision when decided.
 | 4 | Server-side filtering and pagination, should the catalogue outgrow in-memory filtering. Contingency already named in the HLD. | Payload per entity above ~1 MB, or filter latency above 50 ms. |
 | 5 | Error tracking (Sentry) and cookieless analytics (Plausible/Umami). | After the first public deployment. |
 | 6 | Whether the `AboutPage` and `HomePage` need their own content model or stay static JSX. | When institutional copy is written. |
-| 7 | Confirm the resolved versions of React 19 / Vite 8 / TypeScript 6 / ESLint 10 pinned by the scaffold, and align the §2 table with `package-lock.json`. | First increment. |
+| 7 | ~~Confirm the resolved versions of React 19 / Vite 8 / TypeScript 6 / ESLint 10 pinned by the scaffold, and align the §2 table with `package-lock.json`.~~ **Consumed by US-02** (v1.1): §2.1/§2.2 aligned, `zod` moved to v4. | — (closed) |
+| 8 | **CORS on `erebus-api`.** Its Express app registers no CORS middleware, so only the dev proxy (§2.5) makes cross-origin calls work. A deployed `erebus-app` calling a deployed `erebus-api` will fail. Owned by `chore/erebus-api-cors`. | **Blocking prerequisite of the first deploy.** |
+| 9 | Re-enable the `src/models/*.mapper.ts` and `src/models/*.filter.ts` coverage thresholds (§10.6), disabled while no file matched them. | The first entity US (EP02), in the same increment that creates the first mapper/filter. |
+| 10 | **`import/order` (§2.2, §11.3).** Re-enable when `eslint-plugin-import` ships ESLint 10 flat-config support (one-line change, no ADR). If it stalls, decide between `eslint-plugin-import-x` (**requires an ADR** — it is a dependency-set change) and dropping ordering from the gates entirely. | A compatible release, or the next increment that finds the review convention insufficient. |
+| 11 | **A `react-hooks` v7-clean formulation of `useAsyncResource`** (§7.5), removing the need for the `refs` and `set-state-in-effect` directives without losing the abort guard or the `deps`-controlled re-run. Only worth doing if a formulation is *validated*, not guessed. | A React Compiler upgrade that makes the rules non-suppressible, or a proven alternative shape. See ADR-004. |
 
 ---
 
@@ -2458,6 +2710,8 @@ Owned by `tech-lead`. Each becomes an ADR plus an LLD revision when decided.
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
 | 1.0 | 2026-09-10 | rattopedro@gmail.com | Initial normative LLD, derived from PRD Phase 1, HLD v1.1, `design-system.md` (Códice v1), ADR-001, the `erebus-api` LLD HTTP contract, and the architecture interview of 2026-09-10. |
+| 1.1 | 2026-09-10 | `tech-lead` (US-02 technical planning) | Amendments required by the `erebus-app` boilerplate increment (US-02), recorded in ADR-003 and in `docs/user stories/us02-erebus-app-boilerplate/PLAN.md`: **§2.1/§2.2** version table confirmed against the scaffold, `zod` → v4, `styled-components` → current major, `sass` (not `sass-embedded`) stated explicitly, and the "set is closed regardless of version" rule made explicit (closes §15 item 7). **§2.5** `additionalData` removed (it self-injects into `_tokens.scss` and has no consumer) and `server.proxy['/v1']` added for local dev. **§2.6** note that the scaffold ships without `"strict"`; two ESLint zones added (ViewModel, and `import.meta.env` confined to `config.ts`); boundary rules restricted to **core** ESLint rules so a plugin incompatibility can never silently disable one; boundary verification made mandatory. **§3** `ApiStatusBadge`, `use-api-health.ts`, `health.*` added; `use-theme.ts` annotated as provider + hook. **§5.1** `ROUTES` annotated as the end-state shape — only declared routes may have keys. **§7.2** Zod 4 note. **§9.3** rewritten around `ThemeProvider` + `useTheme`, with the "throws outside the provider" clause and the `renderHook` wrapper / `matchMedia` stub rules. **§10.6** zero-file threshold globs disabled until the first entity US. **§12.2** base URL accepts an absolute URL or a root-relative path (dev proxy). **§12.3** scoped toast exemption for ambient status indicators. **§12.5** new — the non-entity wiring reference, and why it is not an entity template. **§15** item 7 closed; items 8 (CORS) and 9 (coverage globs) opened. |
+| 1.2 | 2026-09-10 | `tech-lead` (US-02 implementation escalations) | Amendments forced or escalated by the US-02 implementation increment (dev report §6), recorded in ADR-004 where a pattern decision was involved: **§2.2** `@testing-library/dom` ratified into the closed set as a declared peer of `@testing-library/react`, plus the general rule that declared peers are implicitly in the set and MUST be tabled in the same increment; `eslint-plugin-import` re-scoped to import ordering only, with `import/order` disabled because 2.32.0 crashes under ESLint 10 — no boundary degraded, since all four zones use core rules. **§2.5** the whole `css` block removed: `preprocessorOptions.scss.api` cannot be written on Vite 8 (legacy Sass API removed), so v1.1's explicit `modern-compiler` setting is moot while its decision stands. **§2.6** `baseUrl` removed (TS 6 `TS5101`; `paths` alone is equivalent), and the two compiler options whose consequences the reference slice must absorb called out. **§7.4** the gateway snippet corrected to the only shapes the compiler options permit — an explicit field instead of a constructor parameter property (`erasableSyntaxOnly`), and `signal ? { signal } : {}` instead of `{ signal }` (`exactOptionalPropertyTypes`); both are copied by every future entity gateway. **§10.2** the gateway test example corrected to assert `{}` rather than `{ signal: undefined }`. **§7.5** the three `react-hooks` directives documented as normative and **file-scoped**: `use-async-resource.ts` is the only file allowed to disable `react-hooks/refs` or `react-hooks/set-state-in-effect`, and the same directive in any other hook is an escalation trigger. **§15** items 10 (`import/order`) and 11 (a v7-clean async primitive) opened. |
 
 ---
 

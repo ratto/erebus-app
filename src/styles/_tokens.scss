@@ -1,0 +1,60 @@
+// Códice v1 design tokens. Values are owned by docs/design/design-system.md §4;
+// this file is the canonical CSS shape (LLD §9.2). Only the COLOUR tokens are
+// redefined in the dark block — redefining type, space or form there is a bug.
+
+:root {
+  /* Colour — light: medieval fantasy */
+  --bg: #efe6d4;
+  --surface: #f7f1e3;
+  --ink: #211b14;
+  --ink-muted: #6b5e4b;
+  --rule: #cbbc9e;
+  --rule-table: #ded0b4;
+  --accent: #a32a1e;
+  --accent-2: #9c7a2e;
+  --accent-2-on-light: #7c5f22;
+
+  /* Type */
+  --font-display: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  --font-body: 'Alegreya Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --fs-label: 11px;
+  --fs-badge: 12px;
+  --fs-data: 13px;
+  --fs-sm: 15px;
+  --fs-cell: 16px;
+  --fs-body: 19px;
+  --fs-field: 21px;
+  --fs-h3: 26px;
+  --fs-h2: 34px;
+  --fs-h1: 42px;
+
+  /* Space (base 4) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 22px;
+  --sp-6: 28px;
+  --sp-7: 40px;
+  --sp-8: 56px;
+  --sp-9: 80px;
+
+  /* Form — Códice has no radius and no shadow */
+  --radius: 0;
+  --hairline: 1px;
+  --accent-rule: 3px;
+}
+
+[data-theme='dark'] {
+  /* Colour — dark: medieval horror */
+  --bg: #12100e;
+  --surface: #1b1815;
+  --ink: #e8e0d0;
+  --ink-muted: #9a8f7d;
+  --rule: #332c24;
+  --rule-table: #332c24;
+  --accent: #c43a22;
+  --accent-2: #a98a3e;
+  --accent-2-on-light: #a98a3e;
+}
