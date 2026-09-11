@@ -1,0 +1,5 @@
+// Font loading (LLD §9.1, §13.3): EB Garamond for display >= 26px only,
+// Alegreya Sans for body and UI, IBM Plex Mono for data and provenance.
+// Latin subset, `display=swap` — the three families are the main risk to the
+// first-load budget of LLD §13.3.
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=EB+Garamond:wght@500&family=IBM+Plex+Mono:wght@400;500&display=swap&subset=latin');
