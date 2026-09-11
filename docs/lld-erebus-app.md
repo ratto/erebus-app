@@ -1,7 +1,7 @@
 # LLD: erebus-app
 
-**Version:** 1.2
-**Date:** 2026-09-10 (v1.0, v1.1: 2026-09-10)
+**Version:** 1.3
+**Date:** 2026-09-11 (v1.0–v1.2: 2026-09-10)
 **Owner:** rattopedro@gmail.com
 **Parent documents:** `docs/prd.md` (Phase 1 PRD), `erebus-app/docs/hld-erebus-app.md` (HLD v1.1), `erebus-app/docs/design/design-system.md` (Códice v1)
 **Sibling contract:** `erebus-api/docs/lld-erebus-api.md` (§5 HTTP contract, §6 data models)
@@ -963,11 +963,20 @@ export interface Skill extends Provenance {
   id: number;
   name: string;
   parentSkillId: number | null;
+  /** Denormalised by the API so a detail route can render "group → subgroup"
+   *  without a second request. Null exactly when parentSkillId is null. */
+  parentSkillName: string | null;
   /** A group with subgroups is NOT purchasable — the View MUST surface this. */
   hasSubgroups: boolean;
   baseAttribute: BaseAttribute | null;
   /** Resolved by the API as subgroup.baseAttribute ?? parent.baseAttribute. */
   effectiveBaseAttribute: BaseAttribute | null;
+  /** N3 classification. Non-null ONLY for subgroups of `Condução`, where it is
+   *  'condução' or 'pilotagem'. It is an adjective on the subgroup, never a
+   *  third hierarchy level — see erebus-api LLD §6.3 rule 5. */
+  category: string | null;
+  /** One-sentence canonical description. */
+  description: string | null;
   initialValueType: string | null;
   prerequisite: string | null;
   damage: string | null;
@@ -982,6 +991,28 @@ export interface SkillDetail extends Skill {
 
 Skill names repeat across groups — uniqueness is `(parentSkillId, name)`, never
 `name` alone. A React `key` MUST therefore be `skill.id`, never `skill.name`.
+
+Three states of a `Skill` are **canonical, not missing data**, and the View MUST
+render each as content rather than as a dash in a broken layout or an error:
+
+1. `parentSkillId === null && hasSubgroups === false` — a root leaf, playable on
+   its own (`Explosivos`, `Esquiva`).
+2. `baseAttribute === null && effectiveBaseAttribute === null` — no governing
+   attribute at all (`Explosivos`: highly technical, always starts at 0%).
+   Render "no base attribute", never an empty field.
+3. `hasSubgroups === true && subgroups.length === 0` cannot occur — the API
+   derives `hasSubgroups` from the actual children, so `Artífice` (flagged with
+   subgroups in the canonical source but cataloguing none) arrives as a leaf with
+   its divergence in `notes`.
+
+**Entities with a detail-only shape.** `Skill` and `Enhancement` are the two
+entities whose `GET /:id` returns a *superset* of the list shape (`subgroups[]`,
+`levels[]`). For those two, and only those two, the gateway's `findById` returns
+the `<Entity>Detail` type rather than `<Entity>`, which means a second schema
+(`<entity>DetailDtoSchema`) and a second mapper (`to<Entity>Detail`) in the same
+two files. This is a documented specialisation of the §7 slice, not a new
+pattern: everything else — the class, the singleton, the `AbortSignal`, the
+`toApiError` wrapper, the two hooks — is unchanged.
 
 ```ts
 // src/models/enhancement.ts
@@ -1090,6 +1121,14 @@ export function matchesMeleeWeaponFilter(
 
 `normalise` lives in one place and is shared by every entity filter — the catalogue
 data is Portuguese and accent-sensitive search would be a usability bug.
+
+> **v1.3 (US-03).** `<entity>.filter.ts` also hosts any **other pure derivation over
+> the entity collection** that the listing needs — not only the predicate. US-03 puts
+> `groupSkillsByParent(skills): SkillGroupNode[]` there, because the group → subgroup
+> hierarchy is how the skills listing is presented and §4.2 rule 4 forbids the View
+> from deriving it. The rule is: a pure function over Entities that the ViewModel
+> needs belongs in `<entity>.filter.ts`; it does **not** justify a sixth file role
+> per entity. It is unit-tested without React like every other function here.
 
 ---
 
@@ -1770,6 +1809,22 @@ Mechanical. No design decisions.
 11. Dev: unit tests for mapper, filter predicate, gateway and both hooks (§10.2).
 12. QA: component + integration tests, and E2E per use case (§10.3–10.5).
 
+> **v1.3 (US-03) — what the FIRST entity US additionally carries.** Steps 1–12 are
+> mechanical only once the shared Model and View kit the slice depends on exists.
+> The boilerplate increment (US-02) deliberately created none of it, so the first
+> entity US also creates, once, for every entity that follows:
+>
+> - `src/models/provenance.ts` and `src/models/provenance.schema.ts` (§6.2);
+> - `src/hooks/use-filter-state.ts`, the URL ⇄ state primitive (§5.2, §7.6);
+> - the shared View components the reference slice imports: `SearchField`,
+>   `FilterBar`, `SourceLevelBadge`, `ProvenanceBlock`, `EntityTable`,
+>   `DetailDialog`, `EmptyState`, `ErrorState`, `Skeleton` (§3).
+>
+> `SkillGroupField` and `TaxonomyNote` are weapon-specific (ADR-001) and are created
+> by the first *weapon* US instead. A later entity US that finds one of these files
+> missing has found a gap in the US that should have created it — add it there, do
+> not fork a variant.
+
 ---
 
 ## 8. Anti-patterns
@@ -2365,12 +2420,17 @@ Excluded from coverage: `src/main.tsx`, `src/routes.tsx`, `src/styles/**`,
 `src/vite-env.d.ts` — wiring and declarations, verified by the suite booting.
 
 > **v1.1 (US-02) — a threshold glob matching zero files fails the V8 coverage run.**
-> The `src/models/*.mapper.ts` and `src/models/*.filter.ts` rows are therefore
-> **disabled until the first entity US** (EP02, melee weapons), which is the increment
-> that creates the first file matching them and MUST re-enable both rows in the same
-> increment. Every other row is enabled from the boilerplate increment onward.
+> The `src/models/*.mapper.ts` and `src/models/*.filter.ts` rows were therefore
+> **disabled until the first entity US**, which is the increment that creates the first
+> file matching them and MUST re-enable both rows in the same increment. Every other
+> row is enabled from the boilerplate increment onward.
 > A threshold is never **lowered** to make a run green: add the missing test, or extend
 > the exclusion list and say so explicitly in the PR.
+>
+> **v1.3 (US-03) — both rows are RE-ENABLED.** US-03 (skills) is the first entity US
+> and creates `skill.mapper.ts` and `skill.filter.ts`, so both globs now match. Both
+> rows are enabled at 100/100 in the same increment, closing §15 item 9. Re-disabling
+> either row requires an ADR.
 
 ```ts
 // vitest.config.ts
@@ -2691,15 +2751,15 @@ Owned by `tech-lead`. Each becomes an ADR plus an LLD revision when decided.
 
 | # | Item | Trigger |
 | --- | --- | --- |
-| 1 | Confirm the `FirearmResponseDto`, `ProtectionResponseDto`, `SkillDetailResponseDto` and `EnhancementDetailResponseDto` field lists against `/v1/docs` and correct §6.3 if they differ. | Before the first non-melee entity is implemented. |
-| 2 | `design-system.md` renders component copy in Portuguese; the UI is English. Regenerate its component examples with English copy, or add an explicit note that its labels are illustrative. | Before the first component increment. |
-| 3 | **Campaign type / era filter.** `design-system.md` §1.4 makes it a first-class facet, but no entity in the current API schema carries a campaign or era field. Decide whether it is a Phase 1 filter (requiring an API change) or deferred. | Before `FilterBar` is implemented. |
+| 1 | **Partially resolved by US-03 (v1.3) for `Skill`/`SkillDetail`:** §6.3 corrected against `docs/user stories/us03-consultar-pericias/CONTRACT.md` §2–3 (`parentSkillName`, `category` and `description` added). `erebus-api` does not spell those DTOs out field by field, so **that `CONTRACT.md` is the authority** and `/v1/docs` is the verification. `FirearmResponseDto`, `ProtectionResponseDto` and `EnhancementDetailResponseDto` remain open. | Before each remaining non-melee entity is implemented. |
+| 2 | ~~`design-system.md` renders component copy in Portuguese; the UI is English.~~ **Closed by US-03 (v1.3):** its component copy is **illustrative only**. UI copy is English (§14 item 19); domain data values (skill and weapon names) stay Portuguese because they are data. Where the two disagree, §14 item 19 wins and the design system is read for layout, tokens and states — never for label text. | — (closed) |
+| 3 | ~~**Campaign type / era filter.**~~ **Closed by US-03 (v1.3): deferred out of Phase 1.** No entity in the API schema carries a campaign or era field, so the facet cannot be populated without an `erebus-api` schema change, a curation pass over every catalogue record, and a PRD decision — none of which is in Phase 1's scope. `FilterBar` therefore renders only facets backed by an Entity field. Reopening it requires a PRD change plus an ADR, not a frontend decision. | — (closed) |
 | 4 | Server-side filtering and pagination, should the catalogue outgrow in-memory filtering. Contingency already named in the HLD. | Payload per entity above ~1 MB, or filter latency above 50 ms. |
 | 5 | Error tracking (Sentry) and cookieless analytics (Plausible/Umami). | After the first public deployment. |
 | 6 | Whether the `AboutPage` and `HomePage` need their own content model or stay static JSX. | When institutional copy is written. |
 | 7 | ~~Confirm the resolved versions of React 19 / Vite 8 / TypeScript 6 / ESLint 10 pinned by the scaffold, and align the §2 table with `package-lock.json`.~~ **Consumed by US-02** (v1.1): §2.1/§2.2 aligned, `zod` moved to v4. | — (closed) |
 | 8 | **CORS on `erebus-api`.** Its Express app registers no CORS middleware, so only the dev proxy (§2.5) makes cross-origin calls work. A deployed `erebus-app` calling a deployed `erebus-api` will fail. Owned by `chore/erebus-api-cors`. | **Blocking prerequisite of the first deploy.** |
-| 9 | Re-enable the `src/models/*.mapper.ts` and `src/models/*.filter.ts` coverage thresholds (§10.6), disabled while no file matched them. | The first entity US (EP02), in the same increment that creates the first mapper/filter. |
+| 9 | ~~Re-enable the `src/models/*.mapper.ts` and `src/models/*.filter.ts` coverage thresholds (§10.6), disabled while no file matched them.~~ **Closed by US-03 (v1.3)** — both rows re-enabled at 100/100 alongside the first mapper and filter. | — (closed) |
 | 10 | **`import/order` (§2.2, §11.3).** Re-enable when `eslint-plugin-import` ships ESLint 10 flat-config support (one-line change, no ADR). If it stalls, decide between `eslint-plugin-import-x` (**requires an ADR** — it is a dependency-set change) and dropping ordering from the gates entirely. | A compatible release, or the next increment that finds the review convention insufficient. |
 | 11 | **A `react-hooks` v7-clean formulation of `useAsyncResource`** (§7.5), removing the need for the `refs` and `set-state-in-effect` directives without losing the abort guard or the `deps`-controlled re-run. Only worth doing if a formulation is *validated*, not guessed. | A React Compiler upgrade that makes the rules non-suppressible, or a proven alternative shape. See ADR-004. |
 
@@ -2711,6 +2771,7 @@ Owned by `tech-lead`. Each becomes an ADR plus an LLD revision when decided.
 | --- | --- | --- | --- |
 | 1.0 | 2026-09-10 | rattopedro@gmail.com | Initial normative LLD, derived from PRD Phase 1, HLD v1.1, `design-system.md` (Códice v1), ADR-001, the `erebus-api` LLD HTTP contract, and the architecture interview of 2026-09-10. |
 | 1.1 | 2026-09-10 | `tech-lead` (US-02 technical planning) | Amendments required by the `erebus-app` boilerplate increment (US-02), recorded in ADR-003 and in `docs/user stories/us02-erebus-app-boilerplate/PLAN.md`: **§2.1/§2.2** version table confirmed against the scaffold, `zod` → v4, `styled-components` → current major, `sass` (not `sass-embedded`) stated explicitly, and the "set is closed regardless of version" rule made explicit (closes §15 item 7). **§2.5** `additionalData` removed (it self-injects into `_tokens.scss` and has no consumer) and `server.proxy['/v1']` added for local dev. **§2.6** note that the scaffold ships without `"strict"`; two ESLint zones added (ViewModel, and `import.meta.env` confined to `config.ts`); boundary rules restricted to **core** ESLint rules so a plugin incompatibility can never silently disable one; boundary verification made mandatory. **§3** `ApiStatusBadge`, `use-api-health.ts`, `health.*` added; `use-theme.ts` annotated as provider + hook. **§5.1** `ROUTES` annotated as the end-state shape — only declared routes may have keys. **§7.2** Zod 4 note. **§9.3** rewritten around `ThemeProvider` + `useTheme`, with the "throws outside the provider" clause and the `renderHook` wrapper / `matchMedia` stub rules. **§10.6** zero-file threshold globs disabled until the first entity US. **§12.2** base URL accepts an absolute URL or a root-relative path (dev proxy). **§12.3** scoped toast exemption for ambient status indicators. **§12.5** new — the non-entity wiring reference, and why it is not an entity template. **§15** item 7 closed; items 8 (CORS) and 9 (coverage globs) opened. |
+| 1.3 | 2026-09-11 | `tech-lead` (US-03 technical planning) | Amendments required by the **first entity US** (US-03, skills), recorded in `docs/user stories/us03-consultar-pericias/PLAN.md` §7.2 and contracted in its `CONTRACT.md`. **§6.3** `Skill` gains `parentSkillName`, `category` (the Condução N3 classification — an adjective on the subgroup, never a third hierarchy level) and `description`; the three canonical "empty" states of a skill documented as content, not error states; and the **detail-only shape** specialisation stated for `Skill`/`Enhancement` (`findById` returns `<Entity>Detail`, a second schema and a second mapper in the same two files) — closes §15 item 1 for `Skill`. **§6.5** a pure derivation over the entity collection that is not a predicate (here `groupSkillsByParent`) lives in `<entity>.filter.ts`; it does not justify a sixth file role. **§7.11** the shared Model and View kit the reference slice depends on — `provenance.ts`, `provenance.schema.ts`, `use-filter-state.ts`, and the nine shared components — is created once, by the first entity US, because US-02 deliberately created none of it. **§10.6** the `*.mapper.ts` and `*.filter.ts` coverage rows re-enabled at 100/100 (closes §15 item 9). **§15** item 1 partially closed (Skill only); items 2 (design-system copy is illustrative; §14 item 19 wins) and 3 (campaign/era facet deferred out of Phase 1 — `FilterBar` renders only facets backed by an Entity field) closed. |
 | 1.2 | 2026-09-10 | `tech-lead` (US-02 implementation escalations) | Amendments forced or escalated by the US-02 implementation increment (dev report §6), recorded in ADR-004 where a pattern decision was involved: **§2.2** `@testing-library/dom` ratified into the closed set as a declared peer of `@testing-library/react`, plus the general rule that declared peers are implicitly in the set and MUST be tabled in the same increment; `eslint-plugin-import` re-scoped to import ordering only, with `import/order` disabled because 2.32.0 crashes under ESLint 10 — no boundary degraded, since all four zones use core rules. **§2.5** the whole `css` block removed: `preprocessorOptions.scss.api` cannot be written on Vite 8 (legacy Sass API removed), so v1.1's explicit `modern-compiler` setting is moot while its decision stands. **§2.6** `baseUrl` removed (TS 6 `TS5101`; `paths` alone is equivalent), and the two compiler options whose consequences the reference slice must absorb called out. **§7.4** the gateway snippet corrected to the only shapes the compiler options permit — an explicit field instead of a constructor parameter property (`erasableSyntaxOnly`), and `signal ? { signal } : {}` instead of `{ signal }` (`exactOptionalPropertyTypes`); both are copied by every future entity gateway. **§10.2** the gateway test example corrected to assert `{}` rather than `{ signal: undefined }`. **§7.5** the three `react-hooks` directives documented as normative and **file-scoped**: `use-async-resource.ts` is the only file allowed to disable `react-hooks/refs` or `react-hooks/set-state-in-effect`, and the same directive in any other hook is an escalation trigger. **§15** items 10 (`import/order`) and 11 (a v7-clean async primitive) opened. |
 
 ---
