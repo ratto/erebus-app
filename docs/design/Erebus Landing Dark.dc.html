@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #12100E; }
+  a { color: #E0563B; text-decoration: none; }
+  a:hover { color: #E0563B; text-decoration: underline; }
+</style>
+</helmet>
+<div style="font-family: 'Alegreya Sans', system-ui, sans-serif; color: #E8E0D0; background: #12100E; width: 100%; display: flex; flex-direction: column;">
+
+  <header style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; padding: 18px clamp(20px, 4vw, 72px); border-bottom: 1px solid #332C24; background: #1B1815;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <div style="font-family: 'EB Garamond', Georgia, serif; font-size: 27px; letter-spacing: 0.02em;">Project Erebus</div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; color: #9A8F7D;">FASE 1 · SERVIÇO DE CONSULTA</div>
+    </div>
+    <nav style="display: flex; gap: 22px; flex-wrap: wrap; font-size: 15px;">
+      <a href="#servico" style="color: #CFC5B2;">O serviço</a>
+      <a href="#proveniencia" style="color: #CFC5B2;">Proveniência</a>
+      <a href="#taxonomia" style="color: #CFC5B2;">Taxonomia</a>
+      <a href="#campanhas" style="color: #CFC5B2;">Campanhas</a>
+      <a href="#roteiro" style="color: #CFC5B2;">Roteiro</a>
+    </nav>
+  </header>
+
+  <section style="padding: clamp(56px, 8vw, 128px) clamp(20px, 4vw, 72px) clamp(48px, 6vw, 96px); border-bottom: 1px solid #332C24; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: clamp(32px, 5vw, 80px); align-items: end;">
+    <div style="display: flex; flex-direction: column; gap: 24px; min-width: 0;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.18em; color: #E0563B;">SISTEMA DAEMON · MÓDULO BÁSICO 1.04</div>
+      <h1 style="margin: 0; font-family: 'EB Garamond', Georgia, serif; font-weight: 500; font-size: clamp(46px, 7vw, 104px); line-height: 0.98; letter-spacing: 0.01em;">As regras analógicas,<br />finalmente consultáveis.</h1>
+      <p style="margin: 0; font-size: clamp(19px, 1.5vw, 23px); line-height: 1.5; max-width: 60ch; color: #CFC5B2; text-wrap: pretty;">Erebus exporta as tabelas do Sistema Daemon para o mundo digital: armas, proteções, perícias e aprimoramentos servidos por uma API versionada e navegáveis em segundos — com a origem de cada registro sempre à vista.</p>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+        <a href="#servico" style="background: #E8E0D0; color: #1B1815; padding: 13px 26px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: 0.12em;">VER O SERVIÇO</a>
+        <a href="#roteiro" style="border: 1px solid #E8E0D0; color: #E8E0D0; padding: 12px 25px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: 0.12em;">ROTEIRO · 11 SEMANAS</a>
+      </div>
+    </div>
+    <div style="min-width: 0; display: flex; flex-direction: column; gap: 1px; background: #332C24; border: 1px solid #332C24;">
+      <div style="background: #1B1815; padding: 20px 22px; display: flex; flex-direction: column; gap: 3px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #9A8F7D;">ENTIDADES EM CATÁLOGO</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: clamp(28px, 3vw, 40px); line-height: 1.1;">6</div>
+        <div style="font-size: 15px; color: #9A8F7D;">armas brancas · à distância · de fogo · proteções · perícias · aprimoramentos</div>
+      </div>
+      <div style="background: #1B1815; padding: 20px 22px; display: flex; flex-direction: column; gap: 3px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #9A8F7D;">RESPOSTA DE BUSCA</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: clamp(28px, 3vw, 40px); line-height: 1.1;">&lt; 200ms</div>
+        <div style="font-size: 15px; color: #9A8F7D;">SQLite local, dataset pequeno, sem otimização prematura</div>
+      </div>
+      <div style="background: #1B1815; padding: 20px 22px; display: flex; flex-direction: column; gap: 3px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #9A8F7D;">REGISTROS COM ORIGEM RASTREÁVEL</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: clamp(28px, 3vw, 40px); line-height: 1.1; color: #E0563B;">100%</div>
+        <div style="font-size: 15px; color: #9A8F7D;">nível de fonte + referência específica, sem material de Nível 4</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: clamp(48px, 6vw, 104px) clamp(20px, 4vw, 72px); border-bottom: 1px solid #332C24; background: #1B1815; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: clamp(28px, 3vw, 56px);">
+    <div style="min-width: 0; display: flex; flex-direction: column; gap: 14px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #9A8F7D;">O PROBLEMA</div>
+      <h2 style="margin: 0; font-family: 'EB Garamond', Georgia, serif; font-weight: 500; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.05;">O manual não responde no meio da sessão.</h2>
+    </div>
+    <div style="min-width: 0; display: flex; flex-direction: column; gap: 18px; border-left: 3px solid #C43A22; padding-left: 22px;">
+      <p style="margin: 0; font-size: 19px; line-height: 1.55; color: #CFC5B2; text-wrap: pretty;">Mestres e jogadores abrem o PDF e procuram uma arma, perícia ou aprimoramento à mão — processo lento, sem busca nem filtro, no pior momento possível: o turno de alguém.</p>
+      <p style="margin: 0; font-size: 19px; line-height: 1.55; color: #CFC5B2; text-wrap: pretty;">Não existe uma fonte única, versionada e consultável por programa. O material está espalhado entre manual, netbooks, wiki oficial e comunidade — sem nada que diga, de forma confiável, <em>de onde veio</em> cada regra.</p>
+    </div>
+    <div style="min-width: 0; display: flex; flex-direction: column; gap: 18px; border-left: 3px solid #A98A3E; padding-left: 22px;">
+      <p style="margin: 0; font-size: 19px; line-height: 1.55; color: #CFC5B2; text-wrap: pretty;">E há um custo de projeto: sem serviço de dados funcional, o motor de regras da Fase 2 não tem base para começar. O cronograma inteiro fica travado.</p>
+      <p style="margin: 0; font-size: 19px; line-height: 1.55; color: #CFC5B2; text-wrap: pretty;">Validar a arquitetura num escopo pequeno e de baixo risco — dados somente-leitura — reduz retrabalho antes que o motor consuma os mesmos contratos.</p>
+    </div>
+  </section>
+
+  <section id="servico" style="padding: clamp(48px, 6vw, 104px) clamp(20px, 4vw, 72px); border-bottom: 1px solid #332C24; display: flex; flex-direction: column; gap: clamp(28px, 3vw, 48px);">
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; justify-content: space-between;">
+      <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #9A8F7D;">O SERVIÇO · FASE 1</div>
+        <h2 style="margin: 0; font-family: 'EB Garamond', Georgia, serif; font-weight: 500; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.05;">Listar, buscar, filtrar, ver detalhe.</h2>
+      </div>
+      <p style="margin: 0; font-size: 19px; line-height: 1.5; max-width: 52ch; color: #CFC5B2; text-wrap: pretty;">Somente-leitura por decisão de escopo. A curadoria de fontes novas é processo offline; nada de CRUD em runtime, autenticação ou execução de regras nesta fase.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 1px; background: #1B1815;">
+      <div style="background: #1B1815; outline: 1px solid #332C24; padding: 26px 24px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #E0563B;">EREBUS-API</div>
+        <div style="font-family: 'EB Garamond', Georgia, serif; font-size: 28px; line-height: 1.1;">Servidor de dados</div>
+        <div style="font-size: 16px; line-height: 1.5; color: #CFC5B2;">Node.js + Express + TypeScript sobre SQLite, em Clean Architecture: Controller nunca toca o banco, Service não conhece Express, Repository é o único acesso a dados.</div>
+      </div>
+      <div style="background: #1B1815; outline: 1px solid #332C24; padding: 26px 24px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #E0563B;">EREBUS-APP</div>
+        <div style="font-family: 'EB Garamond', Georgia, serif; font-size: 28px; line-height: 1.1;">Interface de consulta</div>
+        <div style="font-size: 16px; line-height: 1.5; color: #CFC5B2;">React + Vite + TypeScript em MVVM: a View não faz HTTP, a ViewModel orquestra os serviços e expõe estado, o Model são os tipos vindos da API.</div>
+      </div>
+      <div style="background: #12100E; outline: 1px solid #332C24; padding: 26px 24px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #9A8F7D;">EREBUS-ENGINE · FASE 2</div>
+        <div style="font-family: 'EB Garamond', Georgia, serif; font-size: 28px; line-height: 1.1; color: #CFC5B2;">Motor de regras</div>
+        <div style="font-size: 16px; line-height: 1.5; color: #9A8F7D;">C++ em arquitetura hexagonal, fora do escopo aqui. Consumirá estes mesmos endpoints em vez de duplicar a fonte de dados.</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #9A8F7D;">COMO SE PARECE UMA BUSCA</div>
+      <div style="border: 1px solid #332C24; background: #1B1815; display: flex; flex-direction: column;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; padding: 16px; border-bottom: 1px solid #332C24;">
+          <div style="flex: 1 1 260px; min-width: 0; border: 1px solid #332C24; background: #12100E; padding: 9px 12px; font-size: 16px; color: #9A8F7D;">Buscar arma por nome…</div>
+          <div style="background: #E8E0D0; color: #1B1815; padding: 9px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: 0.1em; display: flex; align-items: center;">BUSCAR</div>
+          <div style="border: 1px solid #332C24; color: #CFC5B2; padding: 9px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: 0.1em; display: flex; align-items: center;">NÍVEL 1–3</div>
+          <div style="border: 1px solid #332C24; color: #CFC5B2; padding: 9px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: 0.1em; display: flex; align-items: center;">ÉPOCA: MEDIEVAL</div>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(140px, 2fr) minmax(120px, 1.5fr) minmax(70px, 0.9fr) 56px minmax(80px, 0.8fr) 64px; gap: 10px; padding: 8px 16px; background: #E8E0D0; color: #1B1815; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em;"><div>ARMA</div><div>PERÍCIA</div><div>DANO</div><div>IN</div><div>ALCANCE</div><div>FONTE</div></div>
+        <div style="display: grid; grid-template-columns: minmax(140px, 2fr) minmax(120px, 1.5fr) minmax(70px, 0.9fr) 56px minmax(80px, 0.8fr) 64px; gap: 10px; padding: 9px 16px; font-size: 16px; border-bottom: 1px solid #2B251E; background: #1B1815; align-items: center;"><div>Espada Longa</div><div style="color: #9A8F7D; font-size: 15px;">Armas Brancas*</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">1d6+2</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">3</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #9A8F7D;">—</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E0563B;">N1</div></div>
+        <div style="display: grid; grid-template-columns: minmax(140px, 2fr) minmax(120px, 1.5fr) minmax(70px, 0.9fr) 56px minmax(80px, 0.8fr) 64px; gap: 10px; padding: 9px 16px; font-size: 16px; border-bottom: 1px solid #2B251E; background: #12100E; align-items: center;"><div>Machado de Batalha</div><div style="color: #9A8F7D; font-size: 15px;">Armas Brancas*</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">1d8+1</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">2</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #9A8F7D;">—</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E0563B;">N1</div></div>
+        <div style="display: grid; grid-template-columns: minmax(140px, 2fr) minmax(120px, 1.5fr) minmax(70px, 0.9fr) 56px minmax(80px, 0.8fr) 64px; gap: 10px; padding: 9px 16px; font-size: 16px; border-bottom: 1px solid #2B251E; background: #1B1815; align-items: center;"><div>Besta</div><div style="color: #9A8F7D; font-size: 15px;">Armas Brancas*</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">1d10</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">1</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">60m</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E0563B;">N1</div></div>
+        <div style="display: grid; grid-template-columns: minmax(140px, 2fr) minmax(120px, 1.5fr) minmax(70px, 0.9fr) 56px minmax(80px, 0.8fr) 64px; gap: 10px; padding: 9px 16px; font-size: 16px; background: #12100E; align-items: center;"><div>Alabarda</div><div style="color: #9A8F7D; font-size: 15px;">Armas Brancas*</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">1d10+1</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">1</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #9A8F7D;">—</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #A98A3E;">N2</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="proveniencia" style="padding: clamp(48px, 6vw, 104px) clamp(20px, 4vw, 72px); border-top: 1px solid #332C24; border-bottom: 1px solid #332C24; background: #0B0A09; color: #E8E0D0; display: flex; flex-direction: column; gap: clamp(28px, 3vw, 48px);">
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end; justify-content: space-between;">
+      <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #E0563B;">PROVENIÊNCIA</div>
+        <h2 style="margin: 0; font-family: 'EB Garamond', Georgia, serif; font-weight: 500; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.05;">Nenhuma regra sem origem.</h2>
+      </div>
+      <p style="margin: 0; font-size: 19px; line-height: 1.5; max-width: 56ch; color: #9A8F7D; text-wrap: pretty;">Todo registro carrega o nível de confiança da fonte e a referência exata. Material oficial de suplemento nunca aparece como se fosse Módulo Básico — erro de regra na mesa é perda de confiança na base.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 1px; background: #141210;">
+      <div style="background: #141210; outline: 1px solid #332C24; padding: 24px; display: flex; flex-direction: column; gap: 10px; border-left: 3px solid #C43A22;">
+        <div style="display: inline-flex; align-self: flex-start; border: 1px solid #C43A22; color: #E0563B; padding: 3px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em;">N1 · CANÔNICO</div>
+        <div style="font-family: 'EB Garamond', Georgia, serif; font-size: 26px; line-height: 1.1;">Módulo Básico</div>
+        <div style="font-size: 16px; line-height: 1.5; color: #9A8F7D;">Base obrigatória, extraída dos JSONs versionados: equipamento, perícias e aprimoramentos. Em divergência com qualquer fonte externa, o Nível 1 vence — e a divergência fica anotada.</div>
+      </div>
+      <div style="background: #141210; outline: 1px solid #332C24; padding: 24px; display: flex; flex-direction: column; gap: 10px; border-left: 3px solid #A98A3E;">
+        <div style="display: inline-flex; align-self: flex-start; border: 1px solid #A98A3E; color: #A98A3E; padding: 3px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em;">N2 · OFICIAL</div>
+        <div style="font-family: 'EB Garamond', Georgia, serif; font-size: 26px; line-height: 1.1;">Netbooks e wiki</div>
+        <div style="font-size: 16px; line-height: 1.5; color: #9A8F7D;">Itens publicados pela editora fora do Módulo Básico, reunidos manualmente e citando de qual suplemento vieram. Curadoria offline, sem scraping nesta fase.</div>
+      </div>
+      <div style="background: #141210; outline: 1px solid #332C24; padding: 24px; display: flex; flex-direction: column; gap: 10px; border-left: 3px solid #9A8F7D;">
+        <div style="display: inline-flex; align-self: flex-start; border: 1px dashed #9A8F7D; color: #9A8F7D; padding: 3px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em;">N3 · COMUNIDADE</div>
+        <div style="font-family: 'EB Garamond', Georgia, serif; font-size: 26px; line-height: 1.1;">Curada, rotulada</div>
+        <div style="font-size: 16px; line-height: 1.5; color: #9A8F7D;">Material de apoio e homebrew, incluído só quando preenche lacuna do sistema e sempre marcado como comunidade — nunca como regra oficial.</div>
+      </div>
+      <div style="background: #0B0A09; outline: 1px solid #332C24; padding: 24px; display: flex; flex-direction: column; gap: 10px; border-left: 3px solid #332C24;">
+        <div style="display: inline-flex; align-self: flex-start; border: 1px solid #332C24; color: #9A8F7D; padding: 3px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em;">N4 · FORA DA BASE</div>
+        <div style="font-family: 'EB Garamond', Georgia, serif; font-size: 26px; line-height: 1.1; color: #9A8F7D;">Discussão</div>
+        <div style="font-size: 16px; line-height: 1.5; color: #9A8F7D;">Fórum e conversa sinalizam prática de mesa, nunca regra. Não entra no banco de dados em nenhuma hipótese.</div>
+      </div>
+    </div>
+    <div style="border: 1px solid #332C24; background: #141210; padding: 20px 22px; display: flex; flex-wrap: wrap; gap: 24px; align-items: center;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.8; color: #9A8F7D; min-width: 0;">sourceLevel: 1<br />source: 04-equipment/equipment.json<br />editionOrVersion: 1.04 (Dez/2022)</div>
+      <div style="font-size: 17px; line-height: 1.5; color: #E8E0D0; flex: 1 1 320px; min-width: 0;">Escopo fechado ao Sistema Daemon, sem invenção: lacuna que nenhuma fonte cobre fica vazia, não preenchida por palpite.</div>
+    </div>
+  </section>
+
+  <section id="taxonomia" style="padding: clamp(48px, 6vw, 104px) clamp(20px, 4vw, 72px); border-bottom: 1px solid #332C24; background: #1B1815; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: clamp(28px, 4vw, 64px); align-items: start;">
+    <div style="min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #9A8F7D;">ADR-001 · TAXONOMIA DE ARMAS</div>
+      <h2 style="margin: 0; font-family: 'EB Garamond', Georgia, serif; font-weight: 500; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.05;">A navegação nunca esconde a regra.</h2>
+      <p style="margin: 0; font-size: 19px; line-height: 1.55; color: #CFC5B2; text-wrap: pretty;">O produto divide armas em corpo a corpo, à distância e de fogo, porque é assim que se procura. O sistema, porém, só conhece <strong>armas brancas</strong> e <strong>armas de fogo</strong> — e arcos e bestas são canonicamente armas brancas.</p>
+      <p style="margin: 0; font-size: 19px; line-height: 1.55; color: #CFC5B2; text-wrap: pretty;">Por isso toda arma carrega um campo obrigatório com a perícia que a governa, exibido como informação de primeira classe. O jogador nunca deduz uma perícia que não existe.</p>
+    </div>
+    <div style="min-width: 0; display: flex; flex-direction: column; gap: 14px;">
+      <div style="border-left: 3px solid #A98A3E; background: #12100E; padding: 12px 16px; font-size: 16px; color: #CFC5B2;">Arcos e bestas são canonicamente <strong>armas brancas</strong>: a categoria de navegação nunca substitui a perícia testada na mesa.</div>
+      <div style="border: 1px solid #332C24; background: #12100E; display: flex; flex-direction: column;">
+        <div style="border-left: 3px solid #C43A22; padding: 14px 18px; display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #9A8F7D;">PERÍCIA QUE GOVERNA</div>
+          <div style="font-size: 21px; font-weight: 500;">Armas Brancas*</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 1px; background: #1B1815;">
+          <div style="background: #1B1815; outline: 1px solid #332C24; padding: 12px 16px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #9A8F7D;">CATEGORIA</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 16px;">ranged</div></div>
+          <div style="background: #1B1815; outline: 1px solid #332C24; padding: 12px 16px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #9A8F7D;">ARREMESSÁVEL</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 16px;">false</div></div>
+          <div style="background: #1B1815; outline: 1px solid #332C24; padding: 12px 16px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #9A8F7D;">DANO</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 16px;">1d10</div></div>
+          <div style="background: #1B1815; outline: 1px solid #332C24; padding: 12px 16px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #9A8F7D;">ALCANCE</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 16px;">60m</div></div>
+        </div>
+      </div>
+      <div style="font-size: 15px; color: #9A8F7D; line-height: 1.5;">Arma de arremesso é um registro único, exibido em duas listagens — nunca duplicado.</div>
+    </div>
+  </section>
+
+  <section id="campanhas" style="padding: clamp(48px, 6vw, 104px) clamp(20px, 4vw, 72px); border-bottom: 1px solid #332C24; display: flex; flex-direction: column; gap: clamp(24px, 3vw, 40px);">
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end; justify-content: space-between;">
+      <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #9A8F7D;">TIPOS DE CAMPANHA · MÓDULO BÁSICO, PASSO 1</div>
+        <h2 style="margin: 0; font-family: 'EB Garamond', Georgia, serif; font-weight: 500; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.05;">A época decide o que é válido.</h2>
+      </div>
+      <p style="margin: 0; font-size: 19px; line-height: 1.5; max-width: 54ch; color: #CFC5B2; text-wrap: pretty;">Armas de fogo não existiam até 1400+, e equipamento medieval tem lista própria. Por isso o tipo de campanha é filtro de primeira classe — a mesma faceta que impede uma metralhadora de aparecer numa mesa medieval.</p>
+    </div>
+    <div style="border: 1px solid #332C24; background: #1B1815; overflow-x: auto;">
+      <div style="min-width: 720px; display: flex; flex-direction: column;">
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr 1.2fr 0.8fr 0.9fr 1.6fr; gap: 10px; padding: 8px 16px; background: #E8E0D0; color: #1B1815; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em;"><div>TIPO DE CAMPANHA</div><div>ATRIBUTOS</div><div>APRIMORAMENTOS</div><div>PERÍCIAS</div><div>INIMIGOS</div><div>EXEMPLOS</div></div>
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr 1.2fr 0.8fr 0.9fr 1.6fr; gap: 10px; padding: 11px 16px; font-size: 16px; border-bottom: 1px solid #2B251E; align-items: center;"><div style="font-weight: 500;">Realista/Terror</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">101 (5–18)</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">5</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">≤ 500</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">1 inicial</div><div style="font-size: 15px; color: #9A8F7D;">TREVAS, INVASÃO, INIMIGO NATURAL</div></div>
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr 1.2fr 0.8fr 0.9fr 1.6fr; gap: 10px; padding: 11px 16px; font-size: 16px; border-bottom: 1px solid #2B251E; background: #12100E; align-items: center;"><div style="font-weight: 500;">Aventura/Fantasia</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">111 (5–20)</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">6</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">≤ 500</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">1 inicial</div><div style="font-size: 15px; color: #9A8F7D;">TORMENTA, ARCÁDIA, TEMPLÁRIOS</div></div>
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr 1.2fr 0.8fr 0.9fr 1.6fr; gap: 10px; padding: 11px 16px; font-size: 16px; border-bottom: 1px solid #2B251E; border-left: 3px solid #C43A22; align-items: center;"><div style="font-weight: 500;">Horror Medieval</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">101 (5–18)</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">5</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">≤ 500</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">ao menos 1</div><div style="font-size: 15px; color: #9A8F7D;">ARKANUN, INQUISIÇÃO</div></div>
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr 1.2fr 0.8fr 0.9fr 1.6fr; gap: 10px; padding: 11px 16px; font-size: 16px; border-bottom: 1px solid #2B251E; background: #12100E; align-items: center;"><div style="font-weight: 500;">Espionagem/Heroico</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">111 (5–20)</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">6</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">≤ 500</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">ao menos 2</div><div style="font-size: 15px; color: #9A8F7D;">época contemporânea</div></div>
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr 1.2fr 0.8fr 0.9fr 1.6fr; gap: 10px; padding: 11px 16px; font-size: 16px; align-items: center;"><div style="font-weight: 500;">Imortais/Heróis</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">131 (12–30)</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">1 / 20 anos</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #9A8F7D;">—</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">mín. 2</div><div style="font-size: 15px; color: #9A8F7D;">ANJOS, DEMÔNIOS, VAMPIROS, SPIRITUM</div></div>
+      </div>
+    </div>
+    <div style="font-size: 16px; color: #9A8F7D; line-height: 1.5; max-width: 90ch;">Outros ambientes seguem as mesmas regras genéricas: II Guerra, Egito Antigo, piratas, Japão feudal, Renascença, Império Romano, futurista.</div>
+  </section>
+
+  <sc-if value="{{ mostrarRoteiro }}" hint-placeholder-val="{{ true }}">
+  <section id="roteiro" style="padding: clamp(48px, 6vw, 104px) clamp(20px, 4vw, 72px); border-bottom: 1px solid #332C24; background: #1B1815; display: flex; flex-direction: column; gap: clamp(24px, 3vw, 40px);">
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #9A8F7D;">ROTEIRO · 11 SEMANAS ATÉ NOVEMBRO DE 2026</div>
+      <h2 style="margin: 0; font-family: 'EB Garamond', Georgia, serif; font-weight: 500; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.05;">Da modelagem ao deploy.</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 1px; background: #12100E;">
+      <div style="background: #12100E; outline: 1px solid #332C24; padding: 22px; display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E0563B; letter-spacing: 0.1em;">SEM 1–2</div><div style="font-size: 17px; line-height: 1.45;">Modelagem do schema SQLite com campos de proveniência e script de seed idempotente.</div></div>
+      <div style="background: #12100E; outline: 1px solid #332C24; padding: 22px; display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E0563B; letter-spacing: 0.1em;">SEM 3</div><div style="font-size: 17px; line-height: 1.45;">Curadoria manual de Nível 2 e 3 em arquivo estruturado próprio.</div></div>
+      <div style="background: #12100E; outline: 1px solid #332C24; padding: 22px; display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E0563B; letter-spacing: 0.1em;">SEM 4–6</div><div style="font-size: 17px; line-height: 1.45;">Camadas Repository → Service → Controller, endpoints com filtro por origem e testes.</div></div>
+      <div style="background: #12100E; outline: 1px solid #332C24; padding: 22px; display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E0563B; letter-spacing: 0.1em;">SEM 7</div><div style="font-size: 17px; line-height: 1.45;">Deploy da API e validação ponta a ponta dos endpoints em produção.</div></div>
+      <div style="background: #12100E; outline: 1px solid #332C24; padding: 22px; display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E0563B; letter-spacing: 0.1em;">SEM 8–10</div><div style="font-size: 17px; line-height: 1.45;">Estrutura MVVM, cliente HTTP e telas de listagem, busca e detalhe com origem visível.</div></div>
+      <div style="background: #12100E; outline: 1px solid #332C24; padding: 22px; display: flex; flex-direction: column; gap: 8px;"><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E0563B; letter-spacing: 0.1em;">SEM 11</div><div style="font-size: 17px; line-height: 1.45;">Integração app ↔ API em produção, ajustes de UX, folga e fechamento da Fase 1.</div></div>
+    </div>
+  </section>
+  </sc-if>
+
+  <sc-if value="{{ mostrarEndpoints }}" hint-placeholder-val="{{ true }}">
+  <section style="padding: clamp(48px, 6vw, 104px) clamp(20px, 4vw, 72px); background: #0B0A09; color: #E8E0D0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: clamp(28px, 4vw, 64px); align-items: start;">
+    <div style="min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #E0563B;">CONTRATO</div>
+      <h2 style="margin: 0; font-family: 'EB Garamond', Georgia, serif; font-weight: 500; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.05;">REST simples, por entidade.</h2>
+      <p style="margin: 0; font-size: 19px; line-height: 1.55; color: #9A8F7D; text-wrap: pretty;">Endpoints convencionais e sem esperteza, para que qualquer cliente — inclusive um motor em C++ na Fase 2 — reutilize o mesmo contrato. Erro em formato padronizado: 404 para id inexistente, 400 para parâmetro inválido.</p>
+    </div>
+    <div style="min-width: 0; border: 1px solid #332C24; background: #141210; padding: 22px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; line-height: 2.1; overflow-x: auto;">
+      <div><span style="color: #A98A3E;">GET</span> /melee-weapons<span style="color: #9A8F7D;">?name=&amp;sourceLevel=</span></div>
+      <div><span style="color: #A98A3E;">GET</span> /ranged-weapons<span style="color: #9A8F7D;">?range=</span></div>
+      <div><span style="color: #A98A3E;">GET</span> /firearms<span style="color: #9A8F7D;">?caliber=</span></div>
+      <div><span style="color: #A98A3E;">GET</span> /protections</div>
+      <div><span style="color: #A98A3E;">GET</span> /skills<span style="color: #9A8F7D;">?baseAttribute=</span></div>
+      <div><span style="color: #A98A3E;">GET</span> /enhancements<span style="color: #9A8F7D;">?cost=</span></div>
+      <div style="color: #9A8F7D;">… e /:id em cada uma, com origem no detalhe</div>
+    </div>
+  </section>
+  </sc-if>
+
+  <footer style="padding: clamp(40px, 5vw, 72px) clamp(20px, 4vw, 72px); background: #1B1815; border-top: 1px solid #332C24; display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; align-items: flex-end;">
+    <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+      <div style="font-family: 'EB Garamond', Georgia, serif; font-size: 30px;">Project Erebus</div>
+      <div style="font-size: 16px; color: #9A8F7D; max-width: 60ch; line-height: 1.5;">Fase 1: serviço de consulta. Fase 2: o motor de regras. A base de dados vem primeiro porque tudo o resto depende dela.</div>
+    </div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.9; color: #9A8F7D;">SISTEMA DAEMON · DAEMON EDITORA<br />MANUAL 1.04 · DEZ/2022<br />PRD FASE 1 · 2026-09-10</div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;mostrarRoteiro&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Seções&quot;},&quot;mostrarEndpoints&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Seções&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      mostrarRoteiro: this.props.mostrarRoteiro ?? true,
+      mostrarEndpoints: this.props.mostrarEndpoints ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>
