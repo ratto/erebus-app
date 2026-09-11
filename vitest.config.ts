@@ -36,10 +36,11 @@ export default mergeConfig(
           // Global floor (LLD §10.6).
           statements: 85,
           branches: 80,
-          // The `src/models/*.mapper.ts` and `src/models/*.filter.ts` rows of
-          // LLD §10.6 are deliberately absent: a V8 threshold glob matching zero
-          // files fails the run. The first entity US (EP02) re-enables them in
-          // the same increment that creates the first mapper/filter.
+          // Re-enabled by US-03, the first entity US: `skill.mapper.ts` and
+          // `skill.filter.ts` are the first files these globs match, so both rows
+          // of LLD §10.6 are live again (closes LLD §15 item 9).
+          'src/models/*.mapper.ts': { statements: 100, branches: 100 },
+          'src/models/*.filter.ts': { statements: 100, branches: 100 },
           'src/models/api-error.ts': { statements: 100, branches: 95 },
           'src/models/*.gateway.ts': { statements: 100, branches: 95 },
           'src/hooks/**': { statements: 95, branches: 90 },

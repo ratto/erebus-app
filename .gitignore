@@ -12,6 +12,7 @@ node_modules/.tmp/
 dist
 dist/
 dist-ssr
+dist-e2e-skills
 coverage
 coverage/
 *.local

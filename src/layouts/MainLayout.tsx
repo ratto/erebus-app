@@ -62,6 +62,7 @@ export function MainLayout() {
         <Brand to={ROUTES.home}>Erebus</Brand>
         <Nav>
           <Link to={ROUTES.home}>Home</Link>
+          <Link to={ROUTES.skills}>Skills</Link>
           <Link to={ROUTES.about}>About</Link>
         </Nav>
         <Spacer />
